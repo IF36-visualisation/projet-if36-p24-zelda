@@ -128,4 +128,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+#dataset file, which is too big to upload
+dataset_if36.csv
+
 # End of https://www.toptal.com/developers/gitignore/api/osx,macos,windows,linux,r
