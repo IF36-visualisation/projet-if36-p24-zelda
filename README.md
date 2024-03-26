@@ -47,3 +47,38 @@ Variables du dataset :
 * Stream : int
 * date : date_time
 
+# Comment on compte analyser ces données ?
+
+Quelles sont vos interrogations ?
+
+* Est-ce qu'avec l'essor de plateformes de streaming comme spotify, les views youtube ont baissées ou au contraire augmenter ? En gros quel est l'effet au cours du temps de spotify sur les vuiews de youtube ?
+
+* Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?
+
+* Quel est l'impact / la corrélation des attributs (Danceability,....,Duration_ms) avec le nombre d'écoutes total ? (et/ou sur spotify vs Yt)
+
+* Y-a-t-il une corrélation / un lien entre le nb de commentaires et le nb d'écoutes / de likes d'un titre ?
+
+* Est-ce possible de discerner des 'modes' en termes d'attributs de chansons en fonction du temps (ex : rap qui serait à la mode et donc plus d'écoute sur une période avec des titres speechiness élevé)
+
+* Est-ce qu'on peut reconnaitre un artiste / un album par une combinaison d'intervalles pour chaque attribut ?
+
+* Sur youtube, est-ce que la distinction officiel/pas officiel a un effet sur les écoutes ? / les likes ? / les commentaires ?
+
+* Est-ce que la fréquence de diffusion d'album / de single d'un artiste peut avoir un effet sur sa popularité ?
+
+* Quels sont les effets d'un 'feat' sur un titre ?
+
+* 
+
+Quelles informations pensez-vous obtenir ?
+
+
+
+Quelles variables souhaitez-vous comparer ?
+
+
+
+Qu’est-ce qui pourrait poser problème ?
+
+
