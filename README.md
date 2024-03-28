@@ -159,9 +159,14 @@ Variables du dataset :
 
 # Comment on compte analyser ces données ?
 
-Quelles sont vos numericerrogations ?
+Quelles sont vos Interrogations ?
+
+* La date de sortie d'un titre a-t-elle en effet sur le nombre de stream/views ?
+-> Le résultat de cette analyse est très important pour savoir si on peut utiliser la date de sortie d'un titre et/ou le nb de streams/views pour indiquer la popularité d'un titre.
+
 
 * Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?
+
 
 * Quel est l'impact / la corrélation des attributs (Danceability,....,Duration_ms) avec le nombre d'écoutes total ? (et/ou sur spotify vs Yt)
 
