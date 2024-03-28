@@ -20,34 +20,142 @@ Description du Dataset :
 
 
 Variables du dataset :
-* Artist : character
-* Url_spotify : character
-* Track : character
-* Album : character
-* Album_type : character
-* Uri : character
-* Danceability : numeric
-* Energy : numeric
-* Key : numeric
-* Loudness : numeric
-* Speechiness : numeric
-* Acousticness : numeric
-* Instrumentalness : numeric
-* Liveness : numeric
-* Valence : numeric
-* Tempo : numeric
-* Duration_ms : numeric
-* Url_youtube : character
-* Title : character
-* Channel : character
-* Views : numeric
-* Likes : numeric
-* Comments : numeric
-* Description : character
-* Licensed : logical
-* official_video : logical
-* Stream : numeric
-* date : character
+<table border="1">
+  <thead>
+    <tr>
+      <th>Nom variable</th>
+      <th>Type variable</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Artist</td>
+      <td>character</td>
+      <td>Nom de l'artiste</td>
+    </tr>
+    <tr>
+      <td>URL_spotify</td>
+      <td>character</td>
+      <td>Identifiant du titre sur Spotify</td>
+    </tr>
+    <tr>
+      <td>track</td>
+      <td>character</td>
+      <td>Le nom du titre</td>
+    </tr>
+    <tr>
+      <td>Album</td>
+      <td>character</td>
+      <td>Le nom de l'album</td>
+    </tr>
+    <tr>
+      <td>Uri</td>
+      <td>character</td>
+      <td>Identifiant Spotify unique</td>
+    </tr>
+    <tr>
+      <td>Danceability</td>
+      <td>Numeric</td>
+      <td>Décrit à quel point une piste est adaptée à la danse</td>
+    </tr>
+    <tr>
+      <td>Speechiness</td>
+      <td>numeric</td>
+      <td>Détecte la présence de mots parlés dans une piste</td>
+    </tr>
+    <tr>
+      <td>Acousticness</td>
+      <td>numeric</td>
+      <td>Le niveau acoustique de la piste</td>
+    </tr>
+    <tr>
+      <td>Instrumentalness</td>
+      <td>Numeric</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Loudness</td>
+      <td>Numeric</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Liveness</td>
+      <td>Numeric</td>
+      <td>Détecte la présence d'un public dans l'enregistrement</td>
+    </tr>
+    <tr>
+      <td>Valence</td>
+      <td>Numeric</td>
+      <td>Décrit la positivité musicale transmise par une piste</td>
+    </tr>
+    <tr>
+      <td>Tempo</td>
+      <td>Numeric</td>
+      <td>La vitesse ou le rythme de la piste</td>
+    </tr>
+    <tr>
+      <td>Duration</td>
+      <td>Numeric</td>
+      <td>Durée de la piste</td>
+    </tr>
+    <tr>
+      <td>URL_youtube</td>
+      <td>character</td>
+      <td>URL YouTube pour accéder à la piste</td>
+    </tr>
+    <tr>
+      <td>Title</td>
+      <td>character</td>
+      <td>Titre de la piste</td>
+    </tr>
+    <tr>
+      <td>Chanel</td>
+      <td>character</td>
+      <td>Chaine YouTube de la piste</td>
+    </tr>
+    <tr>
+      <td>Views</td>
+      <td>numeric</td>
+      <td>Le nombre de vues sur YouTube</td>
+    </tr>
+    <tr>
+      <td>Likes</td>
+      <td>numeric</td>
+      <td>Le nombre de likes</td>
+    </tr>
+    <tr>
+      <td>Comments</td>
+      <td>numeric</td>
+      <td>Le nombre de commentaires</td>
+    </tr>
+    <tr>
+      <td>Description</td>
+      <td>character</td>
+      <td>Description de la piste</td>
+    </tr>
+    <tr>
+      <td>Licensed</td>
+      <td>logical</td>
+      <td>Si la musique dispose d'une licence ou non</td>
+    </tr>
+    <tr>
+      <td>Official_video</td>
+      <td>logical</td>
+      <td>Si la vidéo YouTube est officielle ou non</td>
+    </tr>
+    <tr>
+      <td>Streaming</td>
+      <td>numeric</td>
+      <td>Le nombre de streams</td>
+    </tr>
+    <tr>
+      <td>Date</td>
+      <td>character</td>
+      <td>La date de sortie de la musique</td>
+    </tr>
+  </tbody>
+</table>
 
 # Comment on compte analyser ces données ?
 
