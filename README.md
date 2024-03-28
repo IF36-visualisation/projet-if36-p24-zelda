@@ -51,22 +51,61 @@ Variables du dataset :
 
 # Comment on compte analyser ces données ?
 
+Dans la suite, on réfère aux 'attributs des chansons' : ce sont les variables :
+* Danceability
+* Energy
+* Key
+* Loudness
+* Speechiness
+* Acousticness
+* Instrumentalness
+* Liveness
+* Valence
+* Tempo
+* Duration_ms
+
 Quelles sont vos Interrogations ?
 
 * La date de sortie d'un titre a-t-elle en effet sur le nombre de stream/views ?
 -> Le résultat de cette analyse est très important pour savoir si on peut utiliser la date de sortie d'un titre et/ou le nb de streams/views pour indiquer la popularité d'un titre.
+-> Relation
+-> Variables : 'Streams', 'Views', 'date'
+Hypothèses :
+- 
 
 
 * Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?
+-> Comparaison
+-> Variables : 'Album_type', 'Streams', 'Views', 'Likes', 'Comments'
+Hypothèses :
+-
 
 
-* Quel est l'impact / la corrélation des attributs (Danceability,....,Duration_ms) avec le nombre d'écoutes total ? (et/ou sur spotify vs Yt)
+* Y-a-t-il un lien entre les différents attributs des chansons et leur popularité ?
+-> Distribution ? + Comparaison
+-> Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments'
+Hypothèses :
+-
 
-* Y-a-t-il une corrélation / un lien entre le nb de commentaires et le nb d'écoutes / de likes d'un titre ?
 
-* Est-ce possible de discerner des 'modes' en termes d'attributs de chansons en fonction du temps (ex : rap qui serait à la mode et donc plus d'écoute sur une période avec des titres speechiness élevé)
+* Quel est le lien entre le nb de commentaires et/ou le nombre de likes et le nb d'écoutes d'un titre ?
+-> Relation
+-> Variables : 'Streams', 'Views', 'Likes', 'Comments'
 
-* Est-ce qu'on peut reconnaitre un artiste / un album par une combinaison d'numericervalles pour chaque attribut ?
+* Est-ce possible de discerner des 'modes' en termes d'attributs de chansons en fonction du temps ?
+-> ex : rap qui serait à la mode et donc plus d'écoute sur une période avec des titres speechiness élevé
+-> Relation
+-> Variables : attributs
+Hypothèses :
+- 
+
+
+* Est-ce qu'on peut reconnaitre un artiste / un album par une combinaison d'intervalles pour chaque attribut ?
+-> Relation + Distribution
+-> Variables : 'Artist', 'Album', attributs
+Hypothèses :
+-
+
 
 * Sur youtube, est-ce que la distinction officiel/pas officiel a un effet sur les écoutes ? / les likes ? / les commentaires ?
 
