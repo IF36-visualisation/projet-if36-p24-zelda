@@ -12,7 +12,9 @@ Description du Dataset :
 
 *rajouter un petit texte introduisant le dataset*
 
+
 *rajouter une petite explication du traitement qu'on a dû faire pour ajouter les dates*
+
 
 *rajouter un petit paragraphe expliquant pourquoi on a choisi ce dataset*
 
@@ -51,8 +53,6 @@ Variables du dataset :
 
 Quelles sont vos interrogations ?
 
-* Est-ce qu'avec l'essor de plateformes de streaming comme spotify, les views youtube ont baissées ou au contraire augmenter ? En gros quel est l'effet au cours du temps de spotify sur les vuiews de youtube ?
-
 * Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?
 
 * Quel est l'impact / la corrélation des attributs (Danceability,....,Duration_ms) avec le nombre d'écoutes total ? (et/ou sur spotify vs Yt)
@@ -69,7 +69,11 @@ Quelles sont vos interrogations ?
 
 * Quels sont les effets d'un 'feat' sur un titre ?
 
-* 
+* Y-a-t-il un lien entre les valeurs des differents attributs comme 'danceability' et 'energy' ?
+
+* Quelle est l'évolution au cours du temps de la moyenne des valeurs des attributs ?
+
+* Quelle est la distribution / la comparaison au cours du temps de la duration_ms des titres ? -> pareil pour views/streams et likes
 
 Quelles informations pensez-vous obtenir ?
 
@@ -80,5 +84,4 @@ Quelles variables souhaitez-vous comparer ?
 
 
 Qu’est-ce qui pourrait poser problème ?
-
 
