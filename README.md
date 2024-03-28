@@ -228,7 +228,6 @@ Hypothèses :
 * Quelle est la distribution / la comparaison au cours du temps de la duration_ms des titres ? -> pareil pour views/streams et likes
 
 Quelles informations pensez-vous obtenir ?
-12
 
 
 Quelles variables souhaitez-vous comparer ?
