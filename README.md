@@ -19,7 +19,7 @@ Description du Dataset :
 *rajouter un petit paragraphe expliquant pourquoi on a choisi ce dataset*
 
 
-Variables du dataset :
+<h2>Les varaibles du dataset</h2>
 <table border="1">
   <thead>
     <tr>
