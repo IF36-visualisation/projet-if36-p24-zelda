@@ -72,12 +72,12 @@ Description du Dataset :
     <tr>
       <td>Instrumentalness</td>
       <td>Numeric</td>
-      <td></td>
+      <td>se sont les sons produits uniquements par les instruments</td>
     </tr>
     <tr>
       <td>Loudness</td>
       <td>Numeric</td>
-      <td></td>
+      <td>sonorité globale d'une piste en décibels </td>
     </tr>
     <tr>
       <td>Liveness</td>
