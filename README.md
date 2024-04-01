@@ -11,7 +11,7 @@
 <p>Les données ont été collectées sur la plateforme Kaggle. Mais le dataset ne contenait pas les dates de sortie des chansons, ce qui est une information très importante. Nous avons donc utilisé l'identifiant unique de chaque chanson pour récupérer sa date de sortie grâce à l'API Spotify et la bibliothèque spotifyr de R.</p>
 <h2>Raison de notre choix de données</h2>
 
-<p>les raisons pour lesquelles nous avons choisi ce dataset son nombreuses. Tout d'abord le dataset est assez complet et il  contient aussi bien des données numériques , des données catégorielles et même des données textuelles ce qui permet de mener une analyser approfondie et solide. De plus, le dataset est divisé en deux sous groupes de données, d'une part nous avons les données sur Youtube et d'autre part nous avons les données sur spotify ce qui nous permettra d'éffectuer une analyse comparative des deux plateformes de streaming. Enfin , ce dataset n'est ni trop grand ni trop petit et ne sera pas donc lourd à traiter ou encore inutile et il offre en plus de tout cela une grande flexibilité sur le type d'analyse qu'on peut mener. </p>
+<p>Les raisons pour lesquelles nous avons choisi ce dataset son nombreuses. Tout d'abord le dataset est assez complet et il  contient aussi bien des données numériques , des données catégorielles et même des données textuelles ce qui permet de mener une analyser approfondie et solide. De plus, le dataset est divisé en deux sous groupes de données, d'une part nous avons les données sur Youtube et d'autre part nous avons les données sur spotify ce qui nous permettra d'éffectuer une analyse comparative des deux plateformes de streaming. Enfin , ce dataset n'est ni trop grand ni trop petit et ne sera pas donc lourd à traiter ou encore inutile et il offre en plus de tout cela une grande flexibilité sur le type d'analyse qu'on peut mener. </p>
 
 <h2>Format des données</h2>
 
@@ -174,14 +174,13 @@ Dans la suite, on réfère aux 'attributs des chansons' : ce sont les variables 
 * Tempo
 * Duration_ms
 
-Quelles sont vos Interrogations ?
+<h2>Nos intérrogations à propose de ce dataset</h2>
 
 * La date de sortie d'un titre a-t-elle en effet sur le nombre de stream/views ?
 -> Le résultat de cette analyse est très important pour savoir si on peut utiliser la date de sortie d'un titre et/ou le nb de streams/views pour indiquer la popularité d'un titre.
 -> Relation
 -> Variables : 'Streams', 'Views', 'date'
-Hypothèses :
-- 
+
 
 * y'a t'il une correlation entre le nombre d'écoute sur spotify et le nombre de vues d'une chanson sur youtube ?  Normalement on s'attend à ce que se soit le cas .
 * existe t'il des types de chanson qui on été les plus populaire au cours de certaines années ou de certaines période ? 
@@ -189,15 +188,11 @@ Hypothèses :
 * Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?
 -> Comparaison
 -> Variables : 'Album_type', 'Streams', 'Views', 'Likes', 'Comments'
-Hypothèses :
--
 
 
 * Y-a-t-il un lien entre les différents attributs des chansons et leur popularité ?
 -> Distribution ? + Comparaison
 -> Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments'
-Hypothèses :
--
 
 
 * Quel est le lien entre le nb de commentaires et/ou le nombre de likes et le nb d'écoutes d'un titre ?
@@ -208,15 +203,11 @@ Hypothèses :
 -> ex : rap qui serait à la mode et donc plus d'écoute sur une période avec des titres speechiness élevé
 -> Relation
 -> Variables : attributs
-Hypothèses :
-- 
 
 
 * Est-ce qu'on peut reconnaitre un artiste / un album par une combinaison d'intervalles pour chaque attribut ?
 -> Relation + Distribution
 -> Variables : 'Artist', 'Album', attributs
-Hypothèses :
--
 
 
 * Sur youtube, est-ce que la distinction officiel/pas officiel a un effet sur les écoutes ? / les likes ? / les commentaires ?
