@@ -181,6 +181,8 @@ Quelles sont vos Interrogations ?
 Hypothèses :
 - 
 
+* y'a t'il une correlation entre le nombre d'écoute sur spotify et le nombre de vues d'une chanson sur youtube ?  Normalement on s'attend à ce que se soit le cas .
+* existe t'il des types de chanson qui on été les plus populaire au cours de certaines années ou de certaines période ? 
 
 * Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?
 -> Comparaison
