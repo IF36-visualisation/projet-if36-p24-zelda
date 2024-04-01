@@ -9,6 +9,9 @@
 <h2>Origine</h2>
 
 <p>Les données ont été collectées sur la plateforme Kaggle. Mais le dataset ne contenait pas les dates de sortie des chansons, ce qui est une information très importante. Nous avons donc utilisé l'identifiant unique de chaque chanson pour récupérer sa date de sortie grâce à l'API Spotify et la bibliothèque spotifyr de R.</p>
+<h2>Raison de notre choix de données</h2>
+
+<p>les raisons pour lesquelles nous avons choisi ce dataset son nombreuses. Tout d'abord le dataset est assez complet et il  contient aussi bien des données numériques , des données catégorielles et même des données textuelles ce qui permet de mener une analyser approfondie et solide. De plus, le dataset est divisé en deux sous groupes de données, d'une part nous avons les données sur Youtube et d'autre part nous avons les données sur spotify ce qui nous permettra d'éffectuer une analyse comparative des deux plateformes de streaming. Enfin , ce dataset n'est ni trop grand ni trop petit et ne sera pas donc lourd à traiter ou encore inutile et il offre en plus de tout cela une grande flexibilité sur le type d'analyse qu'on peut mener. </p>
 
 <h2>Format des données</h2>
 
@@ -16,7 +19,6 @@
 
 
 
-*rajouter un petit paragraphe expliquant pourquoi on a choisi ce dataset*
 
 
 <h2>Les varaibles du dataset</h2>
@@ -229,12 +231,11 @@ Hypothèses :
 
 * Quelle est la distribution / la comparaison au cours du temps de la duration_ms des titres ? -> pareil pour views/streams et likes
 
-Quelles informations pensez-vous obtenir ?
-
-
-Quelles variables souhaitez-vous comparer ?
 
 
 
-Qu’est-ce qui pourrait poser problème ?
+
+
+
+
 
