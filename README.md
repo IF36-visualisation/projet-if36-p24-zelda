@@ -1,19 +1,19 @@
 # Proposition de dataset
 
-Consignes :
-Proposition
-La proposition est à formuler dans le fichier README.md de votre repository de projet. Utilisez la syntaxe Markdown pour rajouter de la mise en forme (gras, italique, liens, …) et des sections et sous-sections. Vous créerez une section numericroduction, composée de deux sous-sections avec ce contenu :
+<h1>Introduction</h1>
 
-Données : Vos données décrites en détails avec le nombre d’observations et de variables, et le type des variables. D’où viennent-elles, pourquoi les avez-vous choisies, dans quel contexte s’numericègre-elles ? Quel est leur format ? Y a-t-il des catégories ou des sous-groupes au sein des données ?
-Plan d’analyse : Sans écrire la moindre ligne de code, élaborez sur les questions que vous souhaitez vous poser sur les données. Quelles sont vos numericerrogations ? Quelles informations pensez-vous obtenir ? Quelles variables souhaitez-vous comparer ? Qu’est-ce qui pourrait poser problème ? Autrement dit : comment comptez-vous analyser ces données ?
-N’oubliez pas de mettre vos données dans le dossier prévu à cet effet.
+<h2>Données</h2>
 
-Description du Dataset :
+<p>Les données utilisées dans ce projet de data viz sont des informations sur de nombreuses chansons du monde entier ainsi que des artistes à l'origine. Ces données concernent aussi bien la version de la chanson sur Youtube que celle sur Spotify, le dataset est donc divisé en deux sous-groupes de données.</p>
 
-*rajouter un petit texte numericroduisant le dataset*
+<h2>Origine</h2>
 
+<p>Les données ont été collectées sur la plateforme Kaggle. Mais le dataset ne contenait pas les dates de sortie des chansons, ce qui est une information très importante. Nous avons donc utilisé l'identifiant unique de chaque chanson pour récupérer sa date de sortie grâce à l'API Spotify et la bibliothèque spotifyr de R.</p>
 
-*rajouter une petite explication du traitement qu'on a dû faire pour ajouter les dates*
+<h2>Format des données</h2>
+
+<p>Les données sont représentées sous forme d'un tableau de 27 colonnes, ce qui représente les 27 attributs pour chaque chanson. Le format utilisé est le format CSV.</p>
+
 
 
 *rajouter un petit paragraphe expliquant pourquoi on a choisi ce dataset*
