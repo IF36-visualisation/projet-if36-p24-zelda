@@ -65,6 +65,11 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
       <td>Décrit à quel point une piste est adaptée à la danse</td>
     </tr>
     <tr>
+      <td>Energy</td>
+      <td>Numeric</td>
+      <td>Mesure perçue de l'intensité et l'activité de la piste.</td>
+    </tr>
+    <tr>
       <td>Speechiness</td>
       <td>numeric</td>
       <td>Détecte la présence de mots parlés dans une piste</td>
@@ -223,7 +228,6 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 <p>Objectif : Relation + Comparaison avec valeurs discrètes (nombres d'écoutes) et continues (attributs).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li></li>
   <li>On peut s'attendre à ce que les titres avec plus de mots parlés soient plus populaires.</li>
   <li>On peut aussi s'attendre à avoir une répartition avec beaucoup de titres 'lives' avec très peu d'écoutes mais aussi beaucoup avec un grand nombre d'écoutes car c'est un attribut dans une chanson qui peut être plus tranchant pour les auditeurs. On suppose que beaucoup de gens adorent la musique 'live' mais aussi beaucoup de gens la détestent aussi.</li>
 </ul>
@@ -243,105 +247,67 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 
 <p><strong>6. Est-ce possible de discerner des 'modes' en termes d'attributs de chansons en fonction du temps ?</strong></p>
 <p>Par exemple : le rap qui était à la mode à une période donnée et donc plus de titres avec les attributs 'Speechiness' élevé et 'Instrumentalness' faible.</p>
+<p>Il s'agit donc ici d'essayer de repérer des intervalles de valeurs communes pour les attributs des titres d'une même période.</p>
 <p>Variables : attributs, 'date'</p>
-<p>Objectif : Relation + Evolution avec valeurs continues (attributs) et discrètes/ordinales (dates).</p>
+<p>Objectif : Relation + Evolution (+ distribution/statistique) avec valeurs continues (attributs) et ordinales (dates qu'on catégorisera en périodes : intervalles de dates).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>On s'attend à ce qu'on retrouve des intervalles de valeurs pour les attributs qui auront une densité légèrement plus élevée : il sera cependant probablement difficile de raccorder ces données à un genre précis de musique comme le rap donné en exemple.</li>
+  <li>La difficulté avec cette question/analyse est que sans savoir ce qu'on cherche, il sera peut-être difficile de repérer des schémas/patterns pour les attributs des chansons en fonction de la période. Il est donc possible que notre analyse soit difficilement conclusive.</li>
 </ul>
 
 
-<p><strong>Est-ce qu'on peut reconnaitre un artiste / un album par une combinaison d'intervalles pour chaque attribut ?</strong></p>
--> Relation + Distribution
--> Variables : 'Artist', 'Album', attributs
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p><strong>7. Est-ce qu'on peut reconnaître un artiste / un album par une combinaison d'intervalles pour chaque attribut ?</strong></p>
+<p>Cette question est très similaire à la précédente (q6) sauf que nous étudions les artistes / albums au lieu de périodes.</p>
+<p>Variables : 'Artist', 'Album', attributs</p>
+<p>Objectif : Relation + Comparaison + Distribution avec valeurs continues (attributs) et nominales (artistes, albums).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>Nous avons à peu près les mêmes hypothèses que la question précédente.</li>
+  <li>On aura probablement les mêmes difficultés aussi.</li>
 </ul>
 
 
-<p><strong>Sur youtube, est-ce que la distinction officiel/pas officiel a un effet sur les écoutes ? / les likes ? / les commentaires ?</strong></p>
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p><strong>8. Sur youtube, est-ce que la distinction officiel/pas officiel a un effet sur les écoutes ? / les likes ? / les commentaires ?</strong></p>
+<p>Variables : 'Official_video', 'Views', 'Likes', 'Comments'</p>
+<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes, likes, ...) et nominales (official_video).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>Il semblerait que le jeu de données ne propose pas de vidéos officielles et des vidéos non officielles pour un même titre donc on peut supposer que si la vidéo d'une chanson n'est pas officielle, il n'existe probablement pas de vidéo officielle.</li>
+  <li>On s'attend donc à ce qu'il n'y ai pas de grande différence entre les écoutes / likes / commentaires des vidéos officielles et non officielles.</li>
 </ul>
 
 
-<p><strong>Est-ce que la fréquence de diffusion d'album / de single d'un artiste peut avoir un effet sur sa popularité ?</strong></p>
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p><strong>9. Est-ce que la fréquence de diffusion d'album / de single d'un artiste peut avoir un effet sur sa popularité ?</strong></p>
+<p>On peut commencer par faire l'analyse indépendemment du type de l'album, mais on a trouvé cela pertinent d'aussi voir si cette variable a un effet sur nos résultats.</p>
+<p>Variables : 'Streams', 'Views', 'Artist', 'Album-type', 'date' pour obtenir la fréquence</p>
+<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes), nominales (artistes, type d'albums) et continues (fréquence).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>On suppose que d'avoir une fréquence plus élevée de publication de titres est liée à la popularité d'un artiste. Ceci repose sur l'hypothèse que le simple fait de publier donne de l'engouement naturel à un artiste : surtout qu'ils communiquent autour de leurs publication généralement.</li>
+  <li>Le format des single cherche plus à apporter de l'engouement pour un artiste en règle générale : peut-être que si un artiste publie souvent des singles, il aura plus d'écoutes ?</li>
 </ul>
 
 
-<p><strong>Quels sont les effets d'un 'feat' sur un titre ?</strong></p>
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p><strong>10. Quels sont les effets d'un 'feat' sur un titre ?</strong></p>
+<p>Un 'featuring' en musique indique dans le titre de la chanson que celle-ci est une collaboration entre l'auteur et l'artiste featuré.</p>
+<p>Variables : 'Streams', 'Views', 'track', 'Artist'</p>
+<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et nominales (track, artistes).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>On s'attend à ce qu'en général, les titres avec des 'feat' soient plus populaires que ceux sans, surtout au sein des chansons d'un même artiste.</li>
 </ul>
 
 
-<p><strong>Y-a-t-il un lien entre les valeurs des differents attributs comme 'danceability' et 'energy' ?</strong></p>
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p><strong>11. Y-a-t-il un lien entre les valeurs des différents attributs comme 'danceability' et 'energy' ?</strong></p>
+<p>Variables : attributs</p>
+<p>Objectif : Relation + Comparaison avec valeurs continues (attributs).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>On s'attend à ce qu'il y ai des liens plus forts entre certains attributs qu'avec d'autres.</li>
 </ul>
 
-
-<p><strong>Quelle est l'évolution au cours du temps de la moyenne des valeurs des attributs ?</strong></p>
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
-<p>Hypothèses :</p>
-<ul>
-  <li>bla</li>
-  <li>bla</li>
-</ul>
-
-
-<p><strong>Quelle est la distribution / la comparaison au cours du temps de la duration_ms des titres ?</strong></p>
--> pareil pour views/streams et likes
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
-<p>Hypothèses :</p>
-<ul>
-  <li>bla</li>
-  <li>bla</li>
-</ul>
-
-
-<p><strong>Existe t'il des types de chanson qui on été les plus populaire au cours de certaines années ou de certaines période ?</strong></p>
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
-<p>Hypothèses :</p>
-<ul>
-  <li>bla</li>
-  <li>bla</li>
-</ul>
-
+<foot>Proposition de Dataset - IF36 - Zoé Boutin, Brian Diffo Diffo, Hanxiao Sun, He Huang</foot>
 
 
 
