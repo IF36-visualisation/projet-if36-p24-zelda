@@ -241,13 +241,10 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 </ul>
 
 
-<p><strong>Est-ce possible de discerner des 'modes' en termes d'attributs de chansons en fonction du temps ?</strong></p>
--> ex : rap qui serait à la mode et donc plus d'écoute sur une période avec des titres speechiness élevé
--> Relation
--> Variables : attributs
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p><strong>6. Est-ce possible de discerner des 'modes' en termes d'attributs de chansons en fonction du temps ?</strong></p>
+<p>Par exemple : le rap qui était à la mode à une période donnée et donc plus de titres avec les attributs 'Speechiness' élevé et 'Instrumentalness' faible.</p>
+<p>Variables : attributs, 'date'</p>
+<p>Objectif : Relation + Evolution avec valeurs continues (attributs) et discrètes/ordinales (dates).</p>
 <p>Hypothèses :</p>
 <ul>
   <li>bla</li>
