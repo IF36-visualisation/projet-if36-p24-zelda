@@ -211,20 +211,20 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 -> Variables : 'Album_type', 'Streams', 'Views', 'Likes', 'Comments'
 <p></p>
 <p>Variables : 'Streams', 'Views', 'Album_type', 'Likes', 'Comments'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p>Objectif : Comparaison avec valeurs discrètes et nominales (album_type).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>On s'attend à ce que les singles soit plus écoutés que les albums de manière générale.</li>
+  <li>On ne sait pas trop à quoi s'attendre pour les compilations</li>
 </ul>
 
 
-<p><strong>Y-a-t-il un lien entre les différents attributs des chansons et leur popularité ?</strong></p>
+<p><strong>4. Y-a-t-il un lien entre les différents attributs des chansons et leur popularité ?</strong></p>
 -> Distribution ? + Comparaison
 -> Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments'
 <p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p>Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments'</p>
+<p>Objectif : Distribution + Comparaison avec valeurs discrètes (nombres d'écoutes) et continues (attributs).</p>
 <p>Hypothèses :</p>
 <ul>
   <li>bla</li>
