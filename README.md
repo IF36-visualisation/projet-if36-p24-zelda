@@ -196,7 +196,7 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 
 
 <p><strong>2. Y'a t'il une relation entre le nombre de streams sur Spotify et le nombre de vues sur Youtube d'une chanson ?</strong></p>
-<p></p>
+<p>Ces deux plateformes n'ont pas exactement le même but : Youtube est plus axé sur la vidéo alors que Spotify est axé sur la musique et l'audio pur. Elles n'ont aussi pas été créés en même temps : Youtube est plus ancien que Spotify. Elles ont aussi des business plan différent, Youtube est plus dépendant de publicité sur du contenu gratuit que Spotify qui compte plus sur des abonnements payant pour avoir du contenu sans publicités.</p>
 <p>Variables : 'Streams', 'Views', 'date'</p>
 <p>Objectif : Relation/Comparaison avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
 <p>Hypothèses :</p>
@@ -207,9 +207,7 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 
 
 <p><strong>3. Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?</strong></p>
--> Comparaison
--> Variables : 'Album_type', 'Streams', 'Views', 'Likes', 'Comments'
-<p></p>
+<p>Rappel : Les valeurs possibles pour la variable 'Album_type' sont album, single et compilation.</p>
 <p>Variables : 'Streams', 'Views', 'Album_type', 'Likes', 'Comments'</p>
 <p>Objectif : Comparaison avec valeurs discrètes et nominales (album_type).</p>
 <p>Hypothèses :</p>
@@ -220,28 +218,26 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 
 
 <p><strong>4. Y-a-t-il un lien entre les différents attributs des chansons et leur popularité ?</strong></p>
--> Distribution ? + Comparaison
--> Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments'
-<p></p>
+<p>On pourra par exemple aussi ajouté la comparaison avec la valeurs moyenne des attributs en fonction du nombre d'écoutes/la popularité.</p>
 <p>Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments'</p>
-<p>Objectif : Distribution + Comparaison avec valeurs discrètes (nombres d'écoutes) et continues (attributs).</p>
+<p>Objectif : Relation + Comparaison avec valeurs discrètes (nombres d'écoutes) et continues (attributs).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li></li>
+  <li>On peut s'attendre à ce que les titres avec plus de mots parlés soient plus populaires.</li>
+  <li>On peut aussi s'attendre à avoir une répartition avec beaucoup de titres 'lives' avec très peu d'écoutes mais aussi beaucoup avec un grand nombre d'écoutes car c'est un attribut dans une chanson qui peut être plus tranchant pour les auditeurs. On suppose que beaucoup de gens adorent la musique 'live' mais aussi beaucoup de gens la détestent aussi.</li>
 </ul>
 
 
-<p><strong>Quel est le lien entre le nb de commentaires et/ou le nombre de likes et le nb d'écoutes d'un titre ?</strong></p>
--> Relation
--> Variables : 'Streams', 'Views', 'Likes', 'Comments'
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p><strong>5. Quel est le lien entre le nombre de commentaires et/ou le nombre de likes et le nombre d'écoutes d'un titre ?</strong></p>
+<p>On peut faire l'analyse pour le nombre d'écoutes total, le nombre de vues (Yt) et le nombre de streams (Spot.).</p>
+<p>Variables : 'Streams', 'Views', 'Likes', 'Comments'</p>
+<p>Objectif : Relation avec valeurs discrètes.</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>On suppose qu'on pourra repérer un seuil de nombres d'écoutes à partir duquel la quantité de like et/ou commentaires augmentent fortement. En bref, le signal à partir de ce seuil passerait de linéaire à exponentiel.</li>
+  <li>Cette hypothèse vient du fait que nous supposons qu'à partir de cette valeur seuil, il y a assez d'engouement pour un titre pour qu'il "fasse le buzz".</li>
+  <li>On a pensé à cette valeur seuil car les algorithmes de recommandation de Youtube cherchent à "faire buzzer" des vidéos (du peu que nous connaissons de ces algorithmes du côté utilisateur).</li>
 </ul>
 
 
