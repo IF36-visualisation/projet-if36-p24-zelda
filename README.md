@@ -50,6 +50,11 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
       <td>Le nom de l'album</td>
     </tr>
     <tr>
+      <td>Album_type</td>
+      <td>character</td>
+      <td>Donne le type de l'album : single, album...</td>
+    </tr>
+    <tr>
       <td>Uri</td>
       <td>character</td>
       <td>Identifiant Spotify unique</td>
@@ -177,7 +182,7 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 
 <h2>Nos intérrogations à propos de ce dataset</h2>
 
-<p><strong>La date de sortie d'un titre a-t-elle en effet sur le nombre de stream/views ?</strong></p>
+<p><strong>1. La date de sortie d'un titre a-t-elle en effet sur le nombre de stream/views ?</strong></p>
 <p>Le résultat de cette analyse est très important pour savoir si on peut utiliser la date de sortie d'un titre et/ou le nb de streams/views pour indiquer la popularité d'un titre.</p>
 <p>Variables : 'Streams', 'Views', 'date'</p>
 <p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
@@ -185,36 +190,27 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
 <ul>
   <li>Plus un titre a été publié il y a longtemps, plus il a de views/streams.</li>
   <li>Ou à l'inverse, la date de publication n'a pas une grande corrélation avec le nombre d'écoutes et donc on peut dire que ce nombre d'écoute est purement lié à la popularité du titre.</li>
+  <li>Peut-être qu'il n'y a pas une grande dépendance entre le nombre d'écoutes et la date de publication car le dataset est peut-être échantillonné sur des titres qui ont un nombre d'écoutes supérieur à un certain nombre et donc les 'vieilles' chansons représentées dans le jeu de données sont vraiment des chansons 'intemporelles'. Ainsi on peut donc déduire la popularité d'un titre depuis l'apparition de plateformes de streaming comme Youtube et Spotify grâce au nombre d'écoutes total.</li>
+  <li>On pourra faire attention aux titres publiés avant l'apparition de Youtube et/ou avant l'apparition de Spotify (plus tard que Youtube) car le résultat peut être différent en fonction de l'échantillon de titres analysé.</li>
 </ul>
 
 
-<p><strong>Y'a t'il une relation entre le nombre de streams sur Spotify et le nombre de vues sur Youtube d'une chanson ?</strong></p>
+<p><strong>2. Y'a t'il une relation entre le nombre de streams sur Spotify et le nombre de vues sur Youtube d'une chanson ?</strong></p>
 <p></p>
 <p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p>Objectif : Relation/Comparaison avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
 <p>Hypothèses :</p>
 <ul>
-  <li>bla</li>
-  <li>bla</li>
+  <li>On s'attend à ce que les chansons plus 'vieilles' aient plus de vues totales sur Youtube car Youtube existe depuis plus longtemps.</li>
+  <li>On s'attend cependant à ce que les chansons plus 'récentes' (publiées après Spotify) aient plus de streams totaux sur Spotify car il semblerait que Spotify tend à remplacer Yotube pour l'écoute de musique depuis sa création (hypothèse qu'on pourra essayer de vérifier par l'analyse aussi).</li>
 </ul>
 
 
-<p><strong>existe t'il des types de chanson qui on été les plus populaire au cours de certaines années ou de certaines période ?</strong></p>
-<p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
-<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
-<p>Hypothèses :</p>
-<ul>
-  <li>bla</li>
-  <li>bla</li>
-</ul>
-
-
-<p><strong>Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?</strong></p>
+<p><strong>3. Est-ce que les singles sont plus écoutés/appréciés des auditeurs que les albums ?</strong></p>
 -> Comparaison
 -> Variables : 'Album_type', 'Streams', 'Views', 'Likes', 'Comments'
 <p></p>
-<p>Variables : 'Streams', 'Views', 'date'</p>
+<p>Variables : 'Streams', 'Views', 'Album_type', 'Likes', 'Comments'</p>
 <p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
 <p>Hypothèses :</p>
 <ul>
@@ -342,6 +338,16 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
   <li>bla</li>
 </ul>
 
+
+<p><strong>Existe t'il des types de chanson qui on été les plus populaire au cours de certaines années ou de certaines période ?</strong></p>
+<p></p>
+<p>Variables : 'Streams', 'Views', 'date'</p>
+<p>Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et discrètes/ordinales (dates).</p>
+<p>Hypothèses :</p>
+<ul>
+  <li>bla</li>
+  <li>bla</li>
+</ul>
 
 
 
