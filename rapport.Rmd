@@ -1,0 +1,117 @@
+---
+title: "Rapport de projet "
+date: "2024-05-01"
+output:
+  html_document:
+    theme: cosmo
+---
+
+# Introduction
+
+### Données
+
+Les données utilisées dans ce projet de data visualisation sont des informations sur des chansons publiées sur Spotify et Youtube. Nous avons accès à des informations générales sur chaque titre comme l'artiste et l'album ou le single dont il est issu, ainsi que des attributs comme le tempo, la duration ou encore la danceabilité. Notre jeu de données peut être répartit en trois sous-groupes : les informations générales sur le titre, les informations liées à Spotify (nombre de streams, URI,...) et les informations liées à Youtube (nombre de vues, nombres de likes, chaîne youtube,...).
+
+### Origine
+
+Les données ont été collectées sur la plateforme Kaggle. Mais le dataset ne contenait pas les dates de sortie des chansons, ce qui est une information très importante. Nous avons donc utilisé l'identifiant unique de chaque chanson pour récupérer sa date de sortie grâce à l'API Spotify et la bibliothèque spotifyr de R.
+
+## Livrable 1
+
+### importation des modules
+
+```{r}
+# Exemple de graphique
+library(readr)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(tibble)
+library(ggplot2)
+```
+
+### séparation de la date en année en mois et en jour
+
+la date étant sous format chaine de caractère , cette transformation permettra de faciliter les analyses liées à l'évolution du temps
+
+```{r}
+#en R , les doubles crochet[[]] permettent d'accéder aux élements d'une liste et non d'un vecteur[]
+#sapply est une fonction en R permettant d'appliquer une fonction à chaque élément d'un vecteur
+df <- dataset_if36 %>%
+  mutate(date_split = strsplit(date, split = "-"),
+         annee = as.double(sapply(date_split, "[", 1)),
+         mois = as.double(sapply(date_split, "[", 2))) %>%
+  select(-date_split)
+
+
+df_sorted <- df %>%
+  filter(annee!=0)%>%
+  arrange(annee, mois)
+
+```
+
+### Question 1
+
+### Question2:
+
+existe t'il une relation entre le nombre de streaming Spotify ainsi que le nombre de vues sur Youtube.
+
+-   On s'attend à ce que les chansons plus 'vieilles' aient plus de vues totales sur Youtube car Youtube existe depuis plus longtemps.
+
+-   Cependant on s'attend à ce que les chansons plus 'récentes' (publiées après Spotify) aient plus de streams totaux sur Spotify car il semblerait que Spotify tend à remplacer Yotube pour l'écoute de musique depuis sa création (hypothèse qu'on pourra essayer de vérifier par l'analyse aussi)
+
+##### récupation des données du nombre de stream avant et après 2008
+
+```{r}
+#total des vues et stream de musiques par années
+stream_views_annee <- df_sorted %>%
+  group_by(annee)%>%
+  summarise(stream=sum(Stream), view=sum(Views))
+
+
+#chanson  avant 2008
+stream_view_2008 <- df_sorted %>%
+  select(Views, Stream, annee, mois)%>%
+  filter(annee<2008)
+
+#chanson après 2008
+stream_view_2009 <- df_sorted %>%
+  select(Views, Stream, annee, mois)%>%
+  filter(annee>2008)
+```
+
+##### Nuage de point sensé représenter la relation entre le nombre de vues et le nombre de stream
+
+```{r}
+
+#représentation des nuages de point avant et après 2008
+plot1 <- ggplot(stream_view_2008, aes(x = Stream, y = Views)) +
+  geom_point(color = "blue")+geom_smooth()+
+  labs(title="relation between Stream end Views before 2008")+
+  theme(plot.title = element_text(size = 8.5))
+
+plot2 <- ggplot(stream_view_2009, aes(x = Stream, y = Views)) +
+  geom_point(color = "blue")+geom_smooth()+
+  labs(title="relation between views and stream from 2008")+
+  theme(plot.title = element_text(size = 8.5))
+
+
+grid.arrange(plot1, plot2,  nrow = 1, widths = c(4, 4))
+
+
+
+```
+
+```{r}
+#comparaison annuelle entre le nombre de vues et le nombre de stream
+
+ggplot(stream_views_annee)+geom_line(aes(x=annee, y=stream), color="blue")+
+  geom_line(aes(x=annee, y=view), color="red")+
+  scale_color_manual(values = c("Stream" = "blue", "View" = "red"))+
+  scale_x_continuous(breaks = seq(1913, 2023, by = 10))
+
+```
+
+#### Analyse
+
+Commme on peut le voir sur ces nuages de point , il existe une relation qui tend à être linéaire entre le nombre de vue sur youtube et le nombre de strema sur spotify. cela peut se voir grâce à la ligne du geom_smooth. ce pendant , que se soit pour les chansons sorties avant ou après la date de 2008, création de spotify (Youtube en 2005) on observer quasiment la même chose. ce qui contredit notre permière hypothèse. celon laquelle la relation aurait changer avec l'évolution du temps.
