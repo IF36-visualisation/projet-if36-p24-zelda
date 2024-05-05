@@ -339,3 +339,44 @@ Objectif : Relation + Comparaison + Distribution avec valeurs continues (attribu
 
 analyse :
 Quand nous parlons de « reconnaître » ou « identifier » un artiste par les attributs, nous pensons immédiatement à la classification hiérarchique. Il y a beaucoup de attributs qui décrire le style de musique dans notre jeu de données choisi : "Danceability","Energy","Key","Loudness","Speechiness","Acousticness","Instrumentalness","Liveness","Valence","Tempo". Il est logique de faire d’abord un Analyse en composantes principales pour rendre un représentation 2D possible.
+
+```R 
+library(tidyverse)
+library(ggplot2)
+library(cluster)
+library(factoextra)
+
+data <- read.csv("dataset_if36.csv")
+selected_data <- data %>% select(Danceability, Energy, Key, Loudness, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo)
+
+scaled_data <- scale(selected_data)
+pca_result <- prcomp(scaled_data, scale. = TRUE)
+
+# L’inertie des cps
+fviz_pca_var(pca_result, col.var = "contrib", col.ind = "cos2", repel = TRUE)
+ggsave("pca_contrib_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
+
+# Cercle des corrélations
+fviz_contrib(pca_result, choice = "var", axes = 1:2)
+ggsave("pca_loadings_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
+
+# Appliquer la classification hiérarchique sur le résultat de l'ACP
+pca_scores <- as.data.frame(pca_result$x)
+dist_mat <- dist(pca_scores[, 1:2], method = "euclidean")
+hc <- hclust(dist_mat, method = "ward.D2")
+
+rect.hclust(hc, k = 3)
+clusters <- cutree(hc, k = 3)
+clustered_data <- cbind(selected_data, Cluster = clusters)
+write.csv(clustered_data, "clustered_data.csv")
+
+clustered_data <- cbind(clustered_data, PC1 = pca_scores[, 1], PC2 = pca_scores[, 2])
+
+#nuage des points
+ggplot(clustered_data, aes(x = PC1, y = PC2, color = factor(Cluster))) +
+  geom_point() +
+  labs(title = "CAH sur PC1 et PC2")
+
+ggsave("clustered_artists_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
+```
+
