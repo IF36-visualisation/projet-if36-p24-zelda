@@ -311,7 +311,7 @@ Pour les likes et stream, sélectionnez les données supérieures à 1e+09 pour 
 # ggplot(filtered_streams_data, aes(x = Stream, y = Likes)) +
 #   geom_point(alpha = 0.5) +  
 #   geom_smooth(method = "nls", formula = y ~ a * exp(b * x),
-#               method.args = list(start = list(a = 1, b = 0.01)), color = "blue") +  # 添加指数拟合线
+#               method.args = list(start = list(a = 1, b = 0.01)), color = "blue") +  
 #   ggtitle("Relationship between Streams and Likes") +
 #   xlab("Stream") +
 #   ylab("Likes")
@@ -330,6 +330,12 @@ Le code signale une erreur, indiquant que le modèle ne correspond pas à la dis
 
 Ainsi, notre hypothèse est invalide, il existe une relation linéaire entre stream et likes,stream et comment, views et likes, ainsi que views et comment.
 
+### Question 7:
+Est-ce qu'on peut reconnaître un artiste / un album par une combinaison d'intervalles pour chaque attribut ?  
 
+Variables : 'Artist', 'Album', attributs
 
+Objectif : Relation + Comparaison + Distribution avec valeurs continues (attributs) et nominales (artistes, albums).
 
+analyse :
+Quand nous parlons de « reconnaître » ou « identifier » un artiste par les attributs, nous pensons immédiatement à la classification hiérarchique. Il y a beaucoup de attributs qui décrire le style de musique dans notre jeu de données choisi : "Danceability","Energy","Key","Loudness","Speechiness","Acousticness","Instrumentalness","Liveness","Valence","Tempo". Il est logique de faire d’abord un Analyse en composantes principales pour rendre un représentation 2D possible.
