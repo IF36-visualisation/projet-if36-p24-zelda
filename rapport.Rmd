@@ -352,11 +352,11 @@ selected_data <- data %>% select(Danceability, Energy, Key, Loudness, Speechines
 scaled_data <- scale(selected_data)
 pca_result <- prcomp(scaled_data, scale. = TRUE)
 
-# L’inertie des cps
+# Cercle des corrélations
 fviz_pca_var(pca_result, col.var = "contrib", col.ind = "cos2", repel = TRUE)
 ggsave("pca_contrib_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
 ![inertie](https://imgur.com/xocg4eJ)
-# Cercle des corrélations
+# L’inertie des cps
 fviz_contrib(pca_result, choice = "var", axes = 1:2)
 ggsave("pca_loadings_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
 ![cercle](https://imgur.com/joA3uaT)
