@@ -207,3 +207,125 @@ ggplot(stream_views_annee)+geom_line(aes(x=annee, y=stream), color="blue")+
 #### Analyse
 
 Commme on peut le voir sur ces nuages de point , il existe une relation qui tend à être linéaire entre le nombre de vue sur youtube et le nombre de streams sur spotify. Cela peut se voir grâce à la ligne du geom_smooth. Cependant , que ce soit pour les chansons sorties avant ou après la date de 2008, création de spotify (Youtube en 2005) on observe quasiment la même chose. Ce qui contredit notre première hypothèse. selon laquelle la relation aurait changée avec l'évolution du temps.
+
+### Question 5:
+On peut faire l'analyse pour le nombre d'écoutes total, le nombre de vues (Yt) et le nombre de streams (Spot.).
+
+Variables : 'Streams', 'Views', 'Likes', 'Comments'
+
+Objectif : Relation avec valeurs discrètes.
+
+Hypothèses :
+
+On suppose qu'on pourra repérer un seuil de nombres d'écoutes à partir duquel la quantité de like et/ou commentaires augmentent fortement. En bref, le signal à partir de ce seuil passerait de linéaire à exponentiel.
+Cette hypothèse vient du fait que nous supposons qu'à partir de cette valeur seuil, il y a assez d'engouement pour un titre pour qu'il "fasse le buzz".
+On a pensé à cette valeur seuil car les algorithmes de recommandation de Youtube cherchent à "faire buzzer" des vidéos (du peu que nous connaissons de ces algorithmes du côté utilisateur).
+
+##### Utilisez des nuages de points pour visualiser les données et analyser la relation entre stream et like
+```{r}
+ggplot(dataset_if36, aes(x=Stream, y=Likes)) +
+  geom_point(alpha=0.5) +
+  ggtitle("Relationship between Streams and Likes") +
+  xlab("Streams") +
+  ylab("Likes")
+```
+##### Utilisez des nuages de points pour visualiser les données et analyser la relation entre stream et Comments
+```{r}
+ggplot(dataset_if36, aes(x=Stream, y=Comments)) +
+  geom_point(alpha=0.5) +
+  ggtitle("Relationship between Streams and Comments") +
+  xlab("Streams") +
+  ylab("Comments")
+```
+##### Utilisez des nuages de points pour visualiser les données et analyser la relation entre Views et Likes
+```{r}
+ggplot(dataset_if36, aes(x=Views, y=Likes)) +
+  geom_point(alpha=0.5) +
+  ggtitle("Relationship between Views and Likes") +
+  xlab("Views") +
+  ylab("Likes")
+```
+
+##### Utilisez des nuages de points pour visualiser les données et analyser la relation entre Views et Comments
+```{r}
+ggplot(dataset_if36, aes(x=Views, y=Comments)) +
+  geom_point(alpha=0.5) +
+  ggtitle("Relationship between Views and Comments") +
+  xlab("Views") +
+  ylab("Comments")
+```
+
+#### Analyse
+Selon notre conjecture, une fois que le Stream ou la View atteint une certaine valeur, les données peuvent croître de façon exponentielle. Cependant, selon le nuage de points, la relation entre Stream et View, Like et Comment est plus linéaire qu'exponentielle.J’ai donc d’abord essayé d’utiliser une relation linéaire
+
+##### linéaire stream et like
+```{r}
+ggplot(dataset_if36, aes(x=Stream, y=Likes)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method="lm", color="blue") +
+  ggtitle("Relationship between Streams and Likes") +
+  xlab("Streams") +
+  ylab("Likes")
+```
+
+##### linéaire stream et comments
+```{r}
+ggplot(dataset_if36, aes(x=Stream, y=Comments)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method="lm", color="red") +
+  ggtitle("Relationship between Streams and Comments") +
+  xlab("Streams") +
+  ylab("Comments")
+```
+
+##### # linéaire views et likes
+```{r}
+ggplot(dataset_if36, aes(x=Views, y=Likes)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method="lm", color="blue") +
+  ggtitle("Relationship between Views and Likes") +
+  xlab("Views") +
+  ylab("Likes")
+```
+
+##### linéaire views et comments
+```{r}
+ggplot(dataset_if36, aes(x=Views, y=Comments)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method="lm", color="red") +
+  ggtitle("Relationship between Views and Comments") +
+  xlab("Views") +
+  ylab("Comments")
+```
+
+#### Analyse
+D'après l'image générée, il est facile de juger que la relation entre le stream,view et like,comment est complètement linéaire. Quant à Like, je vérifierai ensuite si une relation exponentielle peut être affichée une fois que stream ou view atteignent une certaine valeur.
+
+Pour les likes et stream, sélectionnez les données supérieures à 1e+09 pour essayer d'analyser.
+#filtered_streams_data <- dataset_if36[dataset_if36$Stream > 1e9, ]
+
+# ggplot(filtered_streams_data, aes(x = Stream, y = Likes)) +
+#   geom_point(alpha = 0.5) +  
+#   geom_smooth(method = "nls", formula = y ~ a * exp(b * x),
+#               method.args = list(start = list(a = 1, b = 0.01)), color = "blue") +  # 添加指数拟合线
+#   ggtitle("Relationship between Streams and Likes") +
+#   xlab("Stream") +
+#   ylab("Likes")
+Le code signale une erreur, indiquant que le modèle ne correspond pas à la distribution réelle des données.
+
+Pour les likes et views, sélectionnez les données supérieures à 1e+09 pour essayer d'analyser.
+#"filtered_data <- dataset_if36[dataset_if36$Views > 1e9, ]
+# ggplot(filtered_data, aes(x=Views, y=Likes)) +
+#   geom_point(alpha=0.5) +
+#   geom_smooth(method="nls", formula=y ~ a * exp(b * x),
+#               method.args=list(start=list(a=1, b=0.01)), color="blue") +
+#   ggtitle("Relationship between Views and Likes") +
+#   xlab("Views") +
+#   ylab("Likes")
+Le code signale une erreur, indiquant que le modèle ne correspond pas à la distribution réelle des données.
+
+Ainsi, notre hypothèse est invalide, il existe une relation linéaire entre stream et likes,stream et comment, views et likes, ainsi que views et comment.
+
+
+
+
