@@ -350,18 +350,26 @@ data <- read.csv("dataset_if36.csv")
 selected_data <- data %>% select(Danceability, Energy, Key, Loudness, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo)
 
 scaled_data <- scale(selected_data)
-pca_result <- prcomp(scaled_data, scale. = TRUE)
+pca_result <- PCA(scaled_data, scale. = TRUE)
+```
 
+Pour analyse le résultat, nous visualisons la contribution des composantes principales : 
+```{R}
 # L’inertie des cps
 fviz_eig(pca_result)
 ggsave("pca_loadings_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
 ![inertie](https://imgur.com/8VAmUdX.png)
-
+```
+Les deux première composantes représentent environ 45 % d'inertie, nous pouvons donc dire que cette représentation n'est pas très idéal.
+Nous regardons ensuite le cercle de corrélation :
+```{R}
 # Cercle des corrélations
 fviz_pca_var(pca_result, col.var = "contrib", col.ind = "cos2", repel = TRUE)
 ggsave("pca_contrib_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
 ![cercle](https://imgur.com/xocg4eJ.png)
+```
 
+```{R}
 # Appliquer la classification hiérarchique sur le résultat de l'ACP
 pca_scores <- as.data.frame(pca_result$x)
 dist_mat <- dist(pca_scores[, 1:2], method = "euclidean")
