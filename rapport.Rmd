@@ -188,7 +188,7 @@ plot2 <- ggplot(stream_view_2009, aes(x = Stream, y = Views)) +
   theme(plot.title = element_text(size = 8.5))
 
 
-grid.arrange(plot1, plot2,  nrow = 1, widths = c(4, 4))
+grid.arrange(plot1, plot2,  nrow = 2)
 
 
 
@@ -206,7 +206,11 @@ ggplot(stream_views_annee)+geom_line(aes(x=annee, y=stream), color="blue")+
 
 #### Analyse
 
-Commme on peut le voir sur ces nuages de point , il existe une relation qui tend à être linéaire entre le nombre de vue sur youtube et le nombre de streams sur spotify. Cela peut se voir grâce à la ligne du geom_smooth. Cependant , que ce soit pour les chansons sorties avant ou après la date de 2008, création de spotify (Youtube en 2005) on observe quasiment la même chose. Ce qui contredit notre première hypothèse. selon laquelle la relation aurait changée avec l'évolution du temps.
+les deux nuages de point représentent la relation entre le nombre de stream sur Spotify et le nombre de vues sur youtube pour les chansons sorties avant et après 2008. Comme on peut le voir , que se soit avant ou après l'année 2008 qui est l'année à laquelle spotify a été créé , il existe bien une relation qui tend vers la linéarité entre le nombre de stream sur spotify et le nombre de vues sur youtube.
+
+On peut également observer un changement entre les deux nuages de points. en effet à près 2008, la relation est un peu moins linéaire et on a un peu plus de point en dessous de la droite ce qui rejoint notre hypothèse selon laquelle les chancons les plus récentes sont plus streamées sur spotify que visionnées sur Youtube.
+
+Enfin grace au lineplot qui permet de visualiser l'évolution annuelle du nombre de vues sur youtube et du nombre de stream sur spotify on peut voir que  pour les chanson sorties à partir de 2010, on a une augmentation du nombre d'écoute sur spotify par rapport à  youtube.
 
 ### Question 5:
 On peut faire l'analyse pour le nombre d'écoutes total, le nombre de vues (Yt) et le nombre de streams (Spot.).
