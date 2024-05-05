@@ -18,10 +18,11 @@ Les données ont été collectées sur la plateforme Kaggle. Mais le dataset ne 
 
 ## Livrable 1
 
-### importation des modules
+### Importation des modules
+
+Nous utilisons des librairies non inhérentes au R basique dans notre analyse explorative. Les librairies/packages que nous chargeons font partie du TidyVerse.
 
 ```{r}
-# Exemple de graphique
 library(readr)
 library(dplyr)
 library(tidyr)
@@ -30,9 +31,18 @@ library(tibble)
 library(ggplot2)
 ```
 
-### séparation de la date en année en mois et en jour
+### Chargement des données depuis le fichier CSV
 
-la date étant sous format chaine de caractère , cette transformation permettra de faciliter les analyses liées à l'évolution du temps
+Notre jeu de données est stocké dans un fichier CSV (Excel). Nous devons importer les données dans notre code pour les transformées en 'dataframe' (type de variable en R) afin de pouvoir utiliser des fonctions de R et de nos librairies du TidyVerse pour 'Explorer' nos données.
+
+```{r}
+# Nous travaillons avec le fichier ayant le chemin suivant : "/data/dataset_if36"
+dataset_if36 <- read.csv('data/dataset_if36.csv')
+```
+
+### Séparation de la date en année en mois et en jour
+
+La date étant sous format chaine de caractère , cette transformation permettra de faciliter les analyses liées à l'évolution du temps.
 
 ```{r}
 #en R , les doubles crochet[[]] permettent d'accéder aux élements d'une liste et non d'un vecteur[]
@@ -50,17 +60,99 @@ df_sorted <- df %>%
 
 ```
 
-### Question 1
+### Question 1:
 
-### Question2:
+[***La date de sortie d'un titre a-t-elle un effet sur son nombre d'écoutes total sur les deux plateformes ?***]{.underline}
 
-existe t'il une relation entre le nombre de streaming Spotify ainsi que le nombre de vues sur Youtube.
+[*Sous-question :*]{.underline} ***Est-ce que l'échantillon de titres du dataset est composé majoritairement de titres qui sont 'populaires' indépendamment du temps ?***
+
+-   On s'attend à ce que : plus un titre a été publié il y a longtemps, plus il a de views/streams.
+
+-   Ou à l'inverse, la date de publication n'a pas une grande corrélation avec le nombre d'écoutes et donc on peut dire que ce nombre d'écoute est purement lié à la popularité du titre.
+
+##### Selection des colonnes qui nous intéressent pour cette question et transfer dans un nouveau dataframe 'df_q1'
+
+```{r}
+df_q1 <- df %>%
+  select(date, annee, mois, Stream, Views, Likes)
+
+#Transformation du type de la colonne 'date' de chr à date
+df_q1$date <- as.Date(df_q1$date)
+
+head(df_q1)
+```
+
+##### Création d'une colonne représentant le nombre total d'écoutes d'un titre indépendamment de la plateforme
+
+```{r}
+df_q1 <- df_q1 %>%
+  mutate(ecoutes_totales = Stream + Views)
+
+# Supprimer les lignes avec des valeurs manquantes dans la colonne 'date'
+df_q1 <- df_q1[!is.na(df_q1$date), ]
+
+
+head(df_q1)
+```
+
+##### Tracer du graph en boîte à moustache par année
+
+```{r}
+# Use factor() to convert a numeric variable into a discrete variable
+# Créer le diagramme en boîte avec ggplot2
+df_q1 %>%
+  ggplot(aes(x = factor(annee), y = ecoutes_totales)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue", outlier.color = "magenta", outlier.shape = 16) +
+  labs(x = "Année", y = "Nombre total d'écoutes", title = "Diagramme en boîte des écoutes totales par année") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))  +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightyellow", "lightpink"), 
+                    guide = FALSE) +  # Couleurs pour les boîtes à moustaches
+  scale_color_manual(values = c("darkblue", "darkgreen", "orange", "red"), 
+                     guide = FALSE)  # Couleurs pour les contours des boîtes à moustaches et les médianes
+```
+
+##### Même graph mais en regroupant par décennie pour plus de lisibilité
+
+```{r}
+# Créer une nouvelle variable 'decennie' représentant la décennie
+df_q1$decennie <- as.factor((as.integer(df_q1$annee) %/% 10) * 10)
+
+# Use factor() to convert a numeric variable into a discrete variable
+# Créer le diagramme en boîte avec ggplot2
+df_q1 %>%
+  ggplot(aes(x = factor(decennie), y = ecoutes_totales)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue", outlier.color = "magenta", outlier.shape = 16) +
+  labs(x = "Décennie", y = "Nombre total d'écoutes", title = "Diagramme en boîte des écoutes totales par décennie")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))  +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightyellow", "lightpink"), 
+                    guide = FALSE) +  # Couleurs pour les boîtes à moustaches
+  scale_color_manual(values = c("darkblue", "darkgreen", "orange", "red"), 
+                     guide = FALSE)  # Couleurs pour les contours des boîtes à moustaches et les médianes
+```
+
+#### Analyse
+
+Nous avons utilisé un diagramme en boîte à moustache (box and whisker plot) car nous avons discrétisé le temps par année et que nous voulions nous concentrer sur la distribution statistique des valeurs pour chaque année afin d'en extraire des tendances (si il en existe). Ce graph est pertinent car il synthétise bien nos valeurs discrètes et facilite la recherche d'une relation entre la date de publication d'un titre et son nombre d'écoutes total.
+
+Nous pouvons voir que nos écoutes totales sont plutôt équilibrées en moyenne car nos boîtes à moustaches se trouvent au même niveau en ordonnée et ont une taille et une forme plutôt similaires. On remarque aussi qu'il semble que le 1er quartile et la médiane de nos boîtes sont confondus presque systématiquement. Nous pouvons en déduire que notre dataset est échantilloné sur des titres qui ont un nombre minimal d'écoutes totales. Ce serait donc seulement des titres assez écoutés et donc 'populaires'.
+
+Comme nous en avions fait l'hypothèse, les titres datant d'avant Spotify et Youtube qui sont représentés dans ce dataset sont ceux qui sont encore écoutés aujourd'hui et qui sont encore 'populaires' (des chansons intemporelles comme celles des *Beatles* ou de *Queen* par exemple).
+
+Ainsi, parmis les titres de notre dataset qui sont tous 'populaires' dans une certaine mesure, nous avons des titres 'extrêmement populaires' que nous voyons représentés comme les "points outliers" sur nos graphique (en magenta).
+
+Nous pouvons remarquer de manière assez flagrante que plus nous avançons dans le temps, plus ces titres 'outliers' sont nombreux et ont un nombre d'écoutes total important. Notre interprétation est qu'avec la démocratisation grandissante des moyens de partager l'information (la musique en faisant partie) vers un grand public, il devient de plus en plus facile pour des chansons de devenir très populaires et ce très vite. La notion de "tubes du moment" ou de "chansons qui font le buzz" que nous connaissons tous aujourd'hui créée des titres qui représentes ces valeurs 'outliers' avec des nombres d'écoutes pharamineux dans notre graphique.
+
+En explorant cette question, nous avons pensé à une autre approche que nous pourrons développer plus tard. Nous pourrions créer des nouvelles colonnes dans notre dataframe 'df_q1' calculant le taux d'écoute annuel d'un titre (nombre d'écoutes total / nombre d'années depuis publication) pour en visualiser la distribution.
+
+### Question 2:
+
+Existe t'il une relation entre le nombre de streamings Spotify ainsi que le nombre de vues sur Youtube ?
 
 -   On s'attend à ce que les chansons plus 'vieilles' aient plus de vues totales sur Youtube car Youtube existe depuis plus longtemps.
 
 -   Cependant on s'attend à ce que les chansons plus 'récentes' (publiées après Spotify) aient plus de streams totaux sur Spotify car il semblerait que Spotify tend à remplacer Yotube pour l'écoute de musique depuis sa création (hypothèse qu'on pourra essayer de vérifier par l'analyse aussi)
 
-##### récupation des données du nombre de stream avant et après 2008
+##### Récupation des données du nombre de stream avant et après 2008
 
 ```{r}
 #total des vues et stream de musiques par années
@@ -114,4 +206,4 @@ ggplot(stream_views_annee)+geom_line(aes(x=annee, y=stream), color="blue")+
 
 #### Analyse
 
-Commme on peut le voir sur ces nuages de point , il existe une relation qui tend à être linéaire entre le nombre de vue sur youtube et le nombre de strema sur spotify. cela peut se voir grâce à la ligne du geom_smooth. ce pendant , que se soit pour les chansons sorties avant ou après la date de 2008, création de spotify (Youtube en 2005) on observer quasiment la même chose. ce qui contredit notre permière hypothèse. celon laquelle la relation aurait changer avec l'évolution du temps.
+Commme on peut le voir sur ces nuages de point , il existe une relation qui tend à être linéaire entre le nombre de vue sur youtube et le nombre de streams sur spotify. Cela peut se voir grâce à la ligne du geom_smooth. Cependant , que ce soit pour les chansons sorties avant ou après la date de 2008, création de spotify (Youtube en 2005) on observe quasiment la même chose. Ce qui contredit notre première hypothèse. selon laquelle la relation aurait changée avec l'évolution du temps.
