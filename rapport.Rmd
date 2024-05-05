@@ -355,11 +355,11 @@ pca_result <- prcomp(scaled_data, scale. = TRUE)
 # L’inertie des cps
 fviz_pca_var(pca_result, col.var = "contrib", col.ind = "cos2", repel = TRUE)
 ggsave("pca_contrib_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
-
+![inertie](https://imgur.com/xocg4eJ)
 # Cercle des corrélations
 fviz_contrib(pca_result, choice = "var", axes = 1:2)
 ggsave("pca_loadings_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
-
+![cercle](https://imgur.com/joA3uaT)
 # Appliquer la classification hiérarchique sur le résultat de l'ACP
 pca_scores <- as.data.frame(pca_result$x)
 dist_mat <- dist(pca_scores[, 1:2], method = "euclidean")
@@ -376,7 +376,6 @@ clustered_data <- cbind(clustered_data, PC1 = pca_scores[, 1], PC2 = pca_scores[
 ggplot(clustered_data, aes(x = PC1, y = PC2, color = factor(Cluster))) +
   geom_point() +
   labs(title = "CAH sur PC1 et PC2")
-
-ggsave("clustered_artists_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
+![nuage des points](https://imgur.com/curmszd.png)
 ```
 
