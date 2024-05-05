@@ -340,7 +340,7 @@ Objectif : Relation + Comparaison + Distribution avec valeurs continues (attribu
 analyse :
 Quand nous parlons de « reconnaître » ou « identifier » un artiste par les attributs, nous pensons immédiatement à la classification hiérarchique. Il y a beaucoup de attributs qui décrire le style de musique dans notre jeu de données choisi : "Danceability","Energy","Key","Loudness","Speechiness","Acousticness","Instrumentalness","Liveness","Valence","Tempo". Il est logique de faire d’abord un Analyse en composantes principales pour rendre un représentation 2D possible.
 
-```R 
+```{R}
 library(tidyverse)
 library(ggplot2)
 library(cluster)
