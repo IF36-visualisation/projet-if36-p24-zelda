@@ -307,6 +307,19 @@ Notre jeu de données peut être répartit en trois sous-groupes : les informati
   <li>On s'attend à ce qu'il y ai des liens plus forts entre certains attributs qu'avec d'autres.</li>
 </ul>
 
+<p><strong>12. comment est-ce que la durée des différentes chanson a évoluée avec le temps </strong></p>
+<p>Variables : année, durée</p>
+<p>Objectif : comparaison + évolution (attributs).</p>
+<p>Hypothèses :</p>
+de manière générale , il  est facile de se rendre compte que les chasons qui qui sortaient au paravant étaient deux fois plus longues
+que celles qui sortent actuellement d'ailleurs la longueur des chanson se réduit de plus en plus. En effet , les chansons allaient jusqu'à 7 minutes
+et maintenant elles tournnent autour de 3 minutes. 
+<ul>
+  <li>on s'attend donc à une visualisation sur laquelle on pourra remarqué que pour les décénies , les plus éloignée on aura beaucoup plus de chanson avec 
+    une durée relativement forte , tandis que avec l'évolution du temps , la répartition changera et on aura beaucoups plus de chanson de faible durée.</li>
+</ul>
+
+
 <foot>Proposition de Dataset - IF36 - Zoé Boutin, Brian Diffo Diffo, Hanxiao Sun, He Huang</foot>
 
 
