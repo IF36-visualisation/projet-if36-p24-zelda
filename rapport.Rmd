@@ -29,6 +29,7 @@ library(tidyr)
 library(stringr)
 library(tibble)
 library(ggplot2)
+library(patchwork)
 ```
 
 ### Chargement des données depuis le fichier CSV
@@ -51,7 +52,10 @@ df <- dataset_if36 %>%
   mutate(date_split = strsplit(date, split = "-"),
          annee = as.double(sapply(date_split, "[", 1)),
          mois = as.double(sapply(date_split, "[", 2))) %>%
-  select(-date_split)
+  select(-date_split) %>%
+  filter(!is.na(annee) & !is.na(Stream) & !is.na(Views)) %>%
+  filter(is.finite(Stream) & is.finite(Views)) %>%
+  filter(annee!=0)
 
 
 df_sorted <- df %>%
@@ -95,20 +99,44 @@ df_q1 <- df_q1[!is.na(df_q1$date), ]
 head(df_q1)
 ```
 
-##### Tracer du graph en boîte à moustache par année
+##### Tracer du Nombre total d'écoutes en fonction de l'année de publication
 
 ```{r}
 # Use factor() to convert a numeric variable into a discrete variable
-# Créer le diagramme en boîte avec ggplot2
 df_q1 %>%
   ggplot(aes(x = factor(annee), y = ecoutes_totales)) +
-  geom_boxplot(fill = "lightblue", color = "darkblue", outlier.color = "magenta", outlier.shape = 16) +
-  labs(x = "Année", y = "Nombre total d'écoutes", title = "Diagramme en boîte des écoutes totales par année") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))  +
-  scale_fill_manual(values = c("lightblue", "lightgreen", "lightyellow", "lightpink"), 
-                    guide = FALSE) +  # Couleurs pour les boîtes à moustaches
-  scale_color_manual(values = c("darkblue", "darkgreen", "orange", "red"), 
-                     guide = FALSE)  # Couleurs pour les contours des boîtes à moustaches et les médianes
+  geom_point(alpha = 0.1, color = "darkcyan") +
+  stat_summary(aes(group = 1), fun = mean, geom = 'line', colour = 'orange', alpha = 0.7) +
+  stat_summary(aes(group = 1), fun = median, geom = 'line', colour = 'yellow', alpha = 0.7) +
+  labs(x = "Année", y = "Nombre total d'écoutes", title = "Ecoutes totales par année de publication") +
+  coord_trans(y = 'log10') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+```
+
+```{r}
+stream_plot <- df_q1 %>%
+  ggplot(aes(x = factor(annee), y = Stream)) +
+  geom_point(alpha = 0.1, colour = "darkcyan") +
+  stat_summary(aes(group = 1), fun = mean, geom = 'line', colour = 'orange', alpha = 0.7) +
+  stat_summary(aes(group = 1), fun = median, geom = 'line', colour = 'yellow', alpha = 0.7) +
+  labs(x = "Année", y = "Nombre de Streams", title = "Streams par année de publication") +
+  coord_trans(y = 'log10') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+
+view_plot <- df_q1 %>%
+  ggplot(aes(x = factor(annee), y = Views)) +
+  geom_point(alpha = 0.1, colour = "darkcyan") +
+  stat_summary(aes(group = 1), fun = mean, geom = 'line', colour = 'orange', alpha = 0.7) +
+  stat_summary(aes(group = 1), fun = median, geom = 'line', colour = 'yellow', alpha = 0.7) +
+  labs(x = "Année", y = "Nombre de Vues", title = "Vues par année de publication") +
+  coord_trans(y = 'log10') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+
+#on utilise le package patchwork pour afficher les deux plots ensembles
+stream_plot + view_plot
 ```
 
 ##### Même graph mais en regroupant par décennie pour plus de lisibilité
@@ -121,14 +149,26 @@ df_q1$decennie <- as.factor((as.integer(df_q1$annee) %/% 10) * 10)
 # Créer le diagramme en boîte avec ggplot2
 df_q1 %>%
   ggplot(aes(x = factor(decennie), y = ecoutes_totales)) +
-  geom_boxplot(fill = "lightblue", color = "darkblue", outlier.color = "magenta", outlier.shape = 16) +
-  labs(x = "Décennie", y = "Nombre total d'écoutes", title = "Diagramme en boîte des écoutes totales par décennie")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))  +
-  scale_fill_manual(values = c("lightblue", "lightgreen", "lightyellow", "lightpink"), 
-                    guide = FALSE) +  # Couleurs pour les boîtes à moustaches
-  scale_color_manual(values = c("darkblue", "darkgreen", "orange", "red"), 
-                     guide = FALSE)  # Couleurs pour les contours des boîtes à moustaches et les médianes
+  geom_violin(color = "darkcyan", fill = "lightblue") +
+  stat_summary(aes(group = 1), fun = mean, geom = 'line', colour = 'orange') +
+  stat_summary(aes(group = 1), fun = median, geom = 'line', colour = 'yellow') +
+  labs(x = "Décennie", y = "Nombre d'écoutes total", title = "Ecoutes totales par décennie") +
+  coord_trans(y = 'log10') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
 ```
+
+```{r}
+df_q1 %>%
+    ggplot(aes(x = annee)) +
+    geom_histogram(binwidth = 1,  alpha = 0.7,
+                   color = "lightblue", fill = "lightblue") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0))) +
+    labs(x = "Année",
+         y = "Count",
+         title = "Distribution des années de publication dans le jeu de données")
+```
+
 
 #### Analyse
 
