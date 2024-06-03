@@ -358,6 +358,11 @@ très populaires. Cependant, il est concentré sur des titres relativement
 beaucoup écoutés : la majorité des titres ayant entre 25 et 50 millions
 d'écoutes ce qui est quand même conséquent.
 
+On peut maintenant passer à l'analyse plus pertinente à la question
+posée. \
+(Rappel de la question : La date de sortie d'un titre a-t-elle un effet
+sur son nombre d'écoutes ?)
+
 ##### Nombre total d'écoutes en fonction de l'année de publication
 
 ```{r}
@@ -366,13 +371,23 @@ df_q1 %>%
   ggplot(aes(x = factor(annee), y = ecoutes_totales)) +
   geom_point(alpha = 0.1, color = "darkcyan") +
   scale_y_continuous(labels = scales::number_format()) +
-  stat_summary(aes(group = 1), fun = mean, geom = 'line', colour = 'orange', alpha = 0.7) +
-  stat_summary(aes(group = 1), fun = median, geom = 'line', colour = 'yellow', alpha = 0.7) +
-  labs(x = "Année", y = "Nombre total d'écoutes", title = "Ecoutes totales par année de publication") +
+  stat_summary(aes(group = 1, color = "Mean"), fun = mean, geom = 'line', size = 1, alpha = 0.7) +
+  stat_summary(aes(group = 1, color = "Median"), fun = median, geom = 'line', size = 1, alpha = 0.7) +
+  scale_color_manual(values = c("Mean" = "orange", "Median" = "yellow")) +
+  labs(x = "Année", y = "Nombre total d'écoutes", 
+       title = "Ecoutes totales par année de publication", 
+       color = "Mesures") +
   coord_trans(y = 'log') +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+        legend.position = "right")
+
 ```
+
+On remarque que la moyenne et la médiane sont plutôt constantes en
+fonction du temps
+
+##### Nombre de Streams / Vues en fonction de l'année de publication
 
 ```{r}
 # Find the range of the y-axis to use for both plots
@@ -385,9 +400,10 @@ stream_plot <- df_q1 %>%
   ggplot(aes(x = factor(annee), y = Stream)) +
   geom_point(alpha = 0.1, colour = "darkcyan") +
   scale_y_continuous(labels = scales::number_format(), limits = shared_y_limits) +
-  stat_summary(aes(group = 1), fun = mean, geom = 'line', colour = 'orange', alpha = 0.7) +
-  stat_summary(aes(group = 1), fun = median, geom = 'line', colour = 'yellow', alpha = 0.7) +
-  labs(x = "Année", y = "Nombre de Streams / Vues", title = "Streams par année de publication") +
+  stat_summary(aes(group = 1), fun = mean, geom = 'line', size = 1, colour = "orange", alpha = 0.7) +
+  stat_summary(aes(group = 1), fun = median, geom = 'line', size = 1, colour = "yellow", alpha = 0.7) +
+  labs(x = "Année", y = "Nombre de Streams / Vues",
+       title = "Streams par année de publication") +
   coord_trans(y = 'log') +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
@@ -397,18 +413,22 @@ view_plot <- df_q1 %>%
   ggplot(aes(x = factor(annee), y = Views)) +
   geom_point(alpha = 0.1, colour = "darkcyan") +
   scale_y_continuous(labels = NULL, limits = shared_y_limits) +
-  stat_summary(aes(group = 1), fun = mean, geom = 'line', colour = 'orange', alpha = 0.7) +
-  stat_summary(aes(group = 1), fun = median, geom = 'line', colour = 'yellow', alpha = 0.7) +
-  labs(x = "Année", y = NULL, title = "Vues par année de publication") +
+  stat_summary(aes(group = 1, color = "Moyenne"), fun = mean, geom = 'line', size = 1, alpha = 0.7) +
+  stat_summary(aes(group = 1, color = "Médiane"), fun = median, geom = 'line', size = 1, alpha = 0.7) +
+  scale_color_manual(values = c("Moyenne" = "orange", "Médiane" = "yellow")) +
+  labs(x = "Année", y = NULL,
+       title = "Vues par année de publication",
+       color = "Mesures") +
   coord_trans(y = 'log') +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+        legend.position = "bottom")
 
 # Use the patchwork package to display the plots together
-stream_plot + view_plot
+stream_plot + view_plot + plot_annotation(title = 'Graphiques en échelle logarithmique')
 ```
 
-##### Même graph mais en regroupant par décennie pour plus de lisibilité
+##### Diagramme en boîte à moustache du nombre d'écoutes total en fonction de l'année de publication (regroupée par décennie
 
 ```{r}
 # Créer une nouvelle variable 'decennie' représentant la décennie
@@ -420,12 +440,12 @@ df_q1 %>%
   ggplot(aes(x = factor(decennie), y = ecoutes_totales)) +
   geom_boxplot(color = "darkcyan", fill = "lightblue") +
   scale_y_continuous(labels = scales::number_format()) +
-  labs(x = "Décennie", y = "Nombre d'écoutes total", title = "Ecoutes totales par décennie") +
+  labs(x = "Décennie", y = "Nombre d'écoutes total", title = "Ecoutes totales par décennie en échelle logarithmique") +
   coord_trans(y = 'log10') +
   theme_minimal()
 ```
 
-#### Analyse
+#### Déductions et Conclusions
 
 Nous avons utilisé un diagramme en boîte à moustache (box and whisker
 plot) car nous avons discrétisé le temps par année et que nous voulions
