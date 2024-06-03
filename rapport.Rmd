@@ -4,23 +4,40 @@ date: "2024-05-01"
 output:
   html_document:
     theme: cosmo
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 # Introduction
 
 ### Données
 
-Les données utilisées dans ce projet de data visualisation sont des informations sur des chansons publiées sur Spotify et Youtube. Nous avons accès à des informations générales sur chaque titre comme l'artiste et l'album ou le single dont il est issu, ainsi que des attributs comme le tempo, la duration ou encore la danceabilité. Notre jeu de données peut être répartit en trois sous-groupes : les informations générales sur le titre, les informations liées à Spotify (nombre de streams, URI,...) et les informations liées à Youtube (nombre de vues, nombres de likes, chaîne youtube,...).
+Les données utilisées dans ce projet de data visualisation sont des
+informations sur des chansons publiées sur Spotify et Youtube. Nous
+avons accès à des informations générales sur chaque titre comme
+l'artiste et l'album ou le single dont il est issu, ainsi que des
+attributs comme le tempo, la duration ou encore la danceabilité. Notre
+jeu de données peut être répartit en trois sous-groupes : les
+informations générales sur le titre, les informations liées à Spotify
+(nombre de streams, URI,...) et les informations liées à Youtube (nombre
+de vues, nombres de likes, chaîne youtube,...).
 
 ### Origine
 
-Les données ont été collectées sur la plateforme Kaggle. Mais le dataset ne contenait pas les dates de sortie des chansons, ce qui est une information très importante. Nous avons donc utilisé l'identifiant unique de chaque chanson pour récupérer sa date de sortie grâce à l'API Spotify et la bibliothèque spotifyr de R.
+Les données ont été collectées sur la plateforme Kaggle. Mais le dataset
+ne contenait pas les dates de sortie des chansons, ce qui est une
+information très importante. Nous avons donc utilisé l'identifiant
+unique de chaque chanson pour récupérer sa date de sortie grâce à l'API
+Spotify et la bibliothèque spotifyr de R.
 
 ## Livrable 1
 
 ### Importation des modules
 
-Nous utilisons des librairies non inhérentes au R basique dans notre analyse explorative. Les librairies/packages que nous chargeons font partie du TidyVerse.
+Nous utilisons des librairies non inhérentes au R basique dans notre
+analyse explorative. Les librairies/packages que nous chargeons font
+partie du TidyVerse.
 
 ```{r}
 library(readr)
@@ -30,11 +47,16 @@ library(stringr)
 library(tibble)
 library(ggplot2)
 library(patchwork)
+library(ggforce)
 ```
 
 ### Chargement des données depuis le fichier CSV
 
-Notre jeu de données est stocké dans un fichier CSV (Excel). Nous devons importer les données dans notre code pour les transformées en 'dataframe' (type de variable en R) afin de pouvoir utiliser des fonctions de R et de nos librairies du TidyVerse pour 'Explorer' nos données.
+Notre jeu de données est stocké dans un fichier CSV (Excel). Nous devons
+importer les données dans notre code pour les transformées en
+'dataframe' (type de variable en R) afin de pouvoir utiliser des
+fonctions de R et de nos librairies du TidyVerse pour 'Explorer' nos
+données.
 
 ```{r}
 # Nous travaillons avec le fichier ayant le chemin suivant : "/data/dataset_if36"
@@ -43,7 +65,8 @@ dataset_if36 <- read.csv('data/dataset_if36.csv')
 
 ### Séparation de la date en année en mois et en jour
 
-La date étant sous format chaine de caractère , cette transformation permettra de faciliter les analyses liées à l'évolution du temps.
+La date étant sous format chaine de caractère , cette transformation
+permettra de faciliter les analyses liées à l'évolution du temps.
 
 ```{r}
 #en R , les doubles crochet[[]] permettent d'accéder aux élements d'une liste et non d'un vecteur[]
@@ -66,13 +89,19 @@ df_sorted <- df %>%
 
 ### Question 1:
 
-[***La date de sortie d'un titre a-t-elle un effet sur son nombre d'écoutes total sur les deux plateformes ?***]{.underline}
+[***La date de sortie d'un titre a-t-elle un effet sur son nombre
+d'écoutes total sur les deux plateformes ?***]{.underline}
 
-[*Sous-question :*]{.underline} ***Est-ce que l'échantillon de titres du dataset est composé majoritairement de titres qui sont 'populaires' indépendamment du temps ?***
+[*Sous-question :*]{.underline} ***Est-ce que l'échantillon de titres du
+dataset est composé majoritairement de titres qui sont 'populaires'
+indépendamment du temps ?***
 
--   On s'attend à ce que : plus un titre a été publié il y a longtemps, plus il a de views/streams.
+-   On s'attend à ce que : plus un titre a été publié il y a longtemps,
+    plus il a de views/streams.
 
--   Ou à l'inverse, la date de publication n'a pas une grande corrélation avec le nombre d'écoutes et donc on peut dire que ce nombre d'écoute est purement lié à la popularité du titre.
+-   Ou à l'inverse, la date de publication n'a pas une grande
+    corrélation avec le nombre d'écoutes et donc on peut dire que ce
+    nombre d'écoute est purement lié à la popularité du titre.
 
 ##### Selection des colonnes qui nous intéressent pour cette question et transfer dans un nouveau dataframe 'df_q1'
 
@@ -97,6 +126,64 @@ df_q1 <- df_q1[!is.na(df_q1$date), ]
 
 
 head(df_q1)
+```
+
+##### Analyse de la distribution des titres du jeu de données en fonction de l'année
+
+```{r}
+df_q1 %>%
+    ggplot(aes(x = annee)) +
+    geom_histogram(binwidth = 1,  alpha = 0.7,
+                   color = "lightblue", fill = "lightblue") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0))) +
+    scale_x_continuous(breaks = seq(min(df_q1$annee), max(df_q1$annee), by = 2)) +
+    labs(x = "Année",
+         y = "Count",
+         title = "Distribution des titres du jeu de données en fonction de l'année de publication") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+```
+
+```{r}
+# Aggregate data by year and create the new category
+df_q1_agg <- df_q1 %>%
+    mutate(annee_group = ifelse(annee < 2016, '1918-2015', as.character(annee))) %>%
+    count(annee_group)
+
+# Create the pie chart
+df_q1_agg %>% 
+    ggplot(aes(x = "", y = n, fill = annee_group)) +
+    geom_bar(width = 1, stat = "identity") +
+    coord_polar(theta = "y") +
+    scale_fill_brewer(palette = "Paired") +
+    geom_mark_hull(aes(filter = annee_group == "2022",
+                        label = '2022',
+                        description = 'presque 1/4 des titres sortis en 2022'),
+                   fill = NA,
+                   color = NA) +
+    labs(x = NULL,
+         y = NULL,
+         fill = "Année",
+         title = "Distribution des titres du jeu de données en fonction de l'année \nde publication") +
+    theme_minimal() +
+    theme(axis.text.x = element_blank(),
+          axis.ticks = element_blank(),
+          panel.grid = element_blank())
+```
+
+##### Analyse de la distribution des titres du jeu de données en fonction du nombre d'écoutes
+
+```{r}
+df_q1 %>%
+    ggplot(aes(x = ecoutes_totales)) +
+    geom_histogram(bins = 30, alpha = 0.7,
+                   color = "lightgreen", fill = "lightgreen") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0))) +
+    labs(x = "Année",
+         y = "Count",
+         title = "Distribution des titres du jeu de données en fonction du nombre d'écoutes") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
 ```
 
 ##### Tracer du Nombre total d'écoutes en fonction de l'année de publication
@@ -158,39 +245,67 @@ df_q1 %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
 ```
 
-```{r}
-df_q1 %>%
-    ggplot(aes(x = annee)) +
-    geom_histogram(binwidth = 1,  alpha = 0.7,
-                   color = "lightblue", fill = "lightblue") +
-    scale_y_continuous(expand = expansion(mult = c(0, 0))) +
-    labs(x = "Année",
-         y = "Count",
-         title = "Distribution des années de publication dans le jeu de données")
-```
 
 
 #### Analyse
 
-Nous avons utilisé un diagramme en boîte à moustache (box and whisker plot) car nous avons discrétisé le temps par année et que nous voulions nous concentrer sur la distribution statistique des valeurs pour chaque année afin d'en extraire des tendances (si il en existe). Ce graph est pertinent car il synthétise bien nos valeurs discrètes et facilite la recherche d'une relation entre la date de publication d'un titre et son nombre d'écoutes total.
+Nous avons utilisé un diagramme en boîte à moustache (box and whisker
+plot) car nous avons discrétisé le temps par année et que nous voulions
+nous concentrer sur la distribution statistique des valeurs pour chaque
+année afin d'en extraire des tendances (si il en existe). Ce graph est
+pertinent car il synthétise bien nos valeurs discrètes et facilite la
+recherche d'une relation entre la date de publication d'un titre et son
+nombre d'écoutes total.
 
-Nous pouvons voir que nos écoutes totales sont plutôt équilibrées en moyenne car nos boîtes à moustaches se trouvent au même niveau en ordonnée et ont une taille et une forme plutôt similaires. On remarque aussi qu'il semble que le 1er quartile et la médiane de nos boîtes sont confondus presque systématiquement. Nous pouvons en déduire que notre dataset est échantilloné sur des titres qui ont un nombre minimal d'écoutes totales. Ce serait donc seulement des titres assez écoutés et donc 'populaires'.
+Nous pouvons voir que nos écoutes totales sont plutôt équilibrées en
+moyenne car nos boîtes à moustaches se trouvent au même niveau en
+ordonnée et ont une taille et une forme plutôt similaires. On remarque
+aussi qu'il semble que le 1er quartile et la médiane de nos boîtes sont
+confondus presque systématiquement. Nous pouvons en déduire que notre
+dataset est échantilloné sur des titres qui ont un nombre minimal
+d'écoutes totales. Ce serait donc seulement des titres assez écoutés et
+donc 'populaires'.
 
-Comme nous en avions fait l'hypothèse, les titres datant d'avant Spotify et Youtube qui sont représentés dans ce dataset sont ceux qui sont encore écoutés aujourd'hui et qui sont encore 'populaires' (des chansons intemporelles comme celles des *Beatles* ou de *Queen* par exemple).
+Comme nous en avions fait l'hypothèse, les titres datant d'avant Spotify
+et Youtube qui sont représentés dans ce dataset sont ceux qui sont
+encore écoutés aujourd'hui et qui sont encore 'populaires' (des chansons
+intemporelles comme celles des *Beatles* ou de *Queen* par exemple).
 
-Ainsi, parmis les titres de notre dataset qui sont tous 'populaires' dans une certaine mesure, nous avons des titres 'extrêmement populaires' que nous voyons représentés comme les "points outliers" sur nos graphique (en magenta).
+Ainsi, parmis les titres de notre dataset qui sont tous 'populaires'
+dans une certaine mesure, nous avons des titres 'extrêmement populaires'
+que nous voyons représentés comme les "points outliers" sur nos
+graphique (en magenta).
 
-Nous pouvons remarquer de manière assez flagrante que plus nous avançons dans le temps, plus ces titres 'outliers' sont nombreux et ont un nombre d'écoutes total important. Notre interprétation est qu'avec la démocratisation grandissante des moyens de partager l'information (la musique en faisant partie) vers un grand public, il devient de plus en plus facile pour des chansons de devenir très populaires et ce très vite. La notion de "tubes du moment" ou de "chansons qui font le buzz" que nous connaissons tous aujourd'hui créée des titres qui représentes ces valeurs 'outliers' avec des nombres d'écoutes pharamineux dans notre graphique.
+Nous pouvons remarquer de manière assez flagrante que plus nous avançons
+dans le temps, plus ces titres 'outliers' sont nombreux et ont un nombre
+d'écoutes total important. Notre interprétation est qu'avec la
+démocratisation grandissante des moyens de partager l'information (la
+musique en faisant partie) vers un grand public, il devient de plus en
+plus facile pour des chansons de devenir très populaires et ce très
+vite. La notion de "tubes du moment" ou de "chansons qui font le buzz"
+que nous connaissons tous aujourd'hui créée des titres qui représentes
+ces valeurs 'outliers' avec des nombres d'écoutes pharamineux dans notre
+graphique.
 
-En explorant cette question, nous avons pensé à une autre approche que nous pourrons développer plus tard. Nous pourrions créer des nouvelles colonnes dans notre dataframe 'df_q1' calculant le taux d'écoute annuel d'un titre (nombre d'écoutes total / nombre d'années depuis publication) pour en visualiser la distribution.
+En explorant cette question, nous avons pensé à une autre approche que
+nous pourrons développer plus tard. Nous pourrions créer des nouvelles
+colonnes dans notre dataframe 'df_q1' calculant le taux d'écoute annuel
+d'un titre (nombre d'écoutes total / nombre d'années depuis publication)
+pour en visualiser la distribution.
 
 ### Question 2:
 
-Existe t'il une relation entre le nombre de streamings Spotify ainsi que le nombre de vues sur Youtube ?
+Existe t'il une relation entre le nombre de streamings Spotify ainsi que
+le nombre de vues sur Youtube ?
 
--   On s'attend à ce que les chansons plus 'vieilles' aient plus de vues totales sur Youtube car Youtube existe depuis plus longtemps.
+-   On s'attend à ce que les chansons plus 'vieilles' aient plus de vues
+    totales sur Youtube car Youtube existe depuis plus longtemps.
 
--   Cependant on s'attend à ce que les chansons plus 'récentes' (publiées après Spotify) aient plus de streams totaux sur Spotify car il semblerait que Spotify tend à remplacer Yotube pour l'écoute de musique depuis sa création (hypothèse qu'on pourra essayer de vérifier par l'analyse aussi)
+-   Cependant on s'attend à ce que les chansons plus 'récentes'
+    (publiées après Spotify) aient plus de streams totaux sur Spotify
+    car il semblerait que Spotify tend à remplacer Yotube pour l'écoute
+    de musique depuis sa création (hypothèse qu'on pourra essayer de
+    vérifier par l'analyse aussi)
 
 ##### Récupation des données du nombre de stream avant et après 2008
 
@@ -246,14 +361,28 @@ ggplot(stream_views_annee)+geom_line(aes(x=annee, y=stream), color="blue")+
 
 #### Analyse
 
-les deux nuages de point représentent la relation entre le nombre de stream sur Spotify et le nombre de vues sur youtube pour les chansons sorties avant et après 2008. Comme on peut le voir , que se soit avant ou après l'année 2008 qui est l'année à laquelle spotify a été créé , il existe bien une relation qui tend vers la linéarité entre le nombre de stream sur spotify et le nombre de vues sur youtube.
+les deux nuages de point représentent la relation entre le nombre de
+stream sur Spotify et le nombre de vues sur youtube pour les chansons
+sorties avant et après 2008. Comme on peut le voir , que se soit avant
+ou après l'année 2008 qui est l'année à laquelle spotify a été créé , il
+existe bien une relation qui tend vers la linéarité entre le nombre de
+stream sur spotify et le nombre de vues sur youtube.
 
-On peut également observer un changement entre les deux nuages de points. en effet à près 2008, la relation est un peu moins linéaire et on a un peu plus de point en dessous de la droite ce qui rejoint notre hypothèse selon laquelle les chancons les plus récentes sont plus streamées sur spotify que visionnées sur Youtube.
+On peut également observer un changement entre les deux nuages de
+points. en effet à près 2008, la relation est un peu moins linéaire et
+on a un peu plus de point en dessous de la droite ce qui rejoint notre
+hypothèse selon laquelle les chancons les plus récentes sont plus
+streamées sur spotify que visionnées sur Youtube.
 
-Enfin grace au lineplot qui permet de visualiser l'évolution annuelle du nombre de vues sur youtube et du nombre de stream sur spotify on peut voir que  pour les chanson sorties à partir de 2010, on a une augmentation du nombre d'écoute sur spotify par rapport à  youtube.
+Enfin grace au lineplot qui permet de visualiser l'évolution annuelle du
+nombre de vues sur youtube et du nombre de stream sur spotify on peut
+voir que pour les chanson sorties à partir de 2010, on a une
+augmentation du nombre d'écoute sur spotify par rapport à youtube.
 
 ### Question 5:
-On peut faire l'analyse pour le nombre d'écoutes total, le nombre de vues (Yt) et le nombre de streams (Spot.).
+
+On peut faire l'analyse pour le nombre d'écoutes total, le nombre de
+vues (Yt) et le nombre de streams (Spot.).
 
 Variables : 'Streams', 'Views', 'Likes', 'Comments'
 
@@ -261,11 +390,18 @@ Objectif : Relation avec valeurs discrètes.
 
 Hypothèses :
 
-On suppose qu'on pourra repérer un seuil de nombres d'écoutes à partir duquel la quantité de like et/ou commentaires augmentent fortement. En bref, le signal à partir de ce seuil passerait de linéaire à exponentiel.
-Cette hypothèse vient du fait que nous supposons qu'à partir de cette valeur seuil, il y a assez d'engouement pour un titre pour qu'il "fasse le buzz".
-On a pensé à cette valeur seuil car les algorithmes de recommandation de Youtube cherchent à "faire buzzer" des vidéos (du peu que nous connaissons de ces algorithmes du côté utilisateur).
+On suppose qu'on pourra repérer un seuil de nombres d'écoutes à partir
+duquel la quantité de like et/ou commentaires augmentent fortement. En
+bref, le signal à partir de ce seuil passerait de linéaire à
+exponentiel. Cette hypothèse vient du fait que nous supposons qu'à
+partir de cette valeur seuil, il y a assez d'engouement pour un titre
+pour qu'il "fasse le buzz". On a pensé à cette valeur seuil car les
+algorithmes de recommandation de Youtube cherchent à "faire buzzer" des
+vidéos (du peu que nous connaissons de ces algorithmes du côté
+utilisateur).
 
 ##### Utilisez des nuages de points pour visualiser les données et analyser la relation entre stream et like
+
 ```{r}
 ggplot(dataset_if36, aes(x=Stream, y=Likes)) +
   geom_point(alpha=0.5) +
@@ -273,7 +409,9 @@ ggplot(dataset_if36, aes(x=Stream, y=Likes)) +
   xlab("Streams") +
   ylab("Likes")
 ```
+
 ##### Utilisez des nuages de points pour visualiser les données et analyser la relation entre stream et Comments
+
 ```{r}
 ggplot(dataset_if36, aes(x=Stream, y=Comments)) +
   geom_point(alpha=0.5) +
@@ -281,7 +419,9 @@ ggplot(dataset_if36, aes(x=Stream, y=Comments)) +
   xlab("Streams") +
   ylab("Comments")
 ```
+
 ##### Utilisez des nuages de points pour visualiser les données et analyser la relation entre Views et Likes
+
 ```{r}
 ggplot(dataset_if36, aes(x=Views, y=Likes)) +
   geom_point(alpha=0.5) +
@@ -291,6 +431,7 @@ ggplot(dataset_if36, aes(x=Views, y=Likes)) +
 ```
 
 ##### Utilisez des nuages de points pour visualiser les données et analyser la relation entre Views et Comments
+
 ```{r}
 ggplot(dataset_if36, aes(x=Views, y=Comments)) +
   geom_point(alpha=0.5) +
@@ -300,9 +441,15 @@ ggplot(dataset_if36, aes(x=Views, y=Comments)) +
 ```
 
 #### Analyse
-Selon notre conjecture, une fois que le Stream ou la View atteint une certaine valeur, les données peuvent croître de façon exponentielle. Cependant, selon le nuage de points, la relation entre Stream et View, Like et Comment est plus linéaire qu'exponentielle.J’ai donc d’abord essayé d’utiliser une relation linéaire
+
+Selon notre conjecture, une fois que le Stream ou la View atteint une
+certaine valeur, les données peuvent croître de façon exponentielle.
+Cependant, selon le nuage de points, la relation entre Stream et View,
+Like et Comment est plus linéaire qu'exponentielle.J’ai donc d’abord
+essayé d’utiliser une relation linéaire
 
 ##### linéaire stream et like
+
 ```{r}
 ggplot(dataset_if36, aes(x=Stream, y=Likes)) +
   geom_point(alpha=0.5) +
@@ -313,6 +460,7 @@ ggplot(dataset_if36, aes(x=Stream, y=Likes)) +
 ```
 
 ##### linéaire stream et comments
+
 ```{r}
 ggplot(dataset_if36, aes(x=Stream, y=Comments)) +
   geom_point(alpha=0.5) +
@@ -322,7 +470,8 @@ ggplot(dataset_if36, aes(x=Stream, y=Comments)) +
   ylab("Comments")
 ```
 
-##### # linéaire views et likes
+##### \# linéaire views et likes
+
 ```{r}
 ggplot(dataset_if36, aes(x=Views, y=Likes)) +
   geom_point(alpha=0.5) +
@@ -333,6 +482,7 @@ ggplot(dataset_if36, aes(x=Views, y=Likes)) +
 ```
 
 ##### linéaire views et comments
+
 ```{r}
 ggplot(dataset_if36, aes(x=Views, y=Comments)) +
   geom_point(alpha=0.5) +
@@ -343,42 +493,64 @@ ggplot(dataset_if36, aes(x=Views, y=Comments)) +
 ```
 
 #### Analyse
-D'après l'image générée, il est facile de juger que la relation entre le stream,view et like,comment est complètement linéaire. Quant à Like, je vérifierai ensuite si une relation exponentielle peut être affichée une fois que stream ou view atteignent une certaine valeur.
 
-Pour les likes et stream, sélectionnez les données supérieures à 1e+09 pour essayer d'analyser.
-#filtered_streams_data <- dataset_if36[dataset_if36$Stream > 1e9, ]
+D'après l'image générée, il est facile de juger que la relation entre le
+stream,view et like,comment est complètement linéaire. Quant à Like, je
+vérifierai ensuite si une relation exponentielle peut être affichée une
+fois que stream ou view atteignent une certaine valeur.
+
+Pour les likes et stream, sélectionnez les données supérieures à 1e+09
+pour essayer d'analyser. #filtered_streams_data \<-
+dataset_if36[dataset_if36\$Stream \> 1e9, ]
 
 # ggplot(filtered_streams_data, aes(x = Stream, y = Likes)) +
-#   geom_point(alpha = 0.5) +  
-#   geom_smooth(method = "nls", formula = y ~ a * exp(b * x),
-#               method.args = list(start = list(a = 1, b = 0.01)), color = "blue") +  
-#   ggtitle("Relationship between Streams and Likes") +
-#   xlab("Stream") +
-#   ylab("Likes")
-Le code signale une erreur, indiquant que le modèle ne correspond pas à la distribution réelle des données.
 
-Pour les likes et views, sélectionnez les données supérieures à 1e+09 pour essayer d'analyser.
-#"filtered_data <- dataset_if36[dataset_if36$Views > 1e9, ]
-# ggplot(filtered_data, aes(x=Views, y=Likes)) +
-#   geom_point(alpha=0.5) +
-#   geom_smooth(method="nls", formula=y ~ a * exp(b * x),
-#               method.args=list(start=list(a=1, b=0.01)), color="blue") +
-#   ggtitle("Relationship between Views and Likes") +
-#   xlab("Views") +
-#   ylab("Likes")
-Le code signale une erreur, indiquant que le modèle ne correspond pas à la distribution réelle des données.
+# geom_point(alpha = 0.5) +
 
-Ainsi, notre hypothèse est invalide, il existe une relation linéaire entre stream et likes,stream et comment, views et likes, ainsi que views et comment.
+# geom_smooth(method = "nls", formula = y \~ a \* exp(b \* x),
+
+# method.args = list(start = list(a = 1, b = 0.01)), color = "blue") +
+
+# ggtitle("Relationship between Streams and Likes") +
+
+# xlab("Stream") +
+
+# ylab("Likes")
+
+Le code signale une erreur, indiquant que le modèle ne correspond pas à
+la distribution réelle des données.
+
+Pour les likes et views, sélectionnez les données supérieures à 1e+09
+pour essayer d'analyser. \#"filtered_data \<-
+dataset_if36[dataset_if36\$Views \> 1e9, ] \# ggplot(filtered_data,
+aes(x=Views, y=Likes)) + \# geom_point(alpha=0.5) + \#
+geom_smooth(method="nls", formula=y \~ a \* exp(b \* x), \#
+method.args=list(start=list(a=1, b=0.01)), color="blue") + \#
+ggtitle("Relationship between Views and Likes") + \# xlab("Views") + \#
+ylab("Likes") Le code signale une erreur, indiquant que le modèle ne
+correspond pas à la distribution réelle des données.
+
+Ainsi, notre hypothèse est invalide, il existe une relation linéaire
+entre stream et likes,stream et comment, views et likes, ainsi que views
+et comment.
 
 ### Question 7:
-Est-ce qu'on peut reconnaître un artiste / un album par une combinaison d'intervalles pour chaque attribut ?  
+
+Est-ce qu'on peut reconnaître un artiste / un album par une combinaison
+d'intervalles pour chaque attribut ?
 
 Variables : 'Artist', 'Album', attributs
 
-Objectif : Relation + Comparaison + Distribution avec valeurs continues (attributs) et nominales (artistes, albums).
+Objectif : Relation + Comparaison + Distribution avec valeurs continues
+(attributs) et nominales (artistes, albums).
 
-analyse :
-Quand nous parlons de « reconnaître » ou « identifier » un artiste par les attributs, nous pensons immédiatement à la classification hiérarchique. Il y a beaucoup de attributs qui décrire le style de musique dans notre jeu de données choisi : "Danceability","Energy","Key","Loudness","Speechiness","Acousticness","Instrumentalness","Liveness","Valence","Tempo". Il est logique de faire d’abord un Analyse en composantes principales pour rendre un représentation 2D possible.
+analyse : Quand nous parlons de « reconnaître » ou « identifier » un
+artiste par les attributs, nous pensons immédiatement à la
+classification hiérarchique. Il y a beaucoup de attributs qui décrire le
+style de musique dans notre jeu de données choisi :
+"Danceability","Energy","Key","Loudness","Speechiness","Acousticness","Instrumentalness","Liveness","Valence","Tempo".
+Il est logique de faire d’abord un Analyse en composantes principales
+pour rendre un représentation 2D possible.
 
 ```{R}
 library(tidyverse)
@@ -393,15 +565,20 @@ scaled_data <- scale(selected_data)
 pca_result <- PCA(scaled_data, scale. = TRUE)
 ```
 
-Pour analyse le résultat, nous visualisons la contribution des composantes principales : 
+Pour analyse le résultat, nous visualisons la contribution des
+composantes principales :
+
 ```{R}
 # L’inertie des cps
 fviz_eig(pca_result)
 ggsave("pca_loadings_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
 ![inertie](https://imgur.com/8VAmUdX.png)
 ```
-Les deux première composantes représentent environ 45 % d'inertie, nous pouvons donc dire que cette représentation n'est pas très idéal.
-Nous regardons ensuite le cercle de corrélation :
+
+Les deux première composantes représentent environ 45 % d'inertie, nous
+pouvons donc dire que cette représentation n'est pas très idéal. Nous
+regardons ensuite le cercle de corrélation :
+
 ```{R}
 # Cercle des corrélations
 fviz_pca_var(pca_result, col.var = "contrib", col.ind = "cos2", repel = TRUE)
@@ -428,4 +605,3 @@ ggplot(clustered_data, aes(x = PC1, y = PC2, color = factor(Cluster))) +
   labs(title = "CAH sur PC1 et PC2")
 ![nuage des points](https://imgur.com/curmszd.png)
 ```
-
