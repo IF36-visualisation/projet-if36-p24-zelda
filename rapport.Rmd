@@ -124,6 +124,8 @@ partie du Tidyverse.
 # install.packages("tidyverse")
 # install.packages("cluster")
 # install.packages("factoextra")
+# install.packages("glue")
+# install.packages("ggtext")
 
 library(readr)
 library(dplyr)
@@ -136,6 +138,8 @@ library(ggforce)
 library(tidyverse)
 library(cluster)
 library(factoextra)
+library(glue)
+library(ggtext)
 ```
 
 ### Chargement des données depuis le fichier CSV
@@ -359,7 +363,7 @@ beaucoup écoutés : la majorité des titres ayant entre 25 et 50 millions
 d'écoutes ce qui est quand même conséquent.
 
 On peut maintenant passer à l'analyse plus pertinente à la question
-posée. \
+posée.\
 (Rappel de la question : La date de sortie d'un titre a-t-elle un effet
 sur son nombre d'écoutes ?)
 
@@ -794,3 +798,69 @@ ggplot(clustered_data, aes(x = PC1, y = PC2, color = factor(Cluster))) +
   labs(title = "CAH sur PC1 et PC2")
 ![nuage des points](https://imgur.com/curmszd.png)
 ```
+
+## Bonus / Annexe :
+
+Lors de nos recherches pour ce projet, nous avons trouvé les
+visualisations issus du projet TidyTuesday très inspirants.
+
+Le TidyTuesday Challenge est une initiative hebdomadaire organisée par
+la communauté R for Data Science (R4DS), où les participants sont
+invités à explorer, nettoyer et visualiser des jeux de données fournis
+chaque mardi, en utilisant les principes de la "tidyverse" en R. Cet
+exercice vise à améliorer les compétences en manipulation de données et
+en visualisation tout en favorisant l'apprentissage collaboratif et le
+partage de solutions créatives au sein de la communauté.
+
+Nous avons fait une petite exploration avec le script de Jake Kaupp
+(\@jkaupp sur github) pour essayer de le comprendre et approfondir notre
+maitrise de R et des packages Tidyverse.
+
+Ci-dessous se trouve notre exploration du code de Jake Kaupp pour notre
+jeu de données puis sa visualisation pour une itération du TidyTuesday.
+
+```{r}
+rush <- df %>% 
+  filter(!is.na(Track), Artist %in% c("Metallica", "Smash Mouth", "ABBA", "Britney Spears", "Wolfgang Amadeus Mozart"), Track %in% c("Screaming Suicide", "All Star", "Dancing Queen", "Toxic", "Piano Concerto No. 21 in C Major, K. 467: II. Andante")) %>% 
+  distinct(Track, .keep_all = TRUE) %>% 
+  select(Track, Artist, Danceability, Energy, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo) %>% 
+  mutate(color = c("#f7b801","#f18701","#f35b04","darkred","red")) %>% 
+  mutate_at(vars(Track, Artist), as.character) %>% 
+  mutate_at(vars(Danceability:Tempo), function(x) x/max(x)) %>% 
+  pivot_longer(Danceability:Tempo) 
+
+
+bg <- df %>% 
+          distinct(Uri, .keep_all = TRUE) %>% 
+          distinct(Track, Artist, .keep_all = TRUE) %>% 
+          filter(!is.na(Track)) %>% 
+          select(Track, Artist, Danceability, Energy, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo) %>% 
+          mutate(color = "#d8dee9") %>% 
+  mutate_at(vars(Danceability:Tempo), function(x) x/max(x)) %>% 
+  pivot_longer(Danceability:Tempo) 
+
+
+test_plot <- ggplot(bg, aes(x = name, y = value)) +
+  geom_line(aes(color = color,  group = Track), alpha = 0.1, size = 0.1) +
+  geom_line(data = rush, aes(color = color, group = Artist), size = 0.5) +
+  geom_point(data = rush, aes(color = color, group = Artist), size = 1) +
+  geom_text(data = filter(rush, name == "Valence"), aes(label = glue("{str_replace_all(Artist, '(?<=.)(?!$)', ' ')}\n{Track}"), colour = color), family = "Arial", hjust = 0, nudge_x = 0.1, nudge_y = c(-0.05, 0, 0)) +
+  scale_color_identity() +  
+  scale_fill_identity() +
+  scale_y_continuous(breaks = c(0, 0.5, 1), labels = c("Bas", "Moy", "Haut")) +
+  scale_x_discrete(labels = function(x) str_replace_all(x, "(?<=.)(?!$)", " ")) +
+  expand_limits(x = c(1, 10)) +
+  labs(title = "Charactéristiques Musicales de quelques chansons",
+       x = NULL,
+       y = NULL) +
+  theme_dark() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, size = 6),
+        legend.position = "none")
+
+test_plot
+```
+
+![](data/tw4_plot.png)
+
+[Lien vers le script de \@jkaupp sur
+github](https://github.com/jkaupp/tidytuesdays/blob/master/2020/week4/R/analysis.R)
