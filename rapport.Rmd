@@ -9,9 +9,16 @@ editor_options:
     wrap: 72
 ---
 
-# Introduction
+# Projet : Analyse exploratoire d'un jeu de données d'un ensemble de titres présents sur les plateformes Youtube et Spotify
 
-### Données
+## Introduction
+
+Dans le cadre de l'unité d'enseignement IF36 de l'Université de
+Technologie de Troyes, nous entreprenons ce projet d'analyse
+exploratoire d'un dataset choisi pour mettre en pratique nos
+connaissances en data visualisation.
+
+### Jeu de Données
 
 Les données utilisées dans ce projet de data visualisation sont des
 informations sur des chansons publiées sur Spotify et Youtube. Nous
@@ -23,21 +30,86 @@ informations générales sur le titre, les informations liées à Spotify
 (nombre de streams, URI,...) et les informations liées à Youtube (nombre
 de vues, nombres de likes, chaîne youtube,...).
 
-### Origine
-
 Les données ont été collectées sur la plateforme Kaggle. Mais le dataset
 ne contenait pas les dates de sortie des chansons, ce qui est une
 information très importante. Nous avons donc utilisé l'identifiant
-unique de chaque chanson pour récupérer sa date de sortie grâce à l'API
-Spotify et la bibliothèque spotifyr de R.
+unique de chaque chanson (URI) pour récupérer sa date de sortie grâce à
+l'API Spotify et la bibliothèque 'spotifyr' de R.
 
-## Livrable 1
+### Motivations
+
+Nous avons choisi ce jeu de données du fait de la diversité et richesse
+des données. Le dataset comprend 19064 lignes, chaque ligne représentant
+une chanson d'artistes variés à travers le monde. Les 26 variables
+présentes pour chaque chanson offrent une richesse d'informations,
+incluant des données générales plus textuelles sur chaque titre comme le
+nom de la chanson et l'artiste. Mais ce qui nous a particulièrement plu
+sont les informations statistiques sur les plateformes Spotify et
+Yotube, qui nous permettront de faire une comparaison entre les deux
+plateformes. Enfin, le dataset comporte des données sur les attributs
+musicaux de chaque chanson (danceabilité, énergie, tonalité, volume,...)
+sous forme de coefficients ou autre valeurs numériques que l'ont a
+trouvé très pertinent à analyser.
+
+La musique est un élément central de la culture populaire, touchant un
+large public. Analyser les données musicales permet non seulement
+d'explorer des tendances et des comportements sur les plateformes
+populaires comme Spotify et Youtube, mais aussi de répondre à des
+questions d'intérêt général sur la musique, comme :
+
+-   Quels sont les attributs musicaux des chansons les plus streamées ou
+    les plus vues ?
+
+-   Y a-t-il une corrélation entre les streams Spotify et les vues
+    YouTube ?
+
+-   Quels genres ou artistes sont les plus populaires ?
+
+Nous avons tous utilisé Spotify ou Youtube pour écouter de la musique,
+ce qui rend le sujet non seulement pertinent mais aussi personnellement
+intéressant. En travaillant sur ce projet, nous pouvons combiner notre
+passion pour la musique avec nos compétences techniques en data science,
+ce qui rend l'expérience d'apprentissage à la fois enrichissante et
+motivante.
+
+## Problématique
+
+**Comment les caractéristiques musicales et les métriques d'engagement
+des chansons publiées sur Spotify et YouTube influencent-elles leur
+popularité et leur consommation sur ces plateformes de streaming, et
+quelles tendances peuvent être dégagées de ces données en termes de
+temporalité, d'attributs musicaux et de comportement des utilisateurs
+?**
+
+Nous avons centré notre analyse autour de certains axes d'analyse pour
+répondre à cette problématique :
+
+-   **Influence des caractéristiques musicales** : Analyse des attributs
+    des chansons (danceabilité, énergie, etc.) sur leur popularité.
+
+-   **Temporalité** : Impact de la date de sortie des chansons sur leur
+    nombre de streams et de vues.
+
+-   **Comparaison des plateformes** : Relation entre les métriques
+    d'engagement sur Spotify et YouTube.
+
+-   **Consommation des singles vs. albums** : Préférences des
+    utilisateurs pour différents types de publications.
+
+-   **Effet des caractéristique supplémentaires (featuring, musique
+    officielle et/ou sous license)** : Impact des collaborations, de
+    l'officialité et des licenses sur la popularité des titres.
+
+-   **Evolution des tendances** : Changements dans les attributs des
+    chansons au fil du temps.
+
+## Collecte et Préparation des Données
 
 ### Importation des modules
 
 Nous utilisons des librairies non inhérentes au R basique dans notre
 analyse explorative. Les librairies/packages que nous chargeons font
-partie du TidyVerse.
+partie du Tidyverse.
 
 ```{r}
 # Uncomment the lines if you need to install a package before :
@@ -71,7 +143,7 @@ library(factoextra)
 Notre jeu de données est stocké dans un fichier CSV (Excel). Nous devons
 importer les données dans notre code pour les transformées en
 'dataframe' (type de variable en R) afin de pouvoir utiliser des
-fonctions de R et de nos librairies du TidyVerse pour 'Explorer' nos
+fonctions de R et de nos librairies du Tidyverse pour 'Explorer' nos
 données.
 
 ```{r}
@@ -102,6 +174,14 @@ df_sorted <- df %>%
   arrange(annee, mois)
 
 ```
+
+Maintenant que nos données sont chargées, elles sont prêtes pour
+l'analyse.
+
+## Analyse
+
+Afin de facilité la compréhension et la répartition des tâches, nous
+avons organisé notre analyse par question.
 
 ### Question 1:
 
