@@ -186,7 +186,7 @@ avons organisé notre analyse par question.
 ### Question 1:
 
 [***La date de sortie d'un titre a-t-elle un effet sur son nombre
-d'écoutes total sur les deux plateformes ?***]{.underline}
+d'écoutes ?***]{.underline}
 
 [*Sous-question :*]{.underline} ***Est-ce que l'échantillon de titres du
 dataset est composé majoritairement de titres qui sont 'populaires'
@@ -224,7 +224,20 @@ df_q1 <- df_q1[!is.na(df_q1$date), ]
 head(df_q1)
 ```
 
-##### Analyse de la distribution des titres du jeu de données en fonction de l'année
+Nous avons donc préparer un dataframe plus restreint pour cette
+question.
+
+Avant de continuer avec l'analyse de cette question, il est important de
+comprendre quels choix d'échantillonage ont été faits lors de la
+création de ce jeu de données. Ce dataset ne comprend pas tous les
+titres spotify et youtube disponibles (il serait beaucoup trop grand
+pour notre cas d'utilisation dans ce scénario là), l'échantillon que
+nous avons a un grand effet sur les résultats et conclusions qu'on
+pourra en déduire. C'est donc important de comprendre les limitations de
+notre jeu de données pour les prendre en compte dans nos déductions et
+conclusions à venir.
+
+##### Analyse de la distribution des chansons du jeu de données en fonction de l'année
 
 ```{r}
 df_q1 %>%
@@ -237,13 +250,31 @@ df_q1 %>%
          y = "Count",
          title = "Distribution des titres du jeu de données en fonction de l'année de publication") +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+          axis.ticks.x = element_line())
 ```
+
+On remarque que les chansons de notre dataset sont seulement des titres
+publiés entre 1918 et 2023. De plus, le jeu de données a beaucoup plus
+de chansons publiées depuis 2000 qu'avant avec une grande majorité pour
+les titres publiés en 2022. La distribution en termes d'année de
+publication du jeu de données n'est donc pas du tout régulière : le
+dataset est surtout concentré sur les chansons entre 2000 et 2023.
+
+Nous avons pensé à faire un diagramme en camembert par année des
+chansons pour mieux comprendre la décomposition du jeu de données par
+années de publication.
+
+##### Décomposition du jeu de données par années de publication
 
 ```{r}
 # Aggregate data by year and create the new category
 df_q1_agg <- df_q1 %>%
-    mutate(annee_group = ifelse(annee < 2016, '1918-2015', as.character(annee))) %>%
+    mutate(annee_group = case_when(
+        annee < 2000 ~ '1918-1999',
+        annee > 1999 & annee < 2016 ~ '2000-2015',
+        TRUE ~ as.character(annee)
+    )) %>%
     count(annee_group)
 
 # Create the pie chart
@@ -260,17 +291,30 @@ df_q1_agg %>%
     labs(x = NULL,
          y = NULL,
          fill = "Année",
-         title = "Distribution des titres du jeu de données en fonction de l'année \nde publication") +
+         title = "Décomposition du jeu de données par année de publication") +
     theme_minimal() +
     theme(axis.text.x = element_blank(),
           axis.ticks = element_blank(),
           panel.grid = element_blank())
 ```
 
+On remarque donc que les titres avant 2000 ne représentent même pas
+autant de titres de 2022 qui comptent pour environ 1/5 du jeu de
+données.
+
+D'après la spécifications du jeu de données sur Kaggle : il a été créé
+et collecté le 7 février 2023. Ceci explique le peu de titres de 2023
+malgré la tendance a avoir plus de titres réprésentés, plus le temps
+avance. L'échantillon de données est plus concentré sur des titres
+sortis 'récemment' par rapport à la création du dataset.
+
+On peut aussi faire cette analyse du choix d'échantillonage vis à vis du
+nombre d'écoutes.
+
 ##### Analyse de la distribution des titres du jeu de données en fonction du nombre d'écoutes
 
 ```{r}
-df_q1 %>%
+ecoute_plot <- df_q1 %>%
     ggplot(aes(x = ecoutes_totales)) +
     geom_histogram(bins = 60, alpha = 0.7,
                    color = "lightgreen", fill = "lightgreen") +
@@ -280,9 +324,41 @@ df_q1 %>%
          y = "Count",
          title = "Distribution des titres du jeu de données en fonction du nombre d'écoutes") +
     theme_minimal()
+
+ecoute_zoomed_plot <- df_q1 %>%
+    ggplot(aes(x = ecoutes_totales)) +
+    geom_histogram(binwidth = 25000000, alpha = 0.7,
+                   color = "lightgreen", fill = "lightgreen") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0))) +
+    scale_x_continuous(labels = scales::number_format(), breaks = seq(0, 250000000, by = 25000000)) +
+    coord_cartesian(xlim = c(0, 500000000), ylim = c(0, 3000)) +
+    labs(x = "Année",
+         y = "Count",
+         title = "Zoom sur le pic vers 0") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
+
+ecoute_plot /
+ecoute_zoomed_plot
 ```
 
-##### Tracer du Nombre total d'écoutes en fonction de l'année de publication
+On remarque que le jeu de données a des titres avec des nombres
+d'écoutes allant de moins de 50 millions jusqu'à presque 10 milliards.
+La plupart des titres ont moins de 500 millions d'écoutes totales.
+
+```{r}
+min_ecoutes_totales <- min(df_q1$ecoutes_totales, na.rm = TRUE)
+print(min_ecoutes_totales)
+```
+
+Le minimum d'écoutes totales est 7020.
+
+Il semble donc que le jeu de données ne soit pas limité à des titres
+très populaires. Cependant, il est concentré sur des titres relativement
+beaucoup écoutés : la majorité des titres ayant entre 25 et 50 millions
+d'écoutes ce qui est quand même conséquent.
+
+##### Nombre total d'écoutes en fonction de l'année de publication
 
 ```{r}
 # Use factor() to convert a numeric variable into a discrete variable
