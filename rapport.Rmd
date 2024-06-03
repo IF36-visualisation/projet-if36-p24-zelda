@@ -11,6 +11,9 @@ editor_options:
 
 # Projet : Analyse exploratoire d'un jeu de données d'un ensemble de titres présents sur les plateformes Youtube et Spotify
 
+> Equipe Zelda :\
+> Zoé Boutin, Brian Diffo Diffo, Hanxiao Sun, He Huang
+
 ## Introduction
 
 Dans le cadre de l'unité d'enseignement IF36 de l'Université de
