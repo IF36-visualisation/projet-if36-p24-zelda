@@ -1,5 +1,5 @@
 ---
-title: "Rapport de projet "
+title: "Rapport de projet Equipe Zelda"
 date: "2024-05-01"
 output:
   html_document:
@@ -115,7 +115,7 @@ analyse explorative. Les librairies/packages que nous chargeons font
 partie du Tidyverse.
 
 ```{r}
-# Uncomment the lines if you need to install a package before :
+# Uncomment the lines if you need to install a package before loading it:
 # install.packages("readr")
 # install.packages("dplyr")
 # install.packages("tidyr")
@@ -127,8 +127,10 @@ partie du Tidyverse.
 # install.packages("tidyverse")
 # install.packages("cluster")
 # install.packages("factoextra")
+# install.packages("factomineR")
 # install.packages("glue")
 # install.packages("ggtext")
+# install.packages("gridExtra")
 
 library(readr)
 library(dplyr)
@@ -141,8 +143,10 @@ library(ggforce)
 library(tidyverse)
 library(cluster)
 library(factoextra)
+library(FactoMineR)
 library(glue)
 library(ggtext)
+library(gridExtra)
 ```
 
 ### Chargement des données depuis le fichier CSV
@@ -185,7 +189,7 @@ df_sorted <- df %>%
 Maintenant que nos données sont chargées, elles sont prêtes pour
 l'analyse.
 
-## Analyse
+## Exploration
 
 Afin de facilité la compréhension et la répartition des tâches, nous
 avons organisé notre analyse par question.
@@ -584,6 +588,27 @@ nombre de vues sur youtube et du nombre de stream sur spotify on peut
 voir que pour les chanson sorties à partir de 2010, on a une
 augmentation du nombre d'écoute sur spotify par rapport à youtube.
 
+### Question 3
+
+**Est-ce que les singles sont plus écoutés/appréciés des auditeurs que
+les albums ?**
+
+Rappel : Les valeurs possibles pour la variable 'Album_type' sont album,
+single et compilation.
+
+Variables : 'Streams', 'Views', 'Album_type', 'Likes', 'Comments'
+
+Objectif : Comparaison avec valeurs discrètes et nominales (album_type).
+
+Hypothèses :
+
+-   On s'attend à ce que les singles soit plus écoutés que les albums de
+    manière générale.
+
+-   On ne sait pas trop à quoi s'attendre pour les compilations
+
+On a fait cette question en shiny.
+
 ### Question 5:
 
 On peut faire l'analyse pour le nombre d'écoutes total, le nombre de
@@ -800,6 +825,63 @@ ggplot(clustered_data, aes(x = PC1, y = PC2, color = factor(Cluster))) +
   geom_point() +
   labs(title = "CAH sur PC1 et PC2")
 ![nuage des points](https://imgur.com/curmszd.png)
+```
+
+### Question 9
+
+**Est-ce que la fréquence de diffusion d'album / de single d'un artiste
+peut avoir un effet sur sa popularité ?**
+
+On peut commencer par faire l'analyse indépendemment du type de l'album,
+mais on a trouvé cela pertinent d'aussi voir si cette variable a un
+effet sur nos résultats.
+
+Variables : 'Streams', 'Views', 'Artist', 'Album-type', 'date' pour
+obtenir la fréquence
+
+Objectif : Relation avec valeurs discrètes (nombres d'écoutes),
+nominales (artistes, type d'albums) et continues (fréquence).
+
+Hypothèses :
+
+-   On suppose que d'avoir une fréquence plus élevée de publication de
+    titres est liée à la popularité d'un artiste. Ceci repose sur
+    l'hypothèse que le simple fait de publier donne de l'engouement
+    naturel à un artiste : surtout qu'ils communiquent autour de leurs
+    publication généralement.
+
+-   Le format des single cherche plus à apporter de l'engouement pour un
+    artiste en règle générale : peut-être que si un artiste publie
+    souvent des singles, il aura plus d'écoutes ?
+
+##### Préparation d'un dataframe pour la question
+
+```{r}
+
+```
+
+### Question 10
+
+**Quels sont les effets d'un 'feat' sur un titre ?**
+
+Un 'featuring' en musique indique dans le titre de la chanson que
+celle-ci est une collaboration entre l'auteur et l'artiste featuré.
+
+Variables : 'Streams', 'Views', 'track', 'Artist'
+
+Objectif : Relation avec valeurs discrètes (nombres d'écoutes) et
+nominales (track, artistes).
+
+Hypothèses :
+
+-   On s'attend à ce qu'en général, les titres avec des 'feat' soient
+    plus populaires que ceux sans, surtout au sein des chansons d'un
+    même artiste.
+
+##### Préparation d'un dataframe pour la question
+
+```{r}
+
 ```
 
 ## Bonus / Annexe :
