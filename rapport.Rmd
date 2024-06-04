@@ -537,18 +537,19 @@ stream_view_2009 <- df_sorted %>%
 ```{r}
 
 #représentation des nuages de point avant et après 2008
-plot1 <- ggplot(stream_view_2008, aes(x = Stream, y = Views)) +
-  geom_point(color = "blue")+geom_smooth()+
-  labs(title="relation between Stream end Views before 2008")+
-  theme(plot.title = element_text(size = 8.5))
+ggplot_1 <- ggplotly(ggplot(stream_view_2008, aes(x = Stream, y = Views)) +
+                             geom_point(color = "blue")+geom_smooth()+scale_x_log10()+scale_y_log10()+
+                             labs(title="relation between Stream end Views before 2008")+
+                             theme(plot.title = element_text(size = 8.5)))
 
-plot2 <- ggplot(stream_view_2009, aes(x = Stream, y = Views)) +
-  geom_point(color = "blue")+geom_smooth()+
-  labs(title="relation between views and stream from 2008")+
-  theme(plot.title = element_text(size = 8.5))
+ggplot_2 <- ggplotly(ggplot(stream_view_2009, aes(x = Stream, y = Views)) +
+                             geom_point(color = "blue")+geom_smooth()+scale_x_log10()+scale_y_log10()+
+                             labs(title="relation between views and stream from 2008")+
+                             theme(plot.title = element_text(size = 8.5)))
+ggplot_1
+ggplot_2
 
 
-grid.arrange(plot1, plot2,  nrow = 2)
 
 
 
