@@ -6,10 +6,21 @@ library(stringr)
 library(tibble)
 library(ggplot2)
 library(gridExtra)
+library(plotly)
 
-dataset <- starwars
-df_sorted <- read.csv("df_sorted.csv")
+dataset_if36 <- read.csv('dataset_if36.csv')
+df <- dataset_if36 %>%
+  mutate(date_split = strsplit(date, split = "-"),
+         annee = as.double(sapply(date_split, "[", 1)),
+         mois = as.double(sapply(date_split, "[", 2))) %>%
+  select(-date_split)
+
+
 ############################ éléments question 2 ##################################
+df_sorted <- df %>%
+  filter(annee!=0)%>%
+  arrange(annee, mois)
+
 stream_views_annee <- df_sorted %>%
   group_by(annee)%>%
   summarise(stream=sum(Stream), view=sum(Views))
