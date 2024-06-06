@@ -608,7 +608,64 @@ Hypothèses :
 
 -   On ne sait pas trop à quoi s'attendre pour les compilations
 
-On a fait cette question en shiny.
+##### Selection des colonnes qui nous intéressent pour cette question et transfer dans un nouveau dataframe 'df_q3'
+
+```{r}
+df_q3 <- df %>%
+  select(Artist, Album_type, Duration_ms, Views, Stream, date, annee, mois) %>%
+  na.omit()
+
+head(df_q3)
+
+```
+
+##### Création d'une colonne représentant le nombre total d'écoutes d'un titre indépendamment de la plateforme
+
+```{r}
+df_q3 <- df_q3 %>%
+  mutate(ecoutes_totales = Stream + Views)
+
+head(df_q3)
+```
+
+Maintenant que nous avons un dataframe 'df_q3' plus adapté pour cette
+question, nous allons tout d'abord analyser la proportion de chaque type
+d'album dans ce jeu de données.
+
+##### Analyse de la décomposition du jeu de données par type d'album
+
+```{r}
+df_q3 %>% ggplot(aes(x = "", fill = Album_type)) +
+  geom_bar(position = "stack") +
+  labs(title = "Graphique à barres empilées des Types d'album", x = "", y = "Count") +
+  theme_minimal()
+```
+
+On remarque qu'une grande majorité des titres du dataset sont issus d'un
+album. Environ 1/4 des titres sont issus d'un single et il y peu de
+titres issus de compilations.
+
+##### Diagramme en Boîte à moustaches de Stream et Views par Type d'Album
+
+```{r}
+# Transformer les données en format long
+df_long <- df_q3 %>%
+  pivot_longer(cols = c(Stream, Views), names_to = "Metric", values_to = "Value")
+
+# Créer le boxplot avec facet_wrap
+df_long %>% ggplot(aes(x = Metric, y = Value, color = Album_type)) +
+  geom_boxplot(outliers = FALSE) +
+  scale_y_continuous(labels = scales::number_format()) +
+  facet_wrap(~ Album_type) +
+  labs(title = "Diagramme en Boîte à moustaches de Stream et Views par \nType d'Album", x = "", y = "Nombre de Streams / Vues") +
+  theme_minimal()
+```
+
+##### Visualisation faite avec Tableau :
+
+![](data/q3_tableau_plot.png)
+
+#### Déductions et Conclusions
 
 ### Question 5:
 
