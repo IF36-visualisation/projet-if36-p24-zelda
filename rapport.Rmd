@@ -131,6 +131,7 @@ partie du Tidyverse.
 # install.packages("glue")
 # install.packages("ggtext")
 # install.packages("gridExtra")
+# install.packages("stringr")
 
 library(readr)
 library(dplyr)
@@ -147,6 +148,8 @@ library(FactoMineR)
 library(glue)
 library(ggtext)
 library(gridExtra)
+library(stringr)
+
 ```
 
 ### Chargement des données depuis le fichier CSV
@@ -637,8 +640,10 @@ d'album dans ce jeu de données.
 ```{r}
 df_q3 %>% ggplot(aes(x = "", fill = Album_type)) +
   geom_bar(position = "stack") +
+  coord_flip() +
   labs(title = "Graphique à barres empilées des Types d'album", x = "", y = "Count") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_manual(values = c("album" = "darkcyan", "compilation" = "lightgreen", "single" = "purple"))
 ```
 
 On remarque qu'une grande majorité des titres du dataset sont issus d'un
@@ -912,8 +917,6 @@ Hypothèses :
     artiste en règle générale : peut-être que si un artiste publie
     souvent des singles, il aura plus d'écoutes ?
 
-##### Préparation d'un dataframe pour la question
-
 ```{r}
 
 ```
@@ -939,7 +942,65 @@ Hypothèses :
 ##### Préparation d'un dataframe pour la question
 
 ```{r}
+df_q10 <- df %>%
+  select(Track, Artist, Views, Stream, Likes, Comments, Speechiness) %>%
+  na.omit() %>%
+  mutate(Feat = str_detect(Track, regex("feat", ignore_case = TRUE)))
 
+head(df_q10)
+```
+
+##### Diagramme en Secteurs de Feat
+
+```{r}
+df_q10 %>%
+  ggplot(aes(x = "", fill = Feat)) +
+  geom_bar(position = "stack", width = 0.5) +
+  coord_flip() +
+  labs(title = "Graphique à barres empilées horizontal de Feat", x = "", y = "Count") +
+  theme_minimal() +
+  scale_fill_manual(values = c("TRUE" = "lightgreen", "FALSE" = "darkcyan"), 
+                    labels = c("TRUE" = "Avec Feat", "FALSE" = "Sans Feat"))
+```
+
+```{r}
+# Transformer les données en format long
+df_long_stream_view <- df_q10 %>%
+  pivot_longer(cols = c(Stream, Views), names_to = "Metric", values_to = "Value")
+# Créer le boxplot avec facet_wrap
+df_long_stream_view %>% ggplot(aes(x = Metric, y = Value, color = Feat)) +
+  geom_boxplot(outliers = FALSE) +
+  scale_y_continuous(labels = scales::number_format()) +
+  facet_wrap(~ Feat) +
+  labs(title = "Diagramme en Boîte à moustaches de Stream et Views par \nFeat", x = "", y = "Nombre de Streams / Vues") +
+  theme_minimal()
+```
+
+```{r}
+# Transformer les données en format long
+df_comment <- df_q10 %>%
+  pivot_longer(cols = c(Comments), names_to = "Metric", values_to = "Value")
+# Créer le boxplot avec facet_wrap
+feat_comment_plot <- df_comment %>% ggplot(aes(x = "", y = Value, color = Feat)) +
+  geom_boxplot(outliers = FALSE) +
+  scale_y_continuous(labels = scales::number_format()) +
+  facet_wrap(~ Feat) +
+  labs(title = "Commentaires", x = "", y = "Nombre de Commentaires") +
+  theme_minimal() +
+  theme(legend.position = 'none')
+
+# Transformer les données en format long
+df_like <- df_q10 %>%
+  pivot_longer(cols = c(Comments), names_to = "Metric", values_to = "Value")
+# Créer le boxplot avec facet_wrap
+feat_like_plot <- df_like %>% ggplot(aes(x = "", y = Value, color = Feat)) +
+  geom_boxplot(outliers = FALSE) +
+  scale_y_continuous(labels = scales::number_format()) +
+  facet_wrap(~ Feat) +
+  labs(title = "Likes", x = "", y = "Nombre de Likes") +
+  theme_minimal()
+
+feat_comment_plot + feat_like_plot + plot_annotation(title = "Diagrammes en boîte à moustache de Commentaires et de Likes par Feat")
 ```
 
 ## Bonus / Annexe :
