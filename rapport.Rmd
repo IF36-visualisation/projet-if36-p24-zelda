@@ -132,6 +132,7 @@ partie du Tidyverse.
 # install.packages("ggtext")
 # install.packages("gridExtra")
 # install.packages("stringr")
+# install.packages("ggstatsplot")
 
 library(readr)
 library(dplyr)
@@ -149,6 +150,7 @@ library(glue)
 library(ggtext)
 library(gridExtra)
 library(stringr)
+library(ggstatsplot)
 
 ```
 
@@ -1013,6 +1015,41 @@ df_speechiness %>% ggplot(aes(x = "", y = Value, color = Feat)) +
   facet_wrap(~ Feat) +
   labs(title = "Diagrammes en boîte à moustache de Speechiness en fonction de Feat", x = "", y = "Speechiness") +
   theme_minimal()
+```
+
+```{r}
+# Create the violin plot with facet_wrap
+speechiness_plt <- ggbetweenstats(
+  data = df_q10,
+  x = Feat,
+  y = Speechiness,
+  plot.type = "violin",
+  pairwise.comparisons = FALSE, # Disable pairwise comparisons if not needed
+  results.subtitle = FALSE, # Disable the summary statistics subtitle
+  results.title = FALSE, # Disable the results title at the bottom right
+  centrality.plotting = FALSE, # Disable mean value annotation
+  xlab = "",
+  ylab = "Speechiness",
+  title = "Graphique en Violon de Speechiness par Feat",
+  point.args = list(position = ggplot2::position_jitterdodge(dodge.width = 1), alpha = 0.2, size = 1, stroke = 0, na.rm = TRUE),
+  ggtheme = theme_minimal()
+)
+
+# Customize the plot appearance
+speechiness_plt <- speechiness_plt +
+  theme(
+    axis.ticks = element_blank(),
+    axis.line = element_line(colour = "grey50"),
+    panel.grid = element_line(color = "#b4aea9"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(linetype = "dashed"),
+    panel.background = element_rect(fill = "#fbf9f4", color = "#fbf9f4"),
+    plot.background = element_rect(fill = "#fbf9f4", color = "#fbf9f4")
+  )
+
+# Display the plot
+speechiness_plt
 ```
 
 ## Bonus / Annexe :
