@@ -8,19 +8,9 @@ library(ggplot2)
 library(gridExtra)
 library(plotly)
 
-dataset_if36 <- read.csv('dataset_if36.csv')
-df <- dataset_if36 %>%
-  mutate(date_split = strsplit(date, split = "-"),
-         annee = as.double(sapply(date_split, "[", 1)),
-         mois = as.double(sapply(date_split, "[", 2))) %>%
-  select(-date_split)
-
-
+dataset <- starwars
+df_sorted <- read.csv("df_sorted.csv")
 ############################ éléments question 2 ##################################
-df_sorted <- df %>%
-  filter(annee!=0)%>%
-  arrange(annee, mois)
-
 stream_views_annee <- df_sorted %>%
   group_by(annee)%>%
   summarise(stream=sum(Stream), view=sum(Views))
@@ -117,22 +107,23 @@ shinyServer(function(input, output){
   ##########################question6 visualisation##########################""""
 
 
-  output$graphique_q6 <- renderPlotly(({
-    df_2010 <- scaled_df%>%
-      filter(annee==input$annee)
+  output$graphique_q6 <- renderPlotly({
+    df_2010 <- scaled_df %>%
+      filter(annee == input$annee)
 
     max_attr <- apply(df_2010[, c("Danceability", "Loudness", "Speechiness", "Acousticness")], 1, which.max)
+    attributes <- c("Danceability", "Loudness", "Speechiness", "Acousticness")
+    max_attr_labels <- attributes[max_attr]
+
+    count_data <- as.data.frame(table(max_attr_labels))
+    colnames(count_data) <- c("Attribute", "Count")
 
     colors <- c("Danceability" = "red", "Loudness" = "blue", "Speechiness" = "green", "Acousticness" = "purple")
-    color_labels <- names(colors)[max_attr]
 
-    ggplot_obj <- ggplot(df_2010, aes(x = Views, y = Stream, color = color_labels)) +
-      geom_point(alpha=0.8) +
-      scale_color_manual(values = colors) +
-      labs(color = "Attribut Maximal") +
-      theme_minimal()
-    ggplotly(ggplot_obj)
-  }))
+    plot_ly(count_data, labels = ~Attribute, values = ~Count, type = 'pie',
+            marker = list(colors = colors)) %>%
+      layout(title = paste('Répartition des attributs de chanson en ', input$annee))
+  })
 
 ####################visualisations question 8#################################
   output$graphique_q8_view <- renderPlotly({
