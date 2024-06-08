@@ -1,6 +1,4 @@
 library(shinydashboard)
-library(plotly)
-
 dashboardPage(
   dashboardHeader(title = "Star wars"),
   dashboardSidebar(
@@ -27,33 +25,33 @@ dashboardPage(
 
       tabItem(tabName="question2",
               fluidRow(
-                box(title = "le premier graphique", width = 12,
+                box(title = "", width = 12,
                     plotlyOutput("graphique1"))),
               fluidRow(
 
-                box(title="le deuxième graphique", width = 12,
+                box(title="", width = 12,
                     plotlyOutput("graphique2"))
               ),
               fluidRow(
-                box(title="le deuxième graphique", width = 12,
+                box(title="", width = 12,
                     plotlyOutput("graphique3"))
               )
       ),
 
       tabItem(tabName="question6",
               fluidRow(
-                box(title = "le premier graphique", width = 12,
+                box(title = "LASD", width = 12,
                     plotlyOutput("graphique_q6"))),
 
       ),
 
       tabItem(tabName="question8",
               fluidRow(
-                box(title = "le premier graphique", width = 4,
+                box(title = "", width = 4,
                     plotlyOutput("graphique_q8_view")),
-                box(title = "le premier graphique", width = 4,
+                box(title = "", width = 4,
                     plotlyOutput("graphique_q8_like")),
-                box(title = "le premier graphique", width = 4,
+                box(title = "", width = 4,
                     plotlyOutput("graphique_q8_comment"))),
 
       ),
