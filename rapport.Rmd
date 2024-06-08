@@ -1186,7 +1186,8 @@ github](https://github.com/jkaupp/tidytuesdays/blob/master/2020/week4/R/analysis
 
 ### Question 11
 
-**Y-a-t-il un lien entre les valeurs des différents attributs comme 'danceability' et 'energy' ?**
+**Y-a-t-il un lien entre les valeurs des différents attributs comme
+'danceability' et 'energy' ?**
 
 Variables : attributs quantitatifs
 
@@ -1194,11 +1195,13 @@ Objectif : Relation + Comparaison avec valeurs continues (attributs).
 
 Hypothèses :
 
--   On s'attend à ce qu'il y ai des liens plus forts entre certains attributs qu'avec d'autres.
+-   On s'attend à ce qu'il y ai des liens plus forts entre certains
+    attributs qu'avec d'autres.
 
 ##### Analyse sur la question
 
-Après tous les questions et recherches précédentes et par l'expérience dans la vie quotidienne, 
-on peut déjà avoir une hypothèse que certain variable quantitatifs peuvent avoir une corrélation 
-avec les autres. Le but de cette question est d'essayer faire une analyse et quantifier ces 
+Après tous les questions et recherches précédentes et par l'expérience
+dans la vie quotidienne, on peut déjà avoir une hypothèse que certain
+variable quantitatifs peuvent avoir une corrélation avec les autres. Le
+but de cette question est d'essayer faire une analyse et quantifier ces
 corrélation entre les attributs.

@@ -1,4 +1,6 @@
 library(shinydashboard)
+library(plotly)
+
 dashboardPage(
   dashboardHeader(title = "Star wars"),
   dashboardSidebar(
