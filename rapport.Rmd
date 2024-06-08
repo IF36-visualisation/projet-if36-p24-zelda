@@ -133,6 +133,7 @@ partie du Tidyverse.
 # install.packages("gridExtra")
 # install.packages("stringr")
 # install.packages("ggstatsplot")
+# install.packages("plotly")
 
 library(readr)
 library(dplyr)
@@ -151,6 +152,7 @@ library(ggtext)
 library(gridExtra)
 library(stringr)
 library(ggstatsplot)
+library(plotly)
 
 ```
 
@@ -400,8 +402,86 @@ df_q1 %>%
 
 ```
 
+Nous avons utilisé un diagramme de points pour d'abord voir 'toutes' les
+données sans appliquer de statistique descriptive comme les boîtes à
+moustaches. C'est pertinent dans le sens où l'on peut voir la densité
+des points et on a pû ajouter les courbes de moyenne et médiane pour
+avoir une légère couche statistique pour aider l'analyse.
+
 On remarque que la moyenne et la médiane sont plutôt constantes en
-fonction du temps
+fonction du temps. Il y a une concentration plus élevée de points
+(titres) plus l'année est grande, ce qui est raccord à notre analyse de
+la distribution des chansons du jeu de données en fonction de l’année.
+
+En rappelant que l'échelle du nombre d'écoutes est logarithmique, on
+remarque qu'il y a plus de titres avec un nombre d'écoutes énorme (les
+valeurs vers 10 milliards d'écoutes qu'on a vues dans la distribution en
+fonction du nombre d’écoutes) à partir de 2006 environ.
+
+Or c'est aux alentours de 2006-2008 que sont apparues les plateformes de
+streaming qu'on étudie : Spotify et Youtube. Notre observation
+d'outliers en termes d'un grand nombre d'écoutes est donc probablement
+liée à l'émergeance de ces plateformes.
+
+##### Diagramme en boîte à moustache du nombre d'écoutes total en fonction de l'année de publication (regroupée par décennie)
+
+```{r}
+# Créer une nouvelle variable 'decennie' représentant la décennie
+df_q1$decennie <- as.factor((as.integer(df_q1$annee) %/% 10) * 10)
+
+# Use factor() to convert a numeric variable into a discrete variable
+# Créer le diagramme en boîte avec ggplot2
+df_q1 %>%
+  ggplot(aes(x = factor(decennie), y = ecoutes_totales)) +
+  geom_boxplot(color = "darkcyan", fill = "lightblue") +
+  scale_y_continuous(labels = scales::number_format()) +
+  labs(x = "Décennie", y = "Nombre d'écoutes total", title = "Ecoutes totales par décennie en échelle logarithmique") +
+  coord_trans(y = 'log10') +
+  theme_minimal()
+```
+
+Nous avons utilisé un diagramme en boîte à moustache (box and whisker
+plot) car nous avons discrétisé le temps par année et que nous voulions
+nous concentrer sur la distribution statistique des valeurs afin d’en
+extraire des tendances (si il en existe). Ce graph est pertinent car il
+synthétise bien nos valeurs discrètes et facilite la recherche d’une
+relation entre la date de publication d’un titre et son nombre d’écoutes
+total. On peut faire notre analyse en omettant la décennie 1910 étant
+donné qu'il n'y a qu'un seul titre dans cette période : l'application
+statistique de la boîte à moustache n'a aucun intérêt dans ce cas
+précis.
+
+En regroupant par décennie, on retrouve cette présence accrue d'outliers
+plus écoutés sur les deux dernières décennies. Notre interprétation est
+qu'avec la démocratisation grandissante des moyens de partager
+l'information (la musique en faisant partie) vers un grand public, il
+devient de plus en plus facile pour des chansons de devenir très
+populaires et ce très vite. La notion de "tubes du moment" ou de
+"chansons qui font le buzz" que nous connaissons tous aujourd'hui créée
+des titres qui représentes ces valeurs 'outliers' avec des nombres
+d'écoutes pharamineux dans notre graphique. L'émergeance des plateformes
+de streaming comme celles qu'on étudie, Spotify et Youtube, permet aussi
+de rendre plus accessible ces "tubes" ce qui peut à la manière d'une
+réaction en chaîne, accéléré le phénomène de "buzz" d'un "tube".
+
+On remarque aussi que les boites qui représentent les valeurs entre le
+premier quartile et le troisième quartile ont à peu près toutes la même
+taille et le même nombre d'écoutes médian. Ainsi, même si notre jeu de
+données a beaucoup plus de titres 'récents' : les écoutes totales sont
+plutôt équilibrées en moyenne. Ceci confirme notre observation que ce
+jeu de données est plutôt concentré sur des chansons qui sont
+relativement populaires et ce indépendamment du temps étant donné que
+nous avons des boîtes à moustaches similaires pour chaque décennie.
+
+Cela confirme donc notre hypothèse initiale que les chansons plus
+anciennes (surtout celles datant d'avant Spotify et Youtube)
+représentées dans ce dataset sont des chansons encore toujours
+relativement "populaires" aujourd'hui : des chansons "intemporelles"
+comme des titres des Beatles ou de Queen par exemple.
+
+Nous avons fait notre analyse sur le nombre d'écoutes total : retrouve
+t'on les mêmes conclusions en prenant indépendemment les Streams Spotify
+et les Vues Youtube ?
 
 ##### Nombre de Streams / Vues en fonction de l'année de publication
 
@@ -444,68 +524,46 @@ view_plot <- df_q1 %>%
 stream_plot + view_plot + plot_annotation(title = 'Graphiques en échelle logarithmique')
 ```
 
-##### Diagramme en boîte à moustache du nombre d'écoutes total en fonction de l'année de publication (regroupée par décennie
+On peut dire que de manière générale, on retrouve la même forme de
+graphique quand on prend nos variables indépendantes.
 
-```{r}
-# Créer une nouvelle variable 'decennie' représentant la décennie
-df_q1$decennie <- as.factor((as.integer(df_q1$annee) %/% 10) * 10)
+On remarque tout de même que les Streams Spotify sont plus constants au
+niveau du temps que les Vues Youtube. La moyenne et la médiane des
+Streams est plutôt constante alors qu'on remarque de plus grandes
+fluctuations pour les Vues. Le nombre de Vues semble être croissant en
+fonction de l'année de publication.
 
-# Use factor() to convert a numeric variable into a discrete variable
-# Créer le diagramme en boîte avec ggplot2
-df_q1 %>%
-  ggplot(aes(x = factor(decennie), y = ecoutes_totales)) +
-  geom_boxplot(color = "darkcyan", fill = "lightblue") +
-  scale_y_continuous(labels = scales::number_format()) +
-  labs(x = "Décennie", y = "Nombre d'écoutes total", title = "Ecoutes totales par décennie en échelle logarithmique") +
-  coord_trans(y = 'log10') +
-  theme_minimal()
-```
+Notre interprétation est que les auditeurs/utilisateurs utilisent plus
+Youtube pour les chansons récentes car il apprécient la valeur ajoutée
+de la vidéo (la production de "clips" pour les chansons c'est
+démocratisée depuis l'arrivée de la télévision dans les foyers). Or plus
+une chansons est ancienne, moins il y a de chance qu'elle est un "clip"
+associé.
 
-#### Déductions et Conclusions
+Ainsi, les auditeurs utilisent plus Spotify pour écouter les titres
+qu'ils apprécient indépendamment de leur ancienneté alors qu'ils
+utilisent Youtube plus Youtube pour regarder des clips de chansons et
+moins pour de l'écoute "passive" comme pour Spotify. On pourrait faire
+l'hypothèse (sans pouvoir la confirmer avec les données qui sont
+disponibles dans notre jeu de données) que les Streams de Spotify
+proviennent souvent des mêmes utilisateurs qui écoutent plusieurs fois
+le même titre parce-qu'ils l'apprécient alors que les Vues Youtube
+proviennent de plus d'utilisateurs qui découvrent la musique avec son
+clip (à titre personnel, il est plus probable que je partage un lien
+Youtube que Spotify pour faire connaitre une chanson que j'aime bien à
+un.e proche).
 
-Nous avons utilisé un diagramme en boîte à moustache (box and whisker
-plot) car nous avons discrétisé le temps par année et que nous voulions
-nous concentrer sur la distribution statistique des valeurs pour chaque
-année afin d'en extraire des tendances (si il en existe). Ce graph est
-pertinent car il synthétise bien nos valeurs discrètes et facilite la
-recherche d'une relation entre la date de publication d'un titre et son
-nombre d'écoutes total.
+#### Conclusions
 
-Nous pouvons voir que nos écoutes totales sont plutôt équilibrées en
-moyenne car nos boîtes à moustaches se trouvent au même niveau en
-ordonnée et ont une taille et une forme plutôt similaires. On remarque
-aussi qu'il semble que le 1er quartile et la médiane de nos boîtes sont
-confondus presque systématiquement. Nous pouvons en déduire que notre
-dataset est échantilloné sur des titres qui ont un nombre minimal
-d'écoutes totales. Ce serait donc seulement des titres assez écoutés et
-donc 'populaires'.
+-   Notre dataset est échantilloné sur des titres "populaires"
+    indépendemment de leur date de publication.
 
-Comme nous en avions fait l'hypothèse, les titres datant d'avant Spotify
-et Youtube qui sont représentés dans ce dataset sont ceux qui sont
-encore écoutés aujourd'hui et qui sont encore 'populaires' (des chansons
-intemporelles comme celles des *Beatles* ou de *Queen* par exemple).
+-   Avec l'émergeance de Spotify et Youtube, certaines chansons peuvent
+    plus facilement "faire le buzz".
 
-Ainsi, parmis les titres de notre dataset qui sont tous 'populaires'
-dans une certaine mesure, nous avons des titres 'extrêmement populaires'
-que nous voyons représentés comme les "points outliers" sur nos
-graphique (en magenta).
-
-Nous pouvons remarquer de manière assez flagrante que plus nous avançons
-dans le temps, plus ces titres 'outliers' sont nombreux et ont un nombre
-d'écoutes total important. Notre interprétation est qu'avec la
-démocratisation grandissante des moyens de partager l'information (la
-musique en faisant partie) vers un grand public, il devient de plus en
-plus facile pour des chansons de devenir très populaires et ce très
-vite. La notion de "tubes du moment" ou de "chansons qui font le buzz"
-que nous connaissons tous aujourd'hui créée des titres qui représentes
-ces valeurs 'outliers' avec des nombres d'écoutes pharamineux dans notre
-graphique.
-
-En explorant cette question, nous avons pensé à une autre approche que
-nous pourrons développer plus tard. Nous pourrions créer des nouvelles
-colonnes dans notre dataframe 'df_q1' calculant le taux d'écoute annuel
-d'un titre (nombre d'écoutes total / nombre d'années depuis publication)
-pour en visualiser la distribution.
+-   Les deux plateformes ne sont pas forcément utilisées pour les mêmes
+    raisons : Spotify plus pour de l'écoute "passive" des titres déjà
+    appréciés alors que Youtube pour pour de la découverte de chansons ?
 
 ### Question 2:
 
@@ -596,17 +654,11 @@ augmentation du nombre d'écoute sur spotify par rapport à youtube.
 
 ### Question 3
 
-**Est-ce que les singles sont plus écoutés/appréciés des auditeurs que
-les albums ?**
+[***Est-ce que les singles sont plus écoutés/appréciés des auditeurs que
+les albums ?***]{.underline}
 
-Rappel : Les valeurs possibles pour la variable 'Album_type' sont album,
-single et compilation.
-
-Variables : 'Streams', 'Views', 'Album_type', 'Likes', 'Comments'
-
-Objectif : Comparaison avec valeurs discrètes et nominales (album_type).
-
-Hypothèses :
+*Rappel :* Les valeurs possibles pour la variable 'Album_type' sont
+album, single et compilation.
 
 -   On s'attend à ce que les singles soit plus écoutés que les albums de
     manière générale.
@@ -624,15 +676,6 @@ head(df_q3)
 
 ```
 
-##### Création d'une colonne représentant le nombre total d'écoutes d'un titre indépendamment de la plateforme
-
-```{r}
-df_q3 <- df_q3 %>%
-  mutate(ecoutes_totales = Stream + Views)
-
-head(df_q3)
-```
-
 Maintenant que nous avons un dataframe 'df_q3' plus adapté pour cette
 question, nous allons tout d'abord analyser la proportion de chaque type
 d'album dans ce jeu de données.
@@ -641,7 +684,7 @@ d'album dans ce jeu de données.
 
 ```{r}
 df_q3 %>% ggplot(aes(x = "", fill = Album_type)) +
-  geom_bar(position = "stack") +
+  geom_bar(position = "stack", width = 0.5) +
   coord_flip() +
   labs(title = "Graphique à barres empilées des Types d'album", x = "", y = "Count") +
   theme_minimal() +
@@ -672,7 +715,28 @@ df_long %>% ggplot(aes(x = Metric, y = Value, color = Album_type)) +
 
 ![](data/q3_tableau_plot.png)
 
-#### Déductions et Conclusions
+On s'attendais à ce que les singles soient plus écoutés que les albums
+puisqu'ils sont souvent plus mis en avant de manière individuelle par
+rapport aux albums. Mais on observe que les albums sont plus écoutés que
+les singles. Ceci est surtout vrai sur Spotify : il n'y a pas de grande
+différences pour Youtube.
+
+Il n'y a pas de grande différence entre les singles et les compilations,
+la moyenne des Streams pour les singles est légèrement plus élevée mais
+les médianes sont très proches. On peut à la limite dire qu'il y a plus
+de d'outliers avec un grand nombre d'écoute pour les singles que pour
+les compilations.
+
+#### Conclusions
+
+-   Les chansons issues d'album sont bien plus écoutés que les singles,
+    surtout sur la plateforme Spotify.
+
+-   Les valeurs restent tout de même assez serrées, cette analyse n'est
+    pas très conclusive : il faudrait peut-être plus de données pour
+    faire une analyse par artiste entre les singles, albums et
+    compilations. (Il n'y a pas assez de titres par artiste dans notre
+    dataset pour avoir des résultats exploitables)
 
 ### Question 5:
 
@@ -843,7 +907,7 @@ style de musique dans notre jeu de données choisi :
 Il est logique de faire d’abord un Analyse en composantes principales
 pour rendre un représentation 2D possible.
 
-```{R}
+```{r}
 data <- read.csv("data/dataset_if36.csv")
 selected_data <- data %>% select(Danceability, Energy, Key, Loudness, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo)
 
@@ -854,7 +918,7 @@ pca_result <- PCA(scaled_data, scale. = TRUE)
 Pour analyse le résultat, nous visualisons la contribution des
 composantes principales :
 
-```{R}
+```{r}
 # L’inertie des cps
 fviz_eig(pca_result)
 ggsave("pca_loadings_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
@@ -865,14 +929,14 @@ Les deux première composantes représentent environ 45 % d'inertie, nous
 pouvons donc dire que cette représentation n'est pas très idéal. Nous
 regardons ensuite le cercle de corrélation :
 
-```{R}
+```{r}
 # Cercle des corrélations
 fviz_pca_var(pca_result, col.var = "contrib", col.ind = "cos2", repel = TRUE)
 ggsave("pca_contrib_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
 ![cercle](https://imgur.com/xocg4eJ.png)
 ```
 
-```{R}
+```{r}
 # Appliquer la classification hiérarchique sur le résultat de l'ACP
 pca_scores <- as.data.frame(pca_result$x)
 dist_mat <- dist(pca_scores[, 1:2], method = "euclidean")
@@ -1051,6 +1115,8 @@ speechiness_plt <- speechiness_plt +
 # Display the plot
 speechiness_plt
 ```
+
+#### Conclusion
 
 ## Bonus / Annexe :
 
