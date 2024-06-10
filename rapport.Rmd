@@ -1205,3 +1205,38 @@ dans la vie quotidienne, on peut déjà avoir une hypothèse que certain
 variable quantitatifs peuvent avoir une corrélation avec les autres. Le
 but de cette question est d'essayer faire une analyse et quantifier ces
 corrélation entre les attributs.
+On peut facilement calculer la matrice de corrélation entre ces attributs.
+```{r}
+library(ggplot2)
+library(reshape2)
+
+data <- read.csv("dataset_if36.csv")
+variables_quantitatives <- data[, c("Danceability", "Energy", "Loudness", "Speechiness", "Acousticness", "Instrumentalness", "Liveness", "Valence", "Tempo")]
+
+matrice_de_corrélation <- cor(variables_quantitatives)
+
+inertie_totale <- rowSums(abs(matrice_de_corrélation))
+
+critère_tri <- order(inertie_totale, decreasing = TRUE)
+matrice_triée <- matrice_de_corrélation[critère_tri, critère_tri]
+
+cor_df <- as.data.frame(as.table(matrice_triée))
+colnames(cor_df) <- c("variables_x", "variables_y", "valeur")
+
+résultat <- 
+    ggplot(cor_df, aes(variables_y, variables_x, fill = valeur,label = round(valeur, 2))) +
+    geom_tile(color = "white") +
+    geom_text(color = "black") + #afficher les valeurs de matrice 
+    scale_fill_gradient2(low = "blue", high = "red", mid = "GRAY", #rendre les termes blanches visibles.
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Corrélation") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 10, hjust = 1)) +
+    coord_fixed() +
+    labs(title = "Matrice de corrélation des variables quantitatives", x = "", y = "") +
+    theme(plot.title = element_text(hjust = 0.5))
+
+print(résultat)
+![res](https://imgur.com/eEnhNYV.png)
+```
