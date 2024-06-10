@@ -153,6 +153,7 @@ library(gridExtra)
 library(stringr)
 library(ggstatsplot)
 library(plotly)
+library(lubridate) 
 
 ```
 
@@ -914,14 +915,15 @@ effet sur nos résultats.
     naturel à un artiste : surtout qu'ils communiquent autour de leurs
     publication généralement.
 
--   Popularité est-elle liée à la forme de l'œuvre ? Est-ce que, pour des œuvres ayant la même forme, qu'il s'agisse d'un single ou d'un album, une fréquence plus élevée de publication par les artistes conduit à un plus grand nombre d'écoutes ?
+-   Le format des single cherche plus à apporter de l'engouement pour un artiste en règle     générale : peut-être que si un artiste publie souvent des singles, il aura plus           d'écoutes ?
 
-##### Traiter le format des dates dans les données
+##### Traiter le format des dates dans les données et afficher toutes les valeurs de l'année dans la base de données
 ```{r}
 dataset_if36 <- dataset_if36 %>%
-  filter(!is.na(as.Date(date, "%Y-%m-%d")))
-dataset_if36$date <- as.Date(dataset_if36$date, "%Y-%m-%d")
+  filter(!is.na(date)) %>%
+  mutate(date = ymd(date))
 dataset_if36$year <- year(dataset_if36$date)
+print(dataset_if36$year)
 ```
 
 Comme la période annuelle des données est trop grande, la période peut atteindre 50 ans. Au cours des 50 années, certains artistes peuvent avoir été inactifs pendant une longue période. Nous avons donc décidé d'étudier les données de 2019 à 2023 pour les analyser. 
@@ -932,52 +934,94 @@ filtered_dataset <- dataset_if36 %>%
   filter(year(date) >= 2019 & year(date) <= 2023)
 ```
 
-##### Regroupez par artiste et par année pour calculer le nombre de sorties et le nombre total de streams par an
+##### Regroupez par artiste, année et type d'album pour calculer le nombre de sorties et le nombre total de streams par an
 ```{r}
 artist_yearly_filtered <- filtered_dataset %>%
   mutate(year = year(date)) %>%
-  group_by(Artist, year) %>%
+  group_by(Artist, year, Album_type) %>%
   summarise(Release_Frequency = n(), Total_Streams = sum(Stream, na.rm = TRUE), .groups = 'drop')
 ```
 
-##### Calculer la fréquence de sortie annuelle moyenne et le nombre total de streams moyenne pour chaque artiste
+##### Calculez la fréquence de sortie annuelle moyenne et le nombre total de flux par artiste, en conservant Album_type
 ```{r}
 artist_stats_filtered <- artist_yearly_filtered %>%
-  group_by(Artist) %>%
-  summarise(Avg_Frequency_2019_2023 = mean(Release_Frequency), Avg_Streams_2019_2023 = mean(Total_Streams))
+  group_by(Artist, Album_type) %>%
+  summarise(Avg_Frequency_2019_2023 = mean(Release_Frequency), Avg_Streams_2019_2023 = mean(Total_Streams), .groups = 'drop')
 ```
 
-##### Tracez un nuage de points de la fréquence moyenne des sorties d'albums et du nombre moyen de streams
+##### Diagramme d'un nuage de points de la fréquence des sorties et du nombre de flux, coloré par Album_type
 ```{r}
-ggplot(artist_stats_filtered, aes(x = Avg_Frequency_2019_2023, y = Avg_Streams_2019_2023)) +
+ggplot(artist_stats_filtered, aes(x = Avg_Frequency_2019_2023, y = Avg_Streams_2019_2023, color = Album_type)) +
   geom_point(alpha = 0.5, size = 0.8) +
-  labs(title = "Average Yearly Release Frequency vs. Average Yearly Streams (2019-2023)",
+  labs(title = "La relation entre Average Yearly Release Frequency et Average Yearly Streams (2019-2023)",
        x = "Average Yearly Release Frequency (2019-2023)",
        y = "Average Yearly Streams (2019-2023)") +
   theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 1))
+  theme(axis.text.x = element_text(hjust = 1)) +
+  scale_y_continuous(labels = scales::number_format()) +
+  scale_color_manual(values = c("album" = "red", "single" = "blue"))
 ```
 
 ##### Analyse :
+Ce graphique en nuage de points illustre la relation entre le nombre moyen d'albums publiés par an et le nombre moyen de flux de sportify par an pour chaque artiste de 2019 à 2023.
 
+On constate que pendant cette période, la plupart des artistes ont publié en moyenne entre 0 et 3 albums par an, correspondant à des flux annuels compris entre 0 et 2 500 000 000.
 
+Le nombre d'artistes publiant en moyenne plus de 5 albums par an est faible, et pour ceux qui publient en moyenne 10 albums par an, leur flux n'est pas significativement plus élevé que ceux qui publient moins d'albums.
+
+En revanche, plusieurs artistes qui publient en moyenne environ 4 albums par an ont généré un flux particulièrement élevé.
+
+Cela est conforme à la logique, car publier trop d'albums en une année peut entraîner une baisse de qualité des œuvres, ce qui peut à son tour entraîner une baisse du nombre d'écoutes. En même temps, pour les artistes très connus, même s'ils publient très peu d'albums par an, ils peuvent avoir l'occasion de générer un flux très élevé.
+
+Les points rouges sur ce graphique représentent les œuvres des artistes sous forme d'albums, tandis que les points bleus représentent les œuvres sous forme de singles.
+
+Nous pouvons voir que dans les zones de flux élevé, presque tous les points sont rouges, tandis que les points bleus sont plus concentrés dans les zones de faible flux. De cela, nous pouvons déduire que la forme des œuvres a une certaine influence sur le nombre de flux. La forme d'un album peut, dans une certaine mesure, aider les œuvres à obtenir plus de flux.
+
+Ensuite, nous avons commencé à faire la même analyse sur la relation entre la fréquence annuelle moyenne de sortie d’un album et les vues sur YouTube.
+
+##### Diagramme d'un nuage de points de la fréquence des sorties et du nombre de flux, coloré par Album_type
 ```{r}
+filtered_dataset <- dataset_if36 %>%
+  filter(year(date) >= 2019 & year(date) <= 2023)
 
+artist_yearly_filtered <- filtered_dataset %>%
+  mutate(year = year(date)) %>%
+  group_by(Artist, year, Album_type) %>%
+  summarise(Release_Frequency = n(), Total_Views = sum(Views, na.rm = TRUE), .groups = 'drop')
+
+artist_stats_filtered <- artist_yearly_filtered %>%
+  group_by(Artist, Album_type) %>%
+  summarise(Avg_Frequency_2019_2023 = mean(Release_Frequency), Avg_Views_2019_2023 = mean(Total_Views), .groups = 'drop')
+
+ggplot(artist_stats_filtered, aes(x = Avg_Frequency_2019_2023, y = Avg_Views_2019_2023, color = Album_type)) +
+  geom_point(alpha = 0.5, size = 0.8) +
+  labs(title = "La relation entre Average Yearly Release Frequency et Average Yearly Views (2019-2023)",
+       x = "Average Yearly Release Frequency (2019-2023)",
+       y = "Average Yearly Views (2019-2023)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(hjust = 1)) +
+  scale_y_continuous(labels = scales::number_format()) +
+  scale_color_manual(values = c("album" = "red", "single" = "blue"))
 ```
 
-```{r}
+##### Analyse :
+Cette carte de dispersion montre la relation entre la fréquence moyenne annuelle de publication d'albums et les vues annuelles moyennes pour chaque artiste sur la période 2019-2023, en distinguant les types d'albums par des couleurs différentes , où le rouge représente les albums et le bleu représente les singles .
 
-```
+Lorsque la fréquence moyenne annuelle de publication d'albums est faible (0-2,5), la plage de variation des vues annuelles moyennes est très large, allant de presque zéro à plus de 2 milliards.
 
+Lorsque la fréquence moyenne annuelle de publication d'albums est élevée (2,5-10), les vues annuelles moyennes tendent à être plus faibles et les points de données sont plus clairsemés, ce qui indique qu'une augmentation de la fréquence de publication d'albums n'entraîne pas nécessairement une augmentation des vues.
 
-```{r}
+Globalement, il n'y a pas de corrélation positive directe entre la fréquence moyenne annuelle de publication d'albums et les vues annuelles moyennes. Les vues élevées apparaissent plus souvent dans la zone de faible fréquence de publication d'albums.
 
-```
+Dans la zone de faible fréquence de publication, les singles et les albums peuvent tous deux atteindre des niveaux élevés de vues. Dans la zone de haute fréquence de publication, les singles ont quelques points de vues annuelles moyennes plus élevés, tandis que les albums ont des vues annuelles moyennes relativement plus basses, ce qui pourrait indiquer que les singles sont plus susceptibles de maintenir des vues élevées lorsqu'ils sont publiés fréquemment.
 
+Le type d'album a un certain impact sur les vues. Bien que les deux types aient des points de données avec des vues élevées dans différentes plages de fréquence de publication, les singles ont une plus grande probabilité de maintenir des vues élevées lorsqu'ils sont publiés fréquemment.
 
-```{r}
+##### Conclusions :
+La fréquence moyenne annuelle de publication d'albums n'a pas de relation directe avec le flux de morceaux sur Spotify et le nombre de vues sur YouTube. Il est probable que d'autres facteurs influencent davantage ces flux et ces vues. Nous supposons que ces facteurs pourraient être la popularité de l'artiste ou la qualité des chansons.
 
-```
+La forme de l'œuvre a un certain impact sur les flux et les vues. En ce qui concerne les flux, il semble que les gens préfèrent écouter des albums sur Spotify. Quant aux vidéos, les albums et les singles ont tous deux la possibilité d'obtenir un grand nombre de vues, mais lorsque des œuvres sont publiées fréquemment, les gens semblent préférer regarder des vidéos de singles plutôt que des albums.
+
 ### Question 10
 
 **Quels sont les effets d'un 'feat' sur un titre ?**
