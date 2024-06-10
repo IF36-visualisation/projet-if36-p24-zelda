@@ -820,8 +820,10 @@ Les points bleus dans le graphique représentent les cas où le nombre de commen
 
 Pour des vidéos avec le même nombre de vues, le nombre de commentaires peut varier. Cela peut être dû au contenu de la musique, certaines musiques étant plus susceptibles de susciter des commentaires que d'autres. De plus, pour des vidéos avec le même nombre de commentaires, le nombre de vues peut également varier. Par exemple, il existe des vidéos avec plus d'un million de vues qui ont moins de dix commentaires, tandis que d'autres vidéos avec moins de mille vues ont également moins de dix commentaires. Cela peut être dû à la nature de la musique, certaines musiques, telles que la musique de fond ou la musique dans une langue moins courante, pouvant inciter les spectateurs à apprécier la mélodie sans nécessairement laisser de commentaires.
 
-#### Conclusion
+#### Conclusions
 Il existe une corrélation positive entre le nombre de streams sur Spotify et le nombre de likes, entre le nombre de vues sur YouTube et le nombre de likes, ainsi qu'entre le nombre de vues sur YouTube et le nombre de commentaires. Cependant, différent à ce que l'on pourrait penser, ces relations ne suivent pas une progression linéaire dès le départ et après une progression exponentielles. Parmi ces relations, la relation entre le nombre de vues sur YouTube et le nombre de likes suivre une loi de puissance de manière assez évidente.
+
+
 ### Question 7:
 
 Est-ce qu'on peut reconnaître un artiste / un album par une combinaison
@@ -889,14 +891,11 @@ ggplot(clustered_data, aes(x = PC1, y = PC2, color = factor(Cluster))) +
 ![nuage des points](https://imgur.com/curmszd.png)
 ```
 
+
 ### Question 9
 
 **Est-ce que la fréquence de diffusion d'album / de single d'un artiste
 peut avoir un effet sur sa popularité ?**
-
-On peut commencer par faire l'analyse indépendemment du type de l'album,
-mais on a trouvé cela pertinent d'aussi voir si cette variable a un
-effet sur nos résultats.
 
 Variables : 'Streams', 'Views', 'Artist', 'Album-type', 'date' pour
 obtenir la fréquence
@@ -904,7 +903,10 @@ obtenir la fréquence
 Objectif : Relation avec valeurs discrètes (nombres d'écoutes),
 nominales (artistes, type d'albums) et continues (fréquence).
 
-Hypothèses :
+Rappel :
+On peut commencer par faire l'analyse indépendemment du type de l'album,
+mais on a trouvé cela pertinent d'aussi voir si cette variable a un
+effet sur nos résultats.
 
 -   On suppose que d'avoir une fréquence plus élevée de publication de
     titres est liée à la popularité d'un artiste. Ceci repose sur
@@ -912,14 +914,70 @@ Hypothèses :
     naturel à un artiste : surtout qu'ils communiquent autour de leurs
     publication généralement.
 
--   Le format des single cherche plus à apporter de l'engouement pour un
-    artiste en règle générale : peut-être que si un artiste publie
-    souvent des singles, il aura plus d'écoutes ?
+-   Popularité est-elle liée à la forme de l'œuvre ? Est-ce que, pour des œuvres ayant la même forme, qu'il s'agisse d'un single ou d'un album, une fréquence plus élevée de publication par les artistes conduit à un plus grand nombre d'écoutes ?
+
+##### Traiter le format des dates dans les données
+```{r}
+dataset_if36 <- dataset_if36 %>%
+  filter(!is.na(as.Date(date, "%Y-%m-%d")))
+dataset_if36$date <- as.Date(dataset_if36$date, "%Y-%m-%d")
+dataset_if36$year <- year(dataset_if36$date)
+```
+
+Comme la période annuelle des données est trop grande, la période peut atteindre 50 ans. Au cours des 50 années, certains artistes peuvent avoir été inactifs pendant une longue période. Nous avons donc décidé d'étudier les données de 2019 à 2023 pour les analyser. 
+
+##### Filtrez l'ensemble de données pour conserver les données de la période 2019 à 2023
+```{r}
+filtered_dataset <- dataset_if36 %>%
+  filter(year(date) >= 2019 & year(date) <= 2023)
+```
+
+##### Regroupez par artiste et par année pour calculer le nombre de sorties et le nombre total de streams par an
+```{r}
+artist_yearly_filtered <- filtered_dataset %>%
+  mutate(year = year(date)) %>%
+  group_by(Artist, year) %>%
+  summarise(Release_Frequency = n(), Total_Streams = sum(Stream, na.rm = TRUE), .groups = 'drop')
+```
+
+##### Calculer la fréquence de sortie annuelle moyenne et le nombre total de streams moyenne pour chaque artiste
+```{r}
+artist_stats_filtered <- artist_yearly_filtered %>%
+  group_by(Artist) %>%
+  summarise(Avg_Frequency_2019_2023 = mean(Release_Frequency), Avg_Streams_2019_2023 = mean(Total_Streams))
+```
+
+##### Tracez un nuage de points de la fréquence moyenne des sorties d'albums et du nombre moyen de streams
+```{r}
+ggplot(artist_stats_filtered, aes(x = Avg_Frequency_2019_2023, y = Avg_Streams_2019_2023)) +
+  geom_point(alpha = 0.5, size = 0.8) +
+  labs(title = "Average Yearly Release Frequency vs. Average Yearly Streams (2019-2023)",
+       x = "Average Yearly Release Frequency (2019-2023)",
+       y = "Average Yearly Streams (2019-2023)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(hjust = 1))
+```
+
+##### Analyse :
+
 
 ```{r}
 
 ```
 
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
 ### Question 10
 
 **Quels sont les effets d'un 'feat' sur un titre ?**
