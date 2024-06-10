@@ -739,28 +739,89 @@ les compilations.
     dataset pour avoir des résultats exploitables)
 
 ### Question 5:
+[***Quel est le lien entre le nombre de commentaires et/ou le nombre de likes et le nombre d'écoutes d'un titre ?***]{.underline}
 
-On peut faire l'analyse pour le nombre d'écoutes total, le nombre de
-vues (Yt) et le nombre de streams (Spot.).
-
-Variables : 'Streams', 'Views', 'Likes', 'Comments'
+Variables : 'Streams', 'Views', 'Likes', 'Comments
 
 Objectif : Relation avec valeurs discrètes.
 
-Hypothèses :
+Rappel : 
+On suppose qu'on pourra repérer un seuil de nombres d'écoutes à partir duquel la quantité de like et/ou commentaires augmentent fortement. En bref, le signal à partir de ce seuil passerait de linéaire à exponentiel.
 
-On suppose qu'on pourra repérer un seuil de nombres d'écoutes à partir
-duquel la quantité de like et/ou commentaires augmentent fortement. En
-bref, le signal à partir de ce seuil passerait de linéaire à
-exponentiel. Cette hypothèse vient du fait que nous supposons qu'à
-partir de cette valeur seuil, il y a assez d'engouement pour un titre
-pour qu'il "fasse le buzz". On a pensé à cette valeur seuil car les
-algorithmes de recommandation de Youtube cherchent à "faire buzzer" des
-vidéos (du peu que nous connaissons de ces algorithmes du côté
-utilisateur).
+Cette hypothèse vient du fait que nous supposons qu'à partir de cette valeur seuil, il y a assez d'engouement pour un titre pour qu'il "fasse le buzz".
 
+On a pensé à cette valeur seuil car les algorithmes de recommandation de Youtube cherchent à "faire buzzer" des vidéos (du peu que nous connaissons de ces algorithmes du côté utilisateur).
 
+##### Nuage de point sensé représenter la relation entre le nombre de Streams et le nombre de Likes
+```{r}
+ggplot(dataset_if36, aes(x = Stream, y = Likes + 1)) +
+  geom_point(alpha = 0.2, size = 0.3) +
+  ggtitle("Relationship between Streams and Likes") +
+  xlab("Streams") +
+  ylab("Likes") +
+  coord_fixed() +
+  scale_x_log10(labels = scales::number_format()) + 
+  scale_y_log10(labels = scales::number_format())
 
+```
+
+#### Analyse
+Ce diagramme de dispersion représente la relation entre le nombre de streams sur Spotify et le nombre de likes reçus par la musique.
+
+On peut constater qu'avec l'augmentation du nombre de streams, le nombre de likes augmente également, ce qui suggère que le contenu plus populaire obtient généralement plus de likes, ce qui est conforme à notre compréhension quotidienne.
+
+Avec l'augmentation du nombre de streams, la dispersion du nombre de likes augmente également. Lorsque le nombre de streams atteint 100 000, la plupart des likes se situent entre 1 et 100 000, mais lorsque le nombre de streams atteint 1 000 000 000, le nombre de likes varie de 1 à près de 100 000 000. Cela indique une plus grande incertitude quant aux likes pour le contenu avec un grand nombre de streams.
+
+Il existe quelques valeurs aberrantes possibles dans le graphique, en particulier dans la zone de forts streams. Les points ayant un grand nombre de streams mais un nombre de likes très faible peuvent représenter de la diffusion virale ou du marketing excessif de la musique.
+
+##### Nuage de point sensé représenter la relation entre le nombre de Views et le nombre de Likes
+```{r}
+ggplot(dataset_if36, aes(x = Views, y = Likes + 1)) +
+  geom_point(alpha = 0.15, size = 0.3) +  
+  geom_smooth(method = "lm", se = FALSE, color = "blue", linewidth = 0.5) + 
+  ggtitle("Relationship between Views and Likes") + 
+  xlab("Views") +  
+  ylab("Likes") +  
+  coord_fixed() +  
+  scale_x_log10(labels = scales::number_format()) + 
+  scale_y_log10(labels = scales::number_format())
+
+```
+
+#### Analyse
+Ce graphique de dispersion représente la relation entre le nombre de vues sur YouTube et le nombre de likes reçus par la musique.
+
+On peut observer qu'avec l'augmentation du nombre de vues, le nombre de likes augmente également. Cette forte corrélation positive suggère que les vidéos avec un grand nombre de vues ont tendance à recevoir davantage de likes. Cela est logique, car une exposition accrue entraîne généralement plus d'interaction.
+
+En même temps, sur une échelle logarithmique, la distribution des points se rapproche d'une ligne droite. On peut ajouter une ligne dans le graphique pour visualiser cela, ce qui indique une relation de puissance entre les vues et les likes. Sur une échelle logarithmique, chaque augmentation de pourcentage fixe dans le nombre de vues entraîne également une augmentation de pourcentage fixe dans le nombre de likes.
+
+##### Nuage de point sensé représenter la relation entre le nombre de Views et le nombre de Comments
+```{r}
+ggplot(dataset_if36, aes(x = Views, y = Comments + 1, 
+                         color = ifelse(Comments + 1 < 2, "blue", "black"))) +
+  geom_point(alpha = 0.2, size = 0.3) +
+  ggtitle("Relationship between Views and Comments") +
+  xlab("Views") +
+  ylab("Comments") +
+  coord_fixed() +
+  scale_x_log10(labels = scales::number_format()) +  # Assuming there are no zero or negative values in Views
+  scale_y_log10(labels = scales::number_format()) +
+  scale_color_manual(values = c("blue" = "blue", "black" = "black"))+
+  theme(legend.position = "none")
+
+```
+
+#### Analyse
+Ce graphique de dispersion représente la relation entre le nombre de vues sur YouTube et le nombre de commentaires reçus par la musique.
+
+En observant les points noirs, on peut remarquer qu'avec l'augmentation du nombre de vues, le nombre de commentaires augmente également. Cette corrélation positive suggère que les vidéos avec un grand nombre de vues ont tendance à recevoir plus de commentaires.
+
+Les points bleus dans le graphique représentent les cas où le nombre de commentaires est de zéro. Certains vidéos, bien qu'ayant un grand nombre de vues, n'ont toujours pas de commentaires. Cela peut être dû au fait que les créateurs ont désactivé les commentaires sur la vidéo.
+
+Pour des vidéos avec le même nombre de vues, le nombre de commentaires peut varier. Cela peut être dû au contenu de la musique, certaines musiques étant plus susceptibles de susciter des commentaires que d'autres. De plus, pour des vidéos avec le même nombre de commentaires, le nombre de vues peut également varier. Par exemple, il existe des vidéos avec plus d'un million de vues qui ont moins de dix commentaires, tandis que d'autres vidéos avec moins de mille vues ont également moins de dix commentaires. Cela peut être dû à la nature de la musique, certaines musiques, telles que la musique de fond ou la musique dans une langue moins courante, pouvant inciter les spectateurs à apprécier la mélodie sans nécessairement laisser de commentaires.
+
+#### Conclusion
+Il existe une corrélation positive entre le nombre de streams sur Spotify et le nombre de likes, entre le nombre de vues sur YouTube et le nombre de likes, ainsi qu'entre le nombre de vues sur YouTube et le nombre de commentaires. Cependant, différent à ce que l'on pourrait penser, ces relations ne suivent pas une progression linéaire dès le départ et après une progression exponentielles. Parmi ces relations, la relation entre le nombre de vues sur YouTube et le nombre de likes suivre une loi de puissance de manière assez évidente.
 ### Question 7:
 
 Est-ce qu'on peut reconnaître un artiste / un album par une combinaison
