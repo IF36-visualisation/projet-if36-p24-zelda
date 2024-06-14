@@ -7,8 +7,8 @@ library(tibble)
 library(ggplot2)
 library(gridExtra)
 library(plotly)
+library(lubridate)
 
-dataset <- starwars
 dataset_if36 <- read.csv("dataset_if36.csv")
 
 df <- dataset_if36 %>%
@@ -157,8 +157,49 @@ shinyServer(function(input, output){
     plot_bar_charts(mean_stats_year, "mean_comments")
   })
 
+##########################visualisation question 9####################"
+  filtered_data <- reactive({
+    dataset_if36 %>%
+      filter(year(as.Date(date, "%Y-%m-%d")) %in% input$selected_years,
+             Album_type %in% input$album_type)
+  })
+  
+  artist_yearly <- reactive({
+    filtered_data() %>%
+      mutate(year = year(as.Date(date, "%Y-%m-%d"))) %>%
+      group_by(Artist, year, Album_type) %>%
+      summarise(Release_Frequency = n(),
+                Total_Streams = sum(Stream, na.rm = TRUE),
+                Total_Views = sum(Views, na.rm = TRUE),
+                .groups = 'drop')
+  })
+  
+  artist_stats <- reactive({
+    artist_yearly() %>%
+      group_by(Artist, Album_type) %>%
+      summarise(Avg_Frequency = mean(Release_Frequency),
+                Avg_Streams = mean(Total_Streams),
+                Avg_Views = mean(Total_Views),
+                .groups = 'drop')
+  })
+  
+  output$scatterPlot <- renderPlot({
+    y_var <- input$y_var
+    
+    ggplot(artist_stats(), aes(x = Avg_Frequency, y = !!sym(paste0("Avg_", y_var)), color = Album_type)) +
+      geom_point(alpha = 0.7, size = 2) +
+      scale_color_manual(values = c("album" = "red", "single" = "blue")) +
+      labs(title = paste("La relation entre Average Yearly Release Frequency et Average Yearly", y_var),
+           x = "Average Yearly Release Frequency",
+           y = paste("Average Yearly", y_var),
+           color = "Album Type") +
+      theme_minimal() +
+      theme(axis.text.x = element_text(hjust = 1),
+            axis.title.x = element_text(size = 14),
+            axis.title.y = element_text(size = 14))
+  })
 
- ##########################visualisation question 12####################"
+ ##########################visualisation question 12####################
 
   output$graphique_q12 <- renderPlotly({
     df_duree <- scaled_df %>%
@@ -171,5 +212,6 @@ shinyServer(function(input, output){
     ggplotly(plt)
   })
 
-
 })
+
+

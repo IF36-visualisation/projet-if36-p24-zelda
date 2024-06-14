@@ -2,12 +2,13 @@ library(shinydashboard)
 library(plotly)
 
 dashboardPage(
-  dashboardHeader(title = "Star wars"),
+  dashboardHeader(title = "Visualisaition"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("question2", icon=icon("th"), tabName = "question2"),
       menuItem("quesion6", icon = icon("th"), tabName = "question6"),
       menuItem("question8", icon=icon("th"), tabName = "question8"),
+      menuItem("Question 9", icon = icon("th"), tabName = "question9"),
       menuItem("question12", icon=icon("th"), tabName = "question12"),
       sliderInput("annee", "année de sortie", 1918, 2023, 2009)
     )
@@ -56,6 +57,24 @@ dashboardPage(
                 box(title = "", width = 4,
                     plotlyOutput("graphique_q8_comment"))),
 
+      ),
+      
+      tabItem(tabName = "question9",  
+              fluidRow(
+                box(
+                  title = "Music Analysis Dashboard",
+                  width = 12,
+                  selectInput("selected_years", "Select Years:", 
+                              choices = sort(unique(year(as.Date(dataset_if36$date, "%Y-%m-%d")))), 
+                              multiple = TRUE),
+                  checkboxGroupInput("album_type", "Select Album Type:", 
+                                     choices = unique(dataset_if36$Album_type),
+                                     selected = unique(dataset_if36$Album_type)),
+                  radioButtons("y_var", "Select Y-axis Variable:",
+                               choices = list("Streams" = "Streams", "Views" = "Views")),
+                  plotOutput("scatterPlot")
+                )
+              )
       ),
 
       tabItem(tabName="question12",
