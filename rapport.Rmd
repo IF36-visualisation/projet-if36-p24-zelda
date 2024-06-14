@@ -858,28 +858,33 @@ composantes principales :
 # L’inertie des cps
 fviz_eig(pca_result)
 ggsave("pca_loadings_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
-![inertie](https://imgur.com/8VAmUdX.png)
-```
 
-Les deux première composantes représentent environ 45 % d'inertie, nous
-pouvons donc dire que cette représentation n'est pas très idéal. Nous
-regardons ensuite le cercle de corrélation :
+```
+![inertie](https://imgur.com/8VAmUdX.png)
+Les deux première composantes représentent environ 45 % d'inertie, nous pouvons donc dire que cette représentation n'est pas très idéal. Nous regardons ensuite le cercle de corrélation :
 
 ```{r}
 # Cercle des corrélations
 fviz_pca_var(pca_result, col.var = "contrib", col.ind = "cos2", repel = TRUE)
 ggsave("pca_contrib_plot.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
-![cercle](https://imgur.com/xocg4eJ.png)
-```
 
+```
+![cercle](https://imgur.com/xocg4eJ.png)
+
+Le cercle de corrélation nous montre qu'il existe plusieurs groupes d'attribut :
+    Danceability et Valence
+    Loudness et Energy 
+    Tempo et Liveness 
+    Acousticness et Instrumentalness
+    Speechiness et Key(ce groupe ne donne pas beaucoup de contribution sur les cps.)
 ```{r}
 # Appliquer la classification hiérarchique sur le résultat de l'ACP
 pca_scores <- as.data.frame(pca_result$x)
 dist_mat <- dist(pca_scores[, 1:2], method = "euclidean")
 hc <- hclust(dist_mat, method = "ward.D2")
 
-rect.hclust(hc, k = 3)
-clusters <- cutree(hc, k = 3)
+rect.hclust(hc, k = 6)
+clusters <- cutree(hc, k = 6)
 clustered_data <- cbind(selected_data, Cluster = clusters)
 write.csv(clustered_data, "clustered_data.csv")
 
@@ -889,9 +894,26 @@ clustered_data <- cbind(clustered_data, PC1 = pca_scores[, 1], PC2 = pca_scores[
 ggplot(clustered_data, aes(x = PC1, y = PC2, color = factor(Cluster))) +
   geom_point() +
   labs(title = "CAH sur PC1 et PC2")
-![nuage des points](https://imgur.com/curmszd.png)
-```
 
+```
+![nuage des points](https://imgur.com/curmszd.png)
+
+Si on faire une combinaison du résultat de CAH et le cercle de corrélation, on trouve que les groupes de variable dans le cercle de corrélation nous permettent de décrire les clusters.
+Par exemple, le cluster 1 est Ce cluster est fortement influencé par Danceability et Valence, le cluster 2 est influencé par Loudness et Energy, etc.
+
+![Plot combiné](https://imgur.com/MM6KxxX.png)
+
+On peut maintenant valider notre hypothèse grâce à ce découvert. Le nuage de point des titres et aussi un nuage de point des artiste.
+Prenons l'exemple de groupe Musicale "AC/DC", on liste nombre de ses ouvres dans chaque cluster :
+Cluster 1 : 3 
+Cluster 2 : 2
+Cluster 3 : 0
+Cluster 4 : 4
+Cluster 5 : 0
+Cluster 6 : 0  
+Donc on trouve les attributs liés au ce groupe :
+Dancablity, Valence, Loudness, Energy, Tempo, Liveness
+Ces caractères correspondent bien notre impression de "AC/DC" ! 
 
 ### Question 9
 
