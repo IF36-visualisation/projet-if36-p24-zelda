@@ -1239,16 +1239,15 @@ github](https://github.com/jkaupp/tidytuesdays/blob/master/2020/week4/R/analysis
 **Y-a-t-il un lien entre les valeurs des différents attributs comme
 'danceability' et 'energy' ?**
 
-Variables : attributs quantitatifs
+**Variables** : attributs quantitatifs
 
-Objectif : Relation + Comparaison avec valeurs continues (attributs).
+**Objectif** : Relation + Comparaison avec valeurs continues (attributs).
 
-Hypothèses :
+**Hypothèses** :
 
--   On s'attend à ce qu'il y ai des liens plus forts entre certains
-    attributs qu'avec d'autres.
+On s'attend à ce qu'il y ai des liens plus forts entre certains attributs qu'avec d'autres.
 
-##### Analyse sur la question
+#### Analyse sur la question
 
 Après tous les questions et recherches précédentes et par l'expérience
 dans la vie quotidienne, on peut déjà avoir une hypothèse que certain
@@ -1256,37 +1255,60 @@ variable quantitatifs peuvent avoir une corrélation avec les autres. Le
 but de cette question est d'essayer faire une analyse et quantifier ces
 corrélation entre les attributs.
 On peut facilement calculer la matrice de corrélation entre ces attributs.
+
 ```{r}
 library(ggplot2)
+library(tidyverse)
 library(reshape2)
 
-data <- read.csv("dataset_if36.csv")
-variables_quantitatives <- data[, c("Danceability", "Energy", "Loudness", "Speechiness", "Acousticness", "Instrumentalness", "Liveness", "Valence", "Tempo")]
+data <- read.csv("C:/Users/Glibc/Documents/UTT/P24/IF36/Projet/Question11/data/dataset_if36.csv")
 
-matrice_de_corrélation <- cor(variables_quantitatives)
+variables_actives <- data %>% select(Danceability, 
+                                     Energy, 
+                                     Key, 
+                                     Loudness, 
+                                     Speechiness, 
+                                     Acousticness, 
+                                     Instrumentalness, 
+                                     Liveness, 
+                                     Valence, 
+                                     Tempo)
 
-inertie_totale <- rowSums(abs(matrice_de_corrélation))
+matrice_corrélation <- cor(variables_actives)
+
+inertie_totale <- rowSums(matrice_corrélation)
 
 critère_tri <- order(inertie_totale, decreasing = TRUE)
-matrice_triée <- matrice_de_corrélation[critère_tri, critère_tri]
+matrice_triée <- matrice_corrélation[critère_tri, critère_tri]
 
 cor_df <- as.data.frame(as.table(matrice_triée))
 colnames(cor_df) <- c("variables_x", "variables_y", "valeur")
 
-résultat <- 
-    ggplot(cor_df, aes(variables_y, variables_x, fill = valeur,label = round(valeur, 2))) +
-    geom_tile(color = "white") +
-    geom_text(color = "black") + #afficher les valeurs de matrice 
-    scale_fill_gradient2(low = "blue", high = "red", mid = "GRAY", #rendre les termes blanches visibles.
-                       midpoint = 0, limit = c(-1,1), space = "Lab", 
-                       name="Corrélation") +
+ggplot(cor_df, 
+       aes(variables_y, 
+           variables_x, 
+           fill = valeur,
+           label = round(valeur, 2))) +
+geom_tile(color = "white") +
+geom_text(color = "black") + 
+scale_fill_gradient2(low = "blue", 
+                     high = "red", 
+                     mid = "GRAY", 
+                     midpoint = 0, 
+                     limit = c(-1,1), 
+                     space = "Lab", 
+                     name="Corrélation") +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-                                   size = 10, hjust = 1)) +
+    theme(axis.text.x = element_text(angle = 45, 
+                                     vjust = 1, 
+                                     size = 10, 
+                                     hjust = 1)) +
     coord_fixed() +
-    labs(title = "Matrice de corrélation des variables quantitatives", x = "", y = "") +
+    labs(title = "Matrice de corrélation") +
     theme(plot.title = element_text(hjust = 0.5))
-
-print(résultat)
-![res](https://imgur.com/eEnhNYV.png)
 ```
+![res](https://imgur.com/eEnhNYV.png)
+
+Voici la matrice de corrélation. Nous voyons bien que la corrélation entre "Danceability" et "Energy" est 0.24. Le lien entre ces deux variables existe mais n'est pas très fort. La variable plus corrélée avec "Dancability" est "Valence"(0.46). 
+#### Conclustion
+Cette matrice nous permet aussi de consulter la corrélation entre les n'importe quel binôme de variable, que ce soit positif ou négatif.
