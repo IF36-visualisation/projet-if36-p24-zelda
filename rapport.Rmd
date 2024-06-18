@@ -605,14 +605,22 @@ stream_view_2009 <- df_sorted %>%
 ```{r}
 
 #représentation des nuages de point avant et après 2008
-ggplot_1 <- ggplotly(ggplot(stream_view_2008, aes(x = Stream, y = Views)) +
-                             geom_point(color = "blue")+geom_smooth()+scale_x_log10()+scale_y_log10()+
-                             labs(title="relation between Stream end Views before 2008")+
-                             theme(plot.title = element_text(size = 8.5)))
+ggplot_1 <- ggplotly(
+      ggplot(stream_view_2008, aes(x = Stream, y = Views)) +
+        geom_point(color = "blue") +
+        geom_smooth() +
+        scale_x_log10(labels = comma, breaks = trans_breaks("log10", function(x) 10^x)) +
+        scale_y_log10(labels = comma, breaks = trans_breaks("log10", function(x) 10^x)) +
+        labs(title = "Relation between Stream and Views before 2008") +
+        theme(plot.title = element_text(size = 8.5))
+    )
 
 ggplot_2 <- ggplotly(ggplot(stream_view_2009, aes(x = Stream, y = Views)) +
-                             geom_point(color = "blue")+geom_smooth()+scale_x_log10()+scale_y_log10()+
-                             labs(title="relation between views and stream from 2008")+
+                             geom_point(color = "blue") +
+                             geom_smooth() +
+                             scale_x_log10(labels = comma, breaks = trans_breaks("log10", function(x) 10^x)) +
+                             scale_y_log10(labels = comma, breaks = trans_breaks("log10", function(x) 10^x)) +
+                             labs(title = "Relation between Views and Stream from 2008") +
                              theme(plot.title = element_text(size = 8.5)))
 ggplot_1
 ggplot_2
@@ -626,10 +634,11 @@ ggplot_2
 ```{r}
 #comparaison annuelle entre le nombre de vues et le nombre de stream
 
-ggplot(stream_views_annee)+geom_line(aes(x=annee, y=stream), color="blue")+
-  geom_line(aes(x=annee, y=view), color="red")+
-  scale_color_manual(values = c("Stream" = "blue", "View" = "red"))+
-  scale_x_continuous(breaks = seq(1913, 2023, by = 10))
+ggplotly(ggplot(stream_views_annee) +
+                             geom_line(aes(x = annee, y = stream), color = "blue") +
+                             geom_line(aes(x = annee, y = view), color = "red") +
+                             scale_color_manual(values = c("Stream" = "blue", "View" = "red")) +
+                             scale_x_continuous(breaks = seq(1913, 2023, by = 10)))
 
 ```
 
@@ -652,6 +661,7 @@ Enfin grace au lineplot qui permet de visualiser l'évolution annuelle du
 nombre de vues sur youtube et du nombre de stream sur spotify on peut
 voir que pour les chanson sorties à partir de 2010, on a une
 augmentation du nombre d'écoute sur spotify par rapport à youtube.
+
 
 ### Question 3
 
