@@ -8,7 +8,9 @@ library(ggplot2)
 library(gridExtra)
 library(plotly)
 library(lubridate)
+library(scales)
 
+# Load the dataset outside the server function
 dataset_if36 <- read.csv("dataset_if36.csv")
 
 df <- dataset_if36 %>%
@@ -18,30 +20,28 @@ df <- dataset_if36 %>%
   select(-date_split) %>%
   filter(!is.na(annee) & !is.na(Stream) & !is.na(Views)) %>%
   filter(is.finite(Stream) & is.finite(Views)) %>%
-  filter(annee!=0)
-
+  filter(annee != 0)
 
 df_sorted <- df %>%
-  filter(annee!=0)%>%
+  filter(annee != 0) %>%
   arrange(annee, mois)
+
 ############################ éléments question 2 ##################################
 stream_views_annee <- df_sorted %>%
-  group_by(annee)%>%
-  summarise(stream=sum(Stream), view=sum(Views))
+  group_by(annee) %>%
+  summarise(stream = sum(Stream), view = sum(Views), .groups = 'drop')
 
-
-#chanson  avant 2008
+# chanson avant 2008
 stream_view_2008 <- df_sorted %>%
-  select(Views, Stream, annee, mois)%>%
-  filter(annee<2008)
+  select(Views, Stream, annee, mois) %>%
+  filter(annee < 2008)
 
-#chanson après 2008
+# chanson après 2008
 stream_view_2009 <- df_sorted %>%
-  select(Views, Stream, annee, mois)%>%
-  filter(annee>2008)
+  select(Views, Stream, annee, mois) %>%
+  filter(annee > 2008)
 
-
-###########################éléments pour la question 6########################
+########################### éléments pour la question 6 ########################
 numeric_columns <- c("Loudness", "Valence", "Speechiness", "Tempo", "Danceability", "Acousticness", "Instrumentalness", "Energy")
 
 # Séparation des colonnes numériques et non numériques
@@ -55,18 +55,16 @@ scaled_numeric_data <- scale(numeric_data)
 # Recombinaison des colonnes normalisées et non numériques
 scaled_df <- data.frame(scaled_numeric_data, non_numeric_data)
 
-
-######################élément question 8###########################################
-
+###################### élément question 8 ###########################################
 mean_stats <- scaled_df %>%
   group_by(annee, official_video) %>%
   summarise(
     mean_views = mean(Views, na.rm = TRUE),
     mean_likes = mean(Likes, na.rm = TRUE),
-    mean_comments = mean(Comments, na.rm = TRUE)
+    mean_comments = mean(Comments, na.rm = TRUE),
+    .groups = 'drop'
   ) %>%
   pivot_longer(cols = c(mean_views, mean_likes, mean_comments), names_to = "Metric", values_to = "Value")
-
 
 plot_bar_charts <- function(data, metric) {
   p <- ggplot(data[data$Metric == metric, ], aes(x = Metric, y = Value, fill = as.factor(official_video))) +
@@ -78,49 +76,62 @@ plot_bar_charts <- function(data, metric) {
   ggplotly(p)
 }
 
+shinyServer(function(input, output) {
 
+  # Dummy values for avg_height and median_mass for demonstration
+  avg_height <- mean(dataset_if36$height, na.rm = TRUE)
+  median_mass <- median(dataset_if36$mass, na.rm = TRUE)
 
+  output$averageheight <- renderInfoBox({
+    infoBox(
+      "Average Height", avg_height,
+      color = "purple"
+    )
+  })
 
-shinyServer(function(input, output){
-  avg_height <- mean(dataset$height, na.rm = TRUE)
-  median_mass <- median(dataset$mass, na.rm = TRUE)
+  output$medianmass <- renderInfoBox({
+    infoBox(
+      "Median Mass", median_mass,
+      color = "purple"
+    )
+  })
 
-  output$averageheight <- renderInfoBox({infoBox(
-    "Progress", avg_height,
-    color = "purple")}
-  )
-  output$medianmass <- renderInfoBox({infoBox(
-    "Progress", median_mass,
-    color = "purple")})
-
-  # output Menu question2 , graphique 1
+  # Output Menu question2, graphique 1
   output$graphique1 <- renderPlotly({
-    ggplot_obj <- ggplotly(ggplot(stream_view_2008, aes(x = Stream, y = Views)) +
-                             geom_point(color = "blue")+geom_smooth()+scale_x_log10()+scale_y_log10()+
-                             labs(title="relation between Stream end Views before 2008")+
-                             theme(plot.title = element_text(size = 8.5)))
+    ggplot_obj <- ggplotly(
+      ggplot(stream_view_2008, aes(x = Stream, y = Views)) +
+        geom_point(color = "blue") +
+        geom_smooth() +
+        scale_x_log10(labels = comma, breaks = trans_breaks("log10", function(x) 10^x)) +
+        scale_y_log10(labels = comma, breaks = trans_breaks("log10", function(x) 10^x)) +
+        labs(title = "Relation between Stream and Views before 2008") +
+        theme(plot.title = element_text(size = 8.5))
+    )
     ggplot_obj
   })
 
-  # output Menu question2 , graphique 2
+  # Output Menu question2, graphique 2
   output$graphique2 <- renderPlotly({
     ggplot_obj <- ggplotly(ggplot(stream_view_2009, aes(x = Stream, y = Views)) +
-                             geom_point(color = "blue")+geom_smooth()+scale_x_log10()+scale_y_log10()+
-                             labs(title="relation between views and stream from 2008")+
+                             geom_point(color = "blue") +
+                             geom_smooth() +
+                             scale_x_log10(labels = comma, breaks = trans_breaks("log10", function(x) 10^x)) +
+                             scale_y_log10(labels = comma, breaks = trans_breaks("log10", function(x) 10^x)) +
+                             labs(title = "Relation between Views and Stream from 2008") +
                              theme(plot.title = element_text(size = 8.5)))
     ggplot_obj
   })
 
   output$graphique3 <- renderPlotly({
-    ggplot_obj <- ggplotly(ggplot(stream_views_annee)+geom_line(aes(x=annee, y=stream), color="blue")+
-                             geom_line(aes(x=annee, y=view), color="red")+
-                             scale_color_manual(values = c("Stream" = "blue", "View" = "red"))+
+    ggplot_obj <- ggplotly(ggplot(stream_views_annee) +
+                             geom_line(aes(x = annee, y = stream), color = "blue") +
+                             geom_line(aes(x = annee, y = view), color = "red") +
+                             scale_color_manual(values = c("Stream" = "blue", "View" = "red")) +
                              scale_x_continuous(breaks = seq(1913, 2023, by = 10)))
+    ggplot_obj
   })
 
-  ##########################question6 visualisation##########################""""
-
-
+  ########################## question6 visualisation ##########################
   output$graphique_q6 <- renderPlotly({
     df_2010 <- scaled_df %>%
       filter(annee == input$annee)
@@ -136,34 +147,35 @@ shinyServer(function(input, output){
 
     plot_ly(count_data, labels = ~Attribute, values = ~Count, type = 'pie',
             marker = list(colors = colors)) %>%
-      layout(title = paste('Répartition des attributs de chanson en ', input$annee))
+      layout(title = paste('Répartition des attributs de chanson en', input$annee))
   })
 
-####################visualisations question 8#################################
+  #################### visualisations question 8 ###############################
   output$graphique_q8_view <- renderPlotly({
-    mean_stats_year <- mean_stats%>%
-      filter(annee==input$annee)
+    mean_stats_year <- mean_stats %>%
+      filter(annee == input$annee)
     plot_bar_charts(mean_stats_year, "mean_views")
-
   })
+
   output$graphique_q8_like <- renderPlotly({
-    mean_stats_year <- mean_stats%>%
-      filter(annee==input$annee)
+    mean_stats_year <- mean_stats %>%
+      filter(annee == input$annee)
     plot_bar_charts(mean_stats_year, "mean_likes")
   })
+
   output$graphique_q8_comment <- renderPlotly({
-    mean_stats_year <- mean_stats%>%
-      filter(annee==input$annee)
+    mean_stats_year <- mean_stats %>%
+      filter(annee == input$annee)
     plot_bar_charts(mean_stats_year, "mean_comments")
   })
 
-##########################visualisation question 9####################"
+  ########################## visualisation question 9 #########################
   filtered_data <- reactive({
     dataset_if36 %>%
       filter(year(as.Date(date, "%Y-%m-%d")) %in% input$selected_years,
              Album_type %in% input$album_type)
   })
-  
+
   artist_yearly <- reactive({
     filtered_data() %>%
       mutate(year = year(as.Date(date, "%Y-%m-%d"))) %>%
@@ -173,7 +185,7 @@ shinyServer(function(input, output){
                 Total_Views = sum(Views, na.rm = TRUE),
                 .groups = 'drop')
   })
-  
+
   artist_stats <- reactive({
     artist_yearly() %>%
       group_by(Artist, Album_type) %>%
@@ -182,25 +194,20 @@ shinyServer(function(input, output){
                 Avg_Views = mean(Total_Views),
                 .groups = 'drop')
   })
-  
+
   output$scatterPlot <- renderPlot({
     y_var <- input$y_var
-    
+
     ggplot(artist_stats(), aes(x = Avg_Frequency, y = !!sym(paste0("Avg_", y_var)), color = Album_type)) +
       geom_point(alpha = 0.7, size = 2) +
       scale_color_manual(values = c("album" = "red", "single" = "blue")) +
       labs(title = paste("La relation entre Average Yearly Release Frequency et Average Yearly", y_var),
            x = "Average Yearly Release Frequency",
-           y = paste("Average Yearly", y_var),
-           color = "Album Type") +
-      theme_minimal() +
-      theme(axis.text.x = element_text(hjust = 1),
-            axis.title.x = element_text(size = 14),
-            axis.title.y = element_text(size = 14))
+           y = paste("Average Yearly", y_var)) +
+      theme_minimal()
   })
 
- ##########################visualisation question 12####################
-
+  ###################################visualisation question 12##########################
   output$graphique_q12 <- renderPlotly({
     df_duree <- scaled_df %>%
       select(Uri, Duration_ms, annee, Views)%>%
@@ -212,6 +219,5 @@ shinyServer(function(input, output){
     ggplotly(plt)
   })
 
+
 })
-
-
