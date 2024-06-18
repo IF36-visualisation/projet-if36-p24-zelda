@@ -835,6 +835,65 @@ Pour des vidéos avec le même nombre de vues, le nombre de commentaires peut va
 Il existe une corrélation positive entre le nombre de streams sur Spotify et le nombre de likes, entre le nombre de vues sur YouTube et le nombre de likes, ainsi qu'entre le nombre de vues sur YouTube et le nombre de commentaires. Cependant, différent à ce que l'on pourrait penser, ces relations ne suivent pas une progression linéaire dès le départ et après une progression exponentielles. Parmi ces relations, la relation entre le nombre de vues sur YouTube et le nombre de likes suivre une loi de puissance de manière assez évidente.
 
 
+
+
+
+
+
+### question 6
+
+Est-ce possible de discerner des 'modes' en termes d'attributs de
+chansons en fonction du temps ?
+
+Par exemple : le rap qui était à la mode à une période donnée et donc
+plus de titres avec les attributs 'Speechiness' élevé et
+'Instrumentalness' faible.
+
+Il s'agit donc ici d'essayer de repérer des intervalles de valeurs
+communes pour les attributs des titres d'une même période.
+
+Variables : attributs, 'date'
+
+Objectif : Relation + Evolution (+ distribution/statistique) avec
+valeurs continues (attributs) et ordinales (dates qu'on catégorisera en
+périodes : intervalles de dates).
+
+Hypothèses :
+
+```         
+On s'attend à ce qu'on retrouve des intervalles de valeurs pour les attributs qui auront une densité légèrement plus élevée : il sera cependant probablement difficile de raccorder ces données à un genre précis de musique comme le rap donné en exemple.
+La difficulté avec cette question/analyse est que sans savoir ce qu'on cherche, il sera peut-être difficile de repérer des schémas/patterns pour les attributs des chansons en fonction de la période. Il est donc possible que notre analyse soit difficilement conclusive.
+```
+
+#### visualisation de l'évolution des styles de chansons
+
+![histogram](https://briandiffo.github.io/image_if36/question%206.png)
+
+Une chansons est caractérisée par différents attributs qui sont son
+acoustique, ses paroles , sa dansabilité ainsi que son intensité se sont
+ces différentes caractéristiques qui définissent une chanson. Le but de
+notre recherche est de déterminer si durant certaine période certain de
+ces attributs dominent plus que les autres c'est à dire si par exemple
+en l'an XXXX les chansons avec beaucoup paroles était populaire.
+
+Pour réaliser cette analyse , nous avons d'abord normalisé ces attribut
+pour leur donner les même échelles et nous avons ensuite pour chaque
+année compter le nombre de musique ou chaque attribut domine. On peut
+voir par exemple en 1962 que 84% des chansons ont un aspect acoustique
+relativement important. Et c'est le cas durant toutes les années de 1960
+à 1980. Par contre cette tendance évolue en effet durant les années 2000
+on peut observer que cette répartition des chanson se stabilise et on a
+à peu près un équilibre entre les différents attributs.
+
+Au vu de cette analyse , on peut conclure que oui le caractère
+acoustique, parole ou dansabilité des différentes chansons évolue avec
+le temps. Il y'a des période où les chansons avec beaucoup d'acoustiques
+sont les plus répandues et d'autres où elles le sont moins
+
+
+
+
+
 ### Question 7:
 
 Est-ce qu'on peut reconnaître un artiste / un album par une combinaison des attributaires ?
