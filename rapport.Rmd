@@ -977,6 +977,59 @@ Donc on trouve les caractères liés au ce groupe, et ces caractères correspond
 #### Conclusion : 
 Reconnaître un artiste/un album par des attributs est tout à fait possible. Grâce à une combinaison d'analyse en composantes principales et la classification ascendante hiérarchique, nous pouvons trouver les différents styles musicals puis le style d'artiste/album. 
 
+
+
+
+### question 8
+
+Sur youtube, est-ce que la distinction officiel/pas officiel a un effet
+sur les écoutes ? / les likes ? / les commentaires ?
+
+Variables : 'Official_video', 'Views', 'Likes', 'Comments'
+
+Objectif : Relation avec valeurs discrètes (nombres d'écoutes, likes,
+...) et nominales (official_video).
+
+Hypothèses :
+
+```         
+Il semblerait que le jeu de données ne propose pas de vidéos officielles et des vidéos non officielles pour un même titre donc on peut supposer que si la vidéo d'une chanson n'est pas officielle, il n'existe probablement pas de vidéo officielle.
+On s'attend donc à ce qu'il n'y ai pas de grande différence entre les écoutes / likes / commentaires des vidéos officielles et non officielles.
+```
+
+#### nombre de views, likes et comments pour l'année 2021
+
+![histogram](https://briandiffo.github.io/image_if36/question%208.png)
+\#### nombre de views, likes et comments pour l'année 1960
+
+![histogram](https://briandiffo.github.io/image_if36/question8_2.png)
+
+#### nombre de views, likes et comments pour l'année 1967
+
+![histogram](https://briandiffo.github.io/image_if36/question8_3.png)
+
+Le but de cette analyse était de déterminer si le caractère officiel ou
+non d'une chanson avait une influence sur son nombre de vues ou de like
+ou de commentaires. Pour des soucis d'équitté étant donné qu'on a
+beaucoup plus de chanson officiel que non officielle , nous avons fondé
+notre analyse sur la moyenne.
+
+Comme on pouvait s'y attendre les musique officielle sont largements
+plus appréciées et et regardé que les vidéos non officielles. Par contre
+, on peut observer autre chose , c'est que pour les chansons sortie il
+y'a relativement longtemps, on rencontre beaucoups plus de cas où le
+chansons non officielles dépassent celles officielles. c'est le cas par
+exemple pour les chansons sorties en 1960 où celles sorties en 1967 .
+
+Cela s'explique par le fait que quands ces chansons sont sorties ,
+Youtube n'était pas encore assez connue pour qu'une chaine soit
+systématiquement créée et la chanson postée déçu ainsi pour ces vielles
+chansons , se sont généralement des particulier qui les enregistre et
+les déposent sur Youtube
+
+
+
+
 ### Question 9
 
 **Est-ce que la fréquence de diffusion d'album / de single d'un artiste
@@ -1381,3 +1434,112 @@ scale_fill_gradient2(low = "blue",
 Voici la matrice de corrélation. Nous voyons bien que la corrélation entre "Danceability" et "Energy" est 0.24. Le lien entre ces deux variables existe mais n'est pas très fort. La variable plus corrélée avec "Dancability" est "Valence"(0.46). 
 #### Conclustion
 Cette matrice nous permet aussi de consulter la corrélation entre les n'importe quel binôme de variable, que ce soit positif ou négatif.
+
+### question 12
+
+12. comment est-ce que la durée des différentes chanson a évoluée avec
+    le temps
+
+Variables : année, durée
+
+Objectif : comparaison + évolution (attributs).
+
+Hypothèses : de manière générale , il est facile de se rendre compte que
+les chasons qui qui sortaient au paravant étaient deux fois plus longues
+que celles qui sortent actuellement d'ailleurs la longueur des chanson
+se réduit de plus en plus. En effet , les chansons allaient jusqu'à 7
+minutes et maintenant elles tournnent autour de 3 minutes.
+
+```         
+on s'attend donc à une visualisation sur laquelle on pourra remarqué que pour les décénies , les plus éloignée on aura beaucoup plus de chanson avec une durée relativement forte , tandis que avec l'évolution du temps , la répartition changera et on aura beaucoups plus de chanson de faible durée.
+```
+
+![histogram](https://briandiffo.github.io/image_if36/question%2012%201.png)
+![histogram](https://briandiffo.github.io/image_if36/question%2012%202.png)
+![histogram](https://briandiffo.github.io/image_if36/question%2012%203.png)
+
+Le but de cette question était d'évaluer la répartition des durée des
+différentes chansons et de comparer cette répartition en fonction de
+l'année de sortie de chaque chanson. L'hypothèse était que plus les
+musiques sont récentes et plus elles sont courtes de façon globales.
+
+La première chose que l'on remarque sur cette visualisation est que ,
+sur quasiment toutes les périodes , la durée de musique la plus répandue
+se trouve entre 3 et 4 minutes . Cela peut s'observer par des piques de
+l'histogramme à ce niveau là
+
+La deuxième chose que l'on remarque , c'est que plus rentre dans le
+temps , c’est-à-dire vers les années 1980 et autres et plus on a des
+chansons qui ont une durée de 6 à 7 minutes. c'est le cas par exemple
+autour des années 1980. on observer également en 1973 un nombre
+relativement élevé de musique dont la durée varie entre 4 et 6 minutes ,
+ce qui confirme un peu notre hypothèse. Enfin on peut remarquer que à
+partir des année 2010, on note beaucoup moins de chanson ayant une durée
+supérieure à 5 minutes par rapport aux années précédentes
+
+## Bonus / Annexe :
+
+Lors de nos recherches pour ce projet, nous avons trouvé les
+visualisations issus du projet TidyTuesday très inspirants.
+
+Le TidyTuesday Challenge est une initiative hebdomadaire organisée par
+la communauté R for Data Science (R4DS), où les participants sont
+invités à explorer, nettoyer et visualiser des jeux de données fournis
+chaque mardi, en utilisant les principes de la "tidyverse" en R. Cet
+exercice vise à améliorer les compétences en manipulation de données et
+en visualisation tout en favorisant l'apprentissage collaboratif et le
+partage de solutions créatives au sein de la communauté.
+
+Nous avons fait une petite exploration avec le script de Jake Kaupp
+(\@jkaupp sur github) pour essayer de le comprendre et approfondir notre
+maitrise de R et des packages Tidyverse.
+
+Ci-dessous se trouve notre exploration du code de Jake Kaupp pour notre
+jeu de données puis sa visualisation pour une itération du TidyTuesday.
+
+```{r}
+rush <- df %>% 
+  filter(!is.na(Track), Artist %in% c("Metallica", "Smash Mouth", "ABBA", "Britney Spears", "Wolfgang Amadeus Mozart"), Track %in% c("Screaming Suicide", "All Star", "Dancing Queen", "Toxic", "Piano Concerto No. 21 in C Major, K. 467: II. Andante")) %>% 
+  distinct(Track, .keep_all = TRUE) %>% 
+  select(Track, Artist, Danceability, Energy, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo) %>% 
+  mutate(color = c("#f7b801","#f18701","#f35b04","darkred","red")) %>% 
+  mutate_at(vars(Track, Artist), as.character) %>% 
+  mutate_at(vars(Danceability:Tempo), function(x) x/max(x)) %>% 
+  pivot_longer(Danceability:Tempo) 
+
+
+bg <- df %>% 
+          distinct(Uri, .keep_all = TRUE) %>% 
+          distinct(Track, Artist, .keep_all = TRUE) %>% 
+          filter(!is.na(Track)) %>% 
+          select(Track, Artist, Danceability, Energy, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo) %>% 
+          mutate(color = "#d8dee9") %>% 
+  mutate_at(vars(Danceability:Tempo), function(x) x/max(x)) %>% 
+  pivot_longer(Danceability:Tempo) 
+
+
+test_plot <- ggplot(bg, aes(x = name, y = value)) +
+  geom_line(aes(color = color,  group = Track), alpha = 0.1, size = 0.1) +
+  geom_line(data = rush, aes(color = color, group = Artist), size = 0.5) +
+  geom_point(data = rush, aes(color = color, group = Artist), size = 1) +
+  geom_text(data = filter(rush, name == "Valence"), aes(label = glue("{str_replace_all(Artist, '(?<=.)(?!$)', ' ')}\n{Track}"), colour = color), family = "Arial", hjust = 0, nudge_x = 0.1, nudge_y = c(-0.05, 0, 0)) +
+  scale_color_identity() +  
+  scale_fill_identity() +
+  scale_y_continuous(breaks = c(0, 0.5, 1), labels = c("Bas", "Moy", "Haut")) +
+  scale_x_discrete(labels = function(x) str_replace_all(x, "(?<=.)(?!$)", " ")) +
+  expand_limits(x = c(1, 10)) +
+  labs(title = "Charactéristiques Musicales de quelques chansons",
+       x = NULL,
+       y = NULL) +
+  theme_dark() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, size = 6),
+        legend.position = "none")
+
+test_plotn
+```
+
+![](data/tw4_plot.png)
+
+[Lien vers le script de \@jkaupp sur
+github](https://github.com/jkaupp/tidytuesdays/blob/master/2020/week4/R/analysis.R)
+
