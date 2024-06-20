@@ -12,7 +12,7 @@ editor_options:
 # Projet : Analyse exploratoire d'un jeu de données d'un ensemble de titres présents sur les plateformes Youtube et Spotify
 
 > Equipe Zelda :\
-> Zoé Boutin, Brian Diffo Diffo, Hanxiao Sun, He Huang
+> Zoé Boutin, Brian Diffo Diffo, Hanxiao Sun, HUANG He
 
 ## Introduction
 
@@ -1051,7 +1051,7 @@ On peut maintenant valider notre hypothèse grâce à ce découvert. Le nuage de
 Prenons l'exemple de groupe Musicale "AC/DC", on liste nombre de ses ouvres dans chaque cluster : 
 
 Cluster 1 ("Loudness"  , "Energy"  ) : 3  
-Cluster 2 ("Dancablity", "Valence" ) : 2 
+Cluster 2 ("Dancablity", "Valence" ) : 2  
 Cluster 3 : 0  
 Cluster 4 ("Tempo"     , "Liveness") : 4  
 Cluster 5 : 0  
