@@ -749,6 +749,89 @@ les compilations.
     compilations. (Il n'y a pas assez de titres par artiste dans notre
     dataset pour avoir des résultats exploitables)
 
+### Question 4
+
+Y-a-t-il un lien entre les différents attributs des chansons et leur popularité ?
+
+On pourra par exemple aussi ajouté la comparaison avec la valeurs moyenne des attributs en fonction du nombre d'écoutes/la popularité.
+
+Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments'
+Objectif : Relation + Comparaison avec valeurs discrètes (nombres d'écoutes) et continues (attributs).
+
+Hypothèses :
+
+On peut s'attendre à ce que les titres avec plus de mots parlés soient plus populaires.
+
+On peut aussi s'attendre à avoir une répartition avec beaucoup de titres 'lives' avec très peu d'écoutes mais aussi beaucoup avec un grand nombre d'écoutes car c'est un attribut dans une chanson qui peut être plus tranchant pour les auditeurs. 
+On suppose que beaucoup de gens adorent la musique 'live' mais aussi beaucoup de gens la détestent aussi.
+
+##### Analyse
+
+Pour vérifier nos Hypothèses, il souffit de calculer la popularité des différents type de musique.
+Le résultat de la question 7, qui a catégoriesé tous les morceaux dans le jeu de donnée, est très utile pour répondre à cette question. 
+A la fin de la question 7, on trouve un résultat en format csv, qui contient le cluster des chanson et ses indicateurs de popularité : 
+```{r}
+résultat <- data %>% select (Artist, 
+                             Track, 
+                             Album, 
+                             Stream,
+                             Views,
+                             Likes, 
+                             Comments) 
+               %>% mutate (Cluster = clusters)
+               %>% arrange(Cluster)
+
+write.csv(résultat, "résultat.csv", row.names = FALSE)
+```
+
+A partir de ce fichier, on peut faire une comparaison entre les chansons de différent cluster : 
+
+```{r}
+data <- read.csv("résultat.csv")
+
+moyen_indicateurs <- data %>% group_by(Cluster) 
+    %>% summarize(moyen_stream   = mean(Stream  , na.rm = TRUE),
+                  moyen_views    = mean(Views   , na.rm = TRUE),
+                  moyen_likes    = mean(Likes   , na.rm = TRUE),
+                  moyen_comments = mean(Comments, na.rm = TRUE))
+
+normalize <- function(x) 
+{
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+moyen_normalisé <- moyen_indicateurs %>% mutate(moyen_stream   = normalize(moyen_stream  ),
+                                                moyen_views    = normalize(moyen_views   ),
+                                                moyen_likes    = normalize(moyen_likes   ),
+                                                moyen_comments = normalize(moyen_comments))
+
+
+moyen_indicateurs_long <- moyen_normalisé %>% pivot_longer(cols      = starts_with("moyen"), 
+                                                           names_to  = "Indicateurs", 
+                                                           values_to = "Moyen")
+
+
+ggplot(moyen_indicateurs_long, 
+       aes(x    = as.factor(Cluster), 
+           y    = Moyen, 
+           fill = Indicateurs)) +
+geom_bar(stat     = "identity", 
+         position = "dodge") +
+labs(title = "Popularité Clusters", 
+     x     = "Cluster", 
+     y     = "Popularité") +
+theme_minimal() +
+theme(text        = element_text(color = "black"),
+      axis.text.x = element_text(color = "black")) 
+```
+
+![Popularité](https://imgur.com/Lln8j0b.png)
+
+Voici le résultat, les données sont normalisé car la différence entre les groupes sont trop grande, donc les données sont présentées sous la forme de pourcentage. Le cluster plus populaire, donc le cluster n°2, est considéré comme 100%, et le cluster moins populiare, le n°6, est représenté comme 0%. 
+
+
+On trouve que les chansons plus populaires est ceux qui est dancable et avec valence. La performance des "lives" ne sont pas vraiment très mauvais. Ils se sont classés en quarième mais il ne présente pas une grande différence absolute par rapport aux autres groupes. Pauvre musique classique "instrumentale" et "acoustique", s'est classée sans doute en dernière position.
+
 ### Question 5:
 [***Quel est le lien entre le nombre de commentaires et/ou le nombre de likes et le nombre d'écoutes d'un titre ?***]{.underline}
 
