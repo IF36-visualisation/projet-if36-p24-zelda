@@ -14,6 +14,12 @@ editor_options:
 > Equipe Zelda :\
 > Zoé Boutin, Brian Diffo Diffo, Hanxiao Sun, HUANG He
 
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+> ### Important :
+>
+> ^Veuillez\ téléchargé\ le\ jeu\ de\ données\ [ici](https://filesender.renater.fr/?s=download&token=75679a3f-70ed-40b5-8a7e-5deeeda5a6ba)\ puis\ le\ mettre\ dans\ le\ dossier\ /data\ du\ projet.^
+
 ## Introduction
 
 Dans le cadre de l'unité d'enseignement IF36 de l'Université de
@@ -48,7 +54,7 @@ présentes pour chaque chanson offrent une richesse d'informations,
 incluant des données générales plus textuelles sur chaque titre comme le
 nom de la chanson et l'artiste. Mais ce qui nous a particulièrement plu
 sont les informations statistiques sur les plateformes Spotify et
-Yotube, qui nous permettront de faire une comparaison entre les deux
+Youtube, qui nous permettront de faire une comparaison entre les deux
 plateformes. Enfin, le dataset comporte des données sur les attributs
 musicaux de chaque chanson (danceabilité, énergie, tonalité, volume,...)
 sous forme de coefficients ou autre valeurs numériques que l'ont a
@@ -114,7 +120,7 @@ Nous utilisons des librairies non inhérentes au R basique dans notre
 analyse explorative. Les librairies/packages que nous chargeons font
 partie du Tidyverse.
 
-```{r}
+```{r include=FALSE}
 # Uncomment the lines if you need to install a package before loading it:
 # install.packages("readr")
 # install.packages("dplyr")
@@ -153,7 +159,8 @@ library(gridExtra)
 library(stringr)
 library(ggstatsplot)
 library(plotly)
-library(lubridate) 
+library(lubridate)
+library(scales)
 
 ```
 
@@ -165,7 +172,7 @@ importer les données dans notre code pour les transformées en
 fonctions de R et de nos librairies du Tidyverse pour 'Explorer' nos
 données.
 
-```{r}
+```{r include=FALSE}
 # Nous travaillons avec le fichier ayant le chemin suivant : "/data/dataset_if36"
 dataset_if36 <- read.csv('data/dataset_if36.csv')
 ```
@@ -175,7 +182,7 @@ dataset_if36 <- read.csv('data/dataset_if36.csv')
 La date étant sous format chaine de caractère , cette transformation
 permettra de faciliter les analyses liées à l'évolution du temps.
 
-```{r}
+```{r include=FALSE}
 #en R , les doubles crochet[[]] permettent d'accéder aux élements d'une liste et non d'un vecteur[]
 #sapply est une fonction en R permettant d'appliquer une fonction à chaque élément d'un vecteur
 df <- dataset_if36 %>%
@@ -220,7 +227,7 @@ indépendamment du temps ?***
 
 ##### Selection des colonnes qui nous intéressent pour cette question et transfer dans un nouveau dataframe 'df_q1'
 
-```{r}
+```{r echo=FALSE}
 df_q1 <- df %>%
   select(date, annee, mois, Stream, Views, Likes)
 
@@ -232,7 +239,7 @@ head(df_q1)
 
 ##### Création d'une colonne représentant le nombre total d'écoutes d'un titre indépendamment de la plateforme
 
-```{r}
+```{r echo=FALSE}
 df_q1 <- df_q1 %>%
   mutate(ecoutes_totales = Stream + Views)
 
@@ -258,10 +265,10 @@ conclusions à venir.
 
 ##### Analyse de la distribution des chansons du jeu de données en fonction de l'année
 
-```{r}
+```{r echo=FALSE}
 df_q1 %>%
     ggplot(aes(x = annee)) +
-    geom_histogram(binwidth = 1,  alpha = 0.7,
+    geom_histogram(binwidth = 1,  alpha = 0.9,
                    color = "lightblue", fill = "lightblue") +
     scale_y_continuous(expand = expansion(mult = c(0, 0))) +
     scale_x_continuous(breaks = seq(min(df_q1$annee), max(df_q1$annee), by = 2)) +
@@ -286,7 +293,7 @@ années de publication.
 
 ##### Décomposition du jeu de données par années de publication
 
-```{r}
+```{r echo=FALSE}
 # Aggregate data by year and create the new category
 df_q1_agg <- df_q1 %>%
     mutate(annee_group = case_when(
@@ -302,11 +309,11 @@ df_q1_agg %>%
     geom_bar(width = 1, stat = "identity") +
     coord_polar(theta = "y") +
     scale_fill_brewer(palette = "Paired") +
-    geom_mark_hull(aes(filter = annee_group == "2022",
-                        label = '2022',
-                        description = 'Environ 1/5 des titres sortis en 2022'),
-                   fill = NA,
-                   color = NA) +
+    #geom_mark_hull(aes(filter = annee_group == "2022",
+    #                    label = '2022',
+    #                    description = 'Environ 1/5 des titres sortis en 2022'),
+    #               fill = NA,
+    #               color = NA) +
     labs(x = NULL,
          y = NULL,
          fill = "Année",
@@ -332,7 +339,7 @@ nombre d'écoutes.
 
 ##### Analyse de la distribution des titres du jeu de données en fonction du nombre d'écoutes
 
-```{r}
+```{r echo=FALSE}
 ecoute_plot <- df_q1 %>%
     ggplot(aes(x = ecoutes_totales)) +
     geom_histogram(bins = 60, alpha = 0.7,
@@ -365,9 +372,9 @@ On remarque que le jeu de données a des titres avec des nombres
 d'écoutes allant de moins de 50 millions jusqu'à presque 10 milliards.
 La plupart des titres ont moins de 500 millions d'écoutes totales.
 
-```{r}
+```{r echo=FALSE}
 min_ecoutes_totales <- min(df_q1$ecoutes_totales, na.rm = TRUE)
-print(min_ecoutes_totales)
+print(paste("min_ecoutes_totales =", min_ecoutes_totales))
 ```
 
 Le minimum d'écoutes totales est 7020.
@@ -384,7 +391,7 @@ sur son nombre d'écoutes ?)
 
 ##### Nombre total d'écoutes en fonction de l'année de publication
 
-```{r}
+```{r echo=FALSE}
 # Use factor() to convert a numeric variable into a discrete variable
 df_q1 %>%
   ggplot(aes(x = factor(annee), y = ecoutes_totales)) +
@@ -426,7 +433,7 @@ liée à l'émergeance de ces plateformes.
 
 ##### Diagramme en boîte à moustache du nombre d'écoutes total en fonction de l'année de publication (regroupée par décennie)
 
-```{r}
+```{r echo=FALSE}
 # Créer une nouvelle variable 'decennie' représentant la décennie
 df_q1$decennie <- as.factor((as.integer(df_q1$annee) %/% 10) * 10)
 
@@ -459,7 +466,7 @@ l'information (la musique en faisant partie) vers un grand public, il
 devient de plus en plus facile pour des chansons de devenir très
 populaires et ce très vite. La notion de "tubes du moment" ou de
 "chansons qui font le buzz" que nous connaissons tous aujourd'hui créée
-des titres qui représentes ces valeurs 'outliers' avec des nombres
+des titres qui représentent ces valeurs 'outliers' avec des nombres
 d'écoutes pharamineux dans notre graphique. L'émergeance des plateformes
 de streaming comme celles qu'on étudie, Spotify et Youtube, permet aussi
 de rendre plus accessible ces "tubes" ce qui peut à la manière d'une
@@ -486,7 +493,7 @@ et les Vues Youtube ?
 
 ##### Nombre de Streams / Vues en fonction de l'année de publication
 
-```{r}
+```{r echo=FALSE}
 # Find the range of the y-axis to use for both plots
 y_limits_stream <- range(df_q1$Stream, na.rm = TRUE)
 y_limits_view <- range(df_q1$Views, na.rm = TRUE)
@@ -568,21 +575,21 @@ un.e proche).
 
 ### Question 2:
 
-Existe t'il une relation entre le nombre de streamings Spotify ainsi que
-le nombre de vues sur Youtube ?
+[***Existe t'il une relation entre le nombre de streamings Spotify ainsi
+que le nombre de vues sur Youtube ?***]{.underline}
 
 -   On s'attend à ce que les chansons plus 'vieilles' aient plus de vues
     totales sur Youtube car Youtube existe depuis plus longtemps.
 
 -   Cependant on s'attend à ce que les chansons plus 'récentes'
     (publiées après Spotify) aient plus de streams totaux sur Spotify
-    car il semblerait que Spotify tend à remplacer Yotube pour l'écoute
+    car il semblerait que Spotify tend à remplacer Youtube pour l'écoute
     de musique depuis sa création (hypothèse qu'on pourra essayer de
     vérifier par l'analyse aussi)
 
 ##### Récupation des données du nombre de stream avant et après 2008
 
-```{r}
+```{r echo=FALSE}
 #total des vues et stream de musiques par années
 stream_views_annee <- df_sorted %>%
   group_by(annee)%>%
@@ -602,7 +609,7 @@ stream_view_2009 <- df_sorted %>%
 
 ##### Nuage de point sensé représenter la relation entre le nombre de vues et le nombre de stream
 
-```{r}
+```{r echo=FALSE}
 
 #représentation des nuages de point avant et après 2008
 ggplot_1 <- ggplotly(
@@ -631,7 +638,7 @@ ggplot_2
 
 ```
 
-```{r}
+```{r echo=FALSE}
 #comparaison annuelle entre le nombre de vues et le nombre de stream
 
 ggplotly(ggplot(stream_views_annee) +
@@ -644,7 +651,7 @@ ggplotly(ggplot(stream_views_annee) +
 
 #### Analyse
 
-les deux nuages de point représentent la relation entre le nombre de
+Les deux nuages de point représentent la relation entre le nombre de
 stream sur Spotify et le nombre de vues sur youtube pour les chansons
 sorties avant et après 2008. Comme on peut le voir , que se soit avant
 ou après l'année 2008 qui est l'année à laquelle spotify a été créé , il
@@ -652,16 +659,15 @@ existe bien une relation qui tend vers la linéarité entre le nombre de
 stream sur spotify et le nombre de vues sur youtube.
 
 On peut également observer un changement entre les deux nuages de
-points. en effet à près 2008, la relation est un peu moins linéaire et
-on a un peu plus de point en dessous de la droite ce qui rejoint notre
-hypothèse selon laquelle les chancons les plus récentes sont plus
+points. En effet après 2008, la relation est un peu moins linéaire et on
+a un peu plus de point en dessous de la droite ce qui rejoint notre
+hypothèse selon laquelle les chansons les plus récentes sont plus
 streamées sur spotify que visionnées sur Youtube.
 
 Enfin grace au lineplot qui permet de visualiser l'évolution annuelle du
 nombre de vues sur youtube et du nombre de stream sur spotify on peut
 voir que pour les chanson sorties à partir de 2010, on a une
 augmentation du nombre d'écoute sur spotify par rapport à youtube.
-
 
 ### Question 3
 
@@ -678,7 +684,7 @@ album, single et compilation.
 
 ##### Selection des colonnes qui nous intéressent pour cette question et transfer dans un nouveau dataframe 'df_q3'
 
-```{r}
+```{r echo=FALSE}
 df_q3 <- df %>%
   select(Artist, Album_type, Duration_ms, Views, Stream, date, annee, mois) %>%
   na.omit()
@@ -693,7 +699,7 @@ d'album dans ce jeu de données.
 
 ##### Analyse de la décomposition du jeu de données par type d'album
 
-```{r}
+```{r echo=FALSE}
 df_q3 %>% ggplot(aes(x = "", fill = Album_type)) +
   geom_bar(position = "stack", width = 0.5) +
   coord_flip() +
@@ -708,7 +714,7 @@ titres issus de compilations.
 
 ##### Diagramme en Boîte à moustaches de Stream et Views par Type d'Album
 
-```{r}
+```{r echo=FALSE}
 # Transformer les données en format long
 df_long <- df_q3 %>%
   pivot_longer(cols = c(Stream, Views), names_to = "Metric", values_to = "Value")
@@ -751,26 +757,39 @@ les compilations.
 
 ### Question 4
 
-Y-a-t-il un lien entre les différents attributs des chansons et leur popularité ?
+[***Y-a-t-il un lien entre les différents attributs des chansons et leur
+popularité ?***]{.underline}
 
-On pourra par exemple aussi ajouté la comparaison avec la valeurs moyenne des attributs en fonction du nombre d'écoutes/la popularité.
+On pourra par exemple aussi ajouté la comparaison avec la valeurs
+moyenne des attributs en fonction du nombre d'écoutes/la popularité.
 
-Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments'
-Objectif : Relation + Comparaison avec valeurs discrètes (nombres d'écoutes) et continues (attributs).
+Variables : attributs, 'Streams', 'Views', 'Likes', 'Comments' Objectif
 
-Hypothèses :
+:   Relation + Comparaison avec valeurs discrètes (nombres d'écoutes) et
+    continues (attributs).
 
-On peut s'attendre à ce que les titres avec plus de mots parlés soient plus populaires.
+*Hypothèses :*
 
-On peut aussi s'attendre à avoir une répartition avec beaucoup de titres 'lives' avec très peu d'écoutes mais aussi beaucoup avec un grand nombre d'écoutes car c'est un attribut dans une chanson qui peut être plus tranchant pour les auditeurs. 
-On suppose que beaucoup de gens adorent la musique 'live' mais aussi beaucoup de gens la détestent aussi.
+-   On peut s'attendre à ce que les titres avec plus de mots parlés
+    soient plus populaires.
 
-##### Analyse
+-   On peut aussi s'attendre à avoir une répartition avec beaucoup de
+    titres 'lives' avec très peu d'écoutes mais aussi beaucoup avec un
+    grand nombre d'écoutes car c'est un attribut dans une chanson qui
+    peut être plus tranchant pour les auditeurs. On suppose que beaucoup
+    de gens adorent la musique 'live' mais aussi beaucoup de gens la
+    détestent aussi.
 
-Pour vérifier nos Hypothèses, il souffit de calculer la popularité des différents type de musique.
-Le résultat de la question 7, qui a catégoriesé tous les morceaux dans le jeu de donnée, est très utile pour répondre à cette question. 
-A la fin de la question 7, on trouve un résultat en format csv, qui contient le cluster des chanson et ses indicateurs de popularité : 
-```{r}
+#### Analyse
+
+Pour vérifier nos Hypothèses, il suffit de calculer la popularité des
+différents type de musique. Le résultat de la question 7, qui a
+catégorisé tous les morceaux dans le jeu de donnée, est très utile pour
+répondre à cette question. A la fin de la question 7, on trouve un
+résultat en format csv, qui contient le cluster des chanson et ses
+indicateurs de popularité :
+
+```{r eval=FALSE, include=FALSE}
 résultat <- data %>% select (Artist, 
                              Track, 
                              Album, 
@@ -784,9 +803,10 @@ résultat <- data %>% select (Artist,
 write.csv(résultat, "résultat.csv", row.names = FALSE)
 ```
 
-A partir de ce fichier, on peut faire une comparaison entre les chansons de différent cluster : 
+A partir de ce fichier, on peut faire une comparaison entre les chansons
+de différent cluster :
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 data <- read.csv("résultat.csv")
 
 moyen_indicateurs <- data %>% group_by(Cluster) 
@@ -827,27 +847,44 @@ theme(text        = element_text(color = "black"),
 
 ![Popularité](https://imgur.com/Lln8j0b.png)
 
-Voici le résultat, les données sont normalisé car la différence entre les groupes sont trop grande, donc les données sont présentées sous la forme de pourcentage. Le cluster plus populaire, donc le cluster n°2, est considéré comme 100%, et le cluster moins populiare, le n°6, est représenté comme 0%. 
+Voici le résultat, les données sont normalisé car la différence entre
+les groupes sont trop grande, donc les données sont présentées sous la
+forme de pourcentage. Le cluster plus populaire, donc le cluster n°2,
+est considéré comme 100%, et le cluster moins populiare, le n°6, est
+représenté comme 0%.
 
-
-On trouve que les chansons plus populaires est ceux qui est dancable et avec valence. La performance des "lives" ne sont pas vraiment très mauvais. Ils se sont classés en quarième mais il ne présente pas une grande différence absolute par rapport aux autres groupes. Pauvre musique classique "instrumentale" et "acoustique", s'est classée sans doute en dernière position.
+On trouve que les chansons plus populaires est ceux qui est dancable et
+avec valence. La performance des "lives" ne sont pas vraiment très
+mauvais. Ils se sont classés en quarième mais il ne présente pas une
+grande différence absolute par rapport aux autres groupes. Pauvre
+musique classique "instrumentale" et "acoustique", s'est classée sans
+doute en dernière position.
 
 ### Question 5:
-[***Quel est le lien entre le nombre de commentaires et/ou le nombre de likes et le nombre d'écoutes d'un titre ?***]{.underline}
+
+[***Quel est le lien entre le nombre de commentaires et/ou le nombre de
+likes et le nombre d'écoutes d'un titre ?***]{.underline}
 
 Variables : 'Streams', 'Views', 'Likes', 'Comments
 
 Objectif : Relation avec valeurs discrètes.
 
-Rappel : 
-On suppose qu'on pourra repérer un seuil de nombres d'écoutes à partir duquel la quantité de like et/ou commentaires augmentent fortement. En bref, le signal à partir de ce seuil passerait de linéaire à exponentiel.
+Rappel : On suppose qu'on pourra repérer un seuil de nombres d'écoutes à
+partir duquel la quantité de like et/ou commentaires augmentent
+fortement. En bref, le signal à partir de ce seuil passerait de linéaire
+à exponentiel.
 
-Cette hypothèse vient du fait que nous supposons qu'à partir de cette valeur seuil, il y a assez d'engouement pour un titre pour qu'il "fasse le buzz".
+Cette hypothèse vient du fait que nous supposons qu'à partir de cette
+valeur seuil, il y a assez d'engouement pour un titre pour qu'il "fasse
+le buzz".
 
-On a pensé à cette valeur seuil car les algorithmes de recommandation de Youtube cherchent à "faire buzzer" des vidéos (du peu que nous connaissons de ces algorithmes du côté utilisateur).
+On a pensé à cette valeur seuil car les algorithmes de recommandation de
+Youtube cherchent à "faire buzzer" des vidéos (du peu que nous
+connaissons de ces algorithmes du côté utilisateur).
 
 ##### Nuage de point sensé représenter la relation entre le nombre de Streams et le nombre de Likes
-```{r}
+
+```{r echo=FALSE}
 ggplot(dataset_if36, aes(x = Stream, y = Likes + 1)) +
   geom_point(alpha = 0.2, size = 0.3) +
   ggtitle("Relationship between Streams and Likes") +
@@ -860,16 +897,31 @@ ggplot(dataset_if36, aes(x = Stream, y = Likes + 1)) +
 ```
 
 #### Analyse
-Ce diagramme de dispersion représente la relation entre le nombre de streams sur Spotify et le nombre de likes reçus par la musique.
 
-On peut constater qu'avec l'augmentation du nombre de streams, le nombre de likes augmente également, ce qui suggère que le contenu plus populaire obtient généralement plus de likes, ce qui est conforme à notre compréhension quotidienne.
+Ce diagramme de dispersion représente la relation entre le nombre de
+streams sur Spotify et le nombre de likes reçus par la musique.
 
-Avec l'augmentation du nombre de streams, la dispersion du nombre de likes augmente également. Lorsque le nombre de streams atteint 100 000, la plupart des likes se situent entre 1 et 100 000, mais lorsque le nombre de streams atteint 1 000 000 000, le nombre de likes varie de 1 à près de 100 000 000. Cela indique une plus grande incertitude quant aux likes pour le contenu avec un grand nombre de streams.
+On peut constater qu'avec l'augmentation du nombre de streams, le nombre
+de likes augmente également, ce qui suggère que le contenu plus
+populaire obtient généralement plus de likes, ce qui est conforme à
+notre compréhension initiale.
 
-Il existe quelques valeurs aberrantes possibles dans le graphique, en particulier dans la zone de forts streams. Les points ayant un grand nombre de streams mais un nombre de likes très faible peuvent représenter de la diffusion virale ou du marketing excessif de la musique.
+Avec l'augmentation du nombre de streams, la dispersion du nombre de
+likes augmente également. Lorsque le nombre de streams atteint 100 000,
+la plupart des likes se situent entre 1 et 100 000, mais lorsque le
+nombre de streams atteint 1 000 000 000, le nombre de likes varie de 1 à
+près de 100 000 000. Cela indique une plus grande incertitude quant aux
+likes pour le contenu avec un grand nombre de streams.
+
+Il existe quelques valeurs aberrantes possibles dans le graphique, en
+particulier dans la zone de forts streams. Les points ayant un grand
+nombre de streams mais un nombre de likes très faible peuvent
+représenter de la diffusion virale ou du marketing excessif de la
+musique.
 
 ##### Nuage de point sensé représenter la relation entre le nombre de Views et le nombre de Likes
-```{r}
+
+```{r echo=FALSE}
 ggplot(dataset_if36, aes(x = Views, y = Likes + 1)) +
   geom_point(alpha = 0.15, size = 0.3) +  
   geom_smooth(method = "lm", se = FALSE, color = "blue", linewidth = 0.5) + 
@@ -883,14 +935,26 @@ ggplot(dataset_if36, aes(x = Views, y = Likes + 1)) +
 ```
 
 #### Analyse
-Ce graphique de dispersion représente la relation entre le nombre de vues sur YouTube et le nombre de likes reçus par la musique.
 
-On peut observer qu'avec l'augmentation du nombre de vues, le nombre de likes augmente également. Cette forte corrélation positive suggère que les vidéos avec un grand nombre de vues ont tendance à recevoir davantage de likes. Cela est logique, car une exposition accrue entraîne généralement plus d'interaction.
+Ce graphique de dispersion représente la relation entre le nombre de
+vues sur YouTube et le nombre de likes reçus par la musique.
 
-En même temps, sur une échelle logarithmique, la distribution des points se rapproche d'une ligne droite. On peut ajouter une ligne dans le graphique pour visualiser cela, ce qui indique une relation de puissance entre les vues et les likes. Sur une échelle logarithmique, chaque augmentation de pourcentage fixe dans le nombre de vues entraîne également une augmentation de pourcentage fixe dans le nombre de likes.
+On peut observer qu'avec l'augmentation du nombre de vues, le nombre de
+likes augmente également. Cette forte corrélation positive suggère que
+les vidéos avec un grand nombre de vues ont tendance à recevoir
+davantage de likes. Cela est logique, car une exposition accrue entraîne
+généralement plus d'interaction.
+
+En même temps, sur une échelle logarithmique, la distribution des points
+se rapproche d'une ligne droite. On peut ajouter une ligne dans le
+graphique pour visualiser cela, ce qui indique une relation de puissance
+entre les vues et les likes. Sur une échelle logarithmique, chaque
+augmentation de pourcentage fixe dans le nombre de vues entraîne
+également une augmentation de pourcentage fixe dans le nombre de likes.
 
 ##### Nuage de point sensé représenter la relation entre le nombre de Views et le nombre de Comments
-```{r}
+
+```{r echo=FALSE}
 ggplot(dataset_if36, aes(x = Views, y = Comments + 1, 
                          color = ifelse(Comments + 1 < 2, "blue", "black"))) +
   geom_point(alpha = 0.2, size = 0.3) +
@@ -906,27 +970,47 @@ ggplot(dataset_if36, aes(x = Views, y = Comments + 1,
 ```
 
 #### Analyse
-Ce graphique de dispersion représente la relation entre le nombre de vues sur YouTube et le nombre de commentaires reçus par la musique.
 
-En observant les points noirs, on peut remarquer qu'avec l'augmentation du nombre de vues, le nombre de commentaires augmente également. Cette corrélation positive suggère que les vidéos avec un grand nombre de vues ont tendance à recevoir plus de commentaires.
+Ce graphique de dispersion représente la relation entre le nombre de
+vues sur YouTube et le nombre de commentaires reçus par la musique.
 
-Les points bleus dans le graphique représentent les cas où le nombre de commentaires est de zéro. Certains vidéos, bien qu'ayant un grand nombre de vues, n'ont toujours pas de commentaires. Cela peut être dû au fait que les créateurs ont désactivé les commentaires sur la vidéo.
+En observant les points noirs, on peut remarquer qu'avec l'augmentation
+du nombre de vues, le nombre de commentaires augmente également. Cette
+corrélation positive suggère que les vidéos avec un grand nombre de vues
+ont tendance à recevoir plus de commentaires.
 
-Pour des vidéos avec le même nombre de vues, le nombre de commentaires peut varier. Cela peut être dû au contenu de la musique, certaines musiques étant plus susceptibles de susciter des commentaires que d'autres. De plus, pour des vidéos avec le même nombre de commentaires, le nombre de vues peut également varier. Par exemple, il existe des vidéos avec plus d'un million de vues qui ont moins de dix commentaires, tandis que d'autres vidéos avec moins de mille vues ont également moins de dix commentaires. Cela peut être dû à la nature de la musique, certaines musiques, telles que la musique de fond ou la musique dans une langue moins courante, pouvant inciter les spectateurs à apprécier la mélodie sans nécessairement laisser de commentaires.
+Les points bleus dans le graphique représentent les cas où le nombre de
+commentaires est de zéro. Certains vidéos, bien qu'ayant un grand nombre
+de vues, n'ont toujours pas de commentaires. Cela peut être dû au fait
+que les créateurs ont désactivé les commentaires sur la vidéo.
+
+Pour des vidéos avec le même nombre de vues, le nombre de commentaires
+peut varier. Cela peut être dû au contenu de la musique, certaines
+musiques étant plus susceptibles de susciter des commentaires que
+d'autres. De plus, pour des vidéos avec le même nombre de commentaires,
+le nombre de vues peut également varier. Par exemple, il existe des
+vidéos avec plus d'un million de vues qui ont moins de dix commentaires,
+tandis que d'autres vidéos avec moins de mille vues ont également moins
+de dix commentaires. Cela peut être dû à la nature de la musique,
+certaines musiques, telles que la musique de fond ou la musique dans une
+langue moins courante, pouvant inciter les spectateurs à apprécier la
+mélodie sans nécessairement laisser de commentaires.
 
 #### Conclusions
-Il existe une corrélation positive entre le nombre de streams sur Spotify et le nombre de likes, entre le nombre de vues sur YouTube et le nombre de likes, ainsi qu'entre le nombre de vues sur YouTube et le nombre de commentaires. Cependant, différent à ce que l'on pourrait penser, ces relations ne suivent pas une progression linéaire dès le départ et après une progression exponentielles. Parmi ces relations, la relation entre le nombre de vues sur YouTube et le nombre de likes suivre une loi de puissance de manière assez évidente.
 
+Il existe une corrélation positive entre le nombre de streams sur
+Spotify et le nombre de likes, entre le nombre de vues sur YouTube et le
+nombre de likes, ainsi qu'entre le nombre de vues sur YouTube et le
+nombre de commentaires. Cependant, différent à ce que l'on pourrait
+penser, ces relations ne suivent pas une progression linéaire dès le
+départ et après une progression exponentielles. Parmi ces relations, la
+relation entre le nombre de vues sur YouTube et le nombre de likes
+suivre une loi de puissance de manière assez évidente.
 
+### Question 6
 
-
-
-
-
-### question 6
-
-Est-ce possible de discerner des 'modes' en termes d'attributs de
-chansons en fonction du temps ?
+[***Est-ce possible de discerner des 'modes' en termes d'attributs de
+chansons en fonction du temps ?***]{.underline}
 
 Par exemple : le rap qui était à la mode à une période donnée et donc
 plus de titres avec les attributs 'Speechiness' élevé et
@@ -941,23 +1025,23 @@ Objectif : Relation + Evolution (+ distribution/statistique) avec
 valeurs continues (attributs) et ordinales (dates qu'on catégorisera en
 périodes : intervalles de dates).
 
-Hypothèses :
+*Hypothèses :*
 
 ```         
 On s'attend à ce qu'on retrouve des intervalles de valeurs pour les attributs qui auront une densité légèrement plus élevée : il sera cependant probablement difficile de raccorder ces données à un genre précis de musique comme le rap donné en exemple.
 La difficulté avec cette question/analyse est que sans savoir ce qu'on cherche, il sera peut-être difficile de repérer des schémas/patterns pour les attributs des chansons en fonction de la période. Il est donc possible que notre analyse soit difficilement conclusive.
 ```
 
-#### visualisation de l'évolution des styles de chansons
+##### Visualisation de l'évolution des styles de chansons
 
 ![histogram](https://briandiffo.github.io/image_if36/question%206.png)
 
 Une chansons est caractérisée par différents attributs qui sont son
 acoustique, ses paroles , sa dansabilité ainsi que son intensité se sont
 ces différentes caractéristiques qui définissent une chanson. Le but de
-notre recherche est de déterminer si durant certaine période certain de
-ces attributs dominent plus que les autres c'est à dire si par exemple
-en l'an XXXX les chansons avec beaucoup paroles était populaire.
+notre recherche est de déterminer si durant certaines périodes certains
+de ces attributs dominent plus que les autres c'est à dire si par
+exemple en l'an XXXX les chansons avec beaucoup paroles était populaire.
 
 Pour réaliser cette analyse , nous avons d'abord normalisé ces attribut
 pour leur donner les même échelles et nous avons ensuite pour chaque
@@ -973,32 +1057,59 @@ acoustique, parole ou dansabilité des différentes chansons évolue avec
 le temps. Il y'a des période où les chansons avec beaucoup d'acoustiques
 sont les plus répandues et d'autres où elles le sont moins
 
-
-
-
-
 ### Question 7:
 
-Est-ce qu'on peut reconnaître un artiste / un album par une combinaison des attributaires ?
+[***Est-ce qu'on peut reconnaître un artiste / un album par une
+combinaison des attributs ?***]{.underline}
 
-#### Variables :  
-'Artist',  
-'Album',  
-Les variables quantitatives musicales("Danceability","Energy","Key","Loudness","Speechiness","Acousticness","Instrumentalness","Liveness","Valence","Tempo")
+*Variables :*
 
-#### Objectif : Relation + Comparaison + Distribution avec valeurs continues
+-   'Artist'
+
+-   'Album'
+
+-   Les variables quantitatives musicales
+
+    -   "Danceability"
+
+    -   "Energy"
+
+    -   "Key"
+
+    -   "Loudness"
+
+    -   "Speechiness"
+
+    -   "Acousticness"
+
+    -   "Instrumentalness"
+
+    -   "Liveness"
+
+    -   "Valence"
+
+    -   "Tempo"
+
+Objectif : Relation + Comparaison + Distribution avec valeurs continues
 (attributs) et nominales (artistes, albums).
 
-#### Analyse : 
-Une combinaison des attributs, c'est un style musical. Nous pouvons reconnaître un artiste/un album en comptant le nombre des chansons dans différent styles. 
+#### Analyse :
 
-Pour atteindre cet objectif, il faut trouver un moyen pour définir les différentes styles musicale. Nous pouvons faire l'étude à partir de la relation et la corrélation entre les variables quantitatives. Il y a beaucoup de variables qui peut décrire le style musical dans notre jeu de données choisi :
+Une combinaison des attributs, c'est un style musical. Nous pouvons
+reconnaître un artiste/un album en comptant le nombre des chansons dans
+différent styles.
+
+Pour atteindre cet objectif, il faut trouver un moyen pour définir les
+différentes styles musicaux. Nous pouvons faire l'étude à partir de la
+relation et la corrélation entre les variables quantitatives. Il y a
+beaucoup de variables qui peut décrire le style musical dans notre jeu
+de données choisi :
 "Danceability","Energy","Key","Loudness","Speechiness","Acousticness","Instrumentalness","Liveness","Valence","Tempo".
 
-Il sont nombreux, il est donc logique de faire d'abord un analyse en composantes principales pour rendre une représentation 2D possible.
+Il sont nombreux, il est donc logique de faire d'abord une analyse en
+composantes principales pour rendre une représentation 2D possible.
 
-
-```{r}
+```{r echo=FALSE}
 data <- read.csv("data/dataset_if36.csv")
 variables_actives <- data %>% select(Danceability, 
                                      Energy, 
@@ -1015,58 +1126,73 @@ donnée_centrée_réduite <- scale(variables_actives)
 résultat.ACP <- PCA(donnée_centrée_réduite, graph = FALSE)
 ```
 
-Pour analyse le résultat, nous imprimons l'inertie des composantes principales et le cercle de corrélation :
+Pour analyse le résultat, nous imprimons l'inertie des composantes
+principales et le cercle de corrélation :
 
-```{r}
+```{r echo=FALSE}
 # L’inertie des cps
 fviz_eig(résultat.ACP)
 # Cercle des corrélations
 fviz_pca_var(résultat.ACP)
 
 ```
+
 ![inertie](https://imgur.com/VYpMGRa.png)
 ![cercle_de_correlation](https://imgur.com/i3o72hg.png)
-Le cercle de corrélation nous montre qu'il existe plusieurs groupes d'attribut :
-    Danceability et Valence
-    Loudness et Energy 
-    Tempo et Liveness 
-    Acousticness et Instrumentalness
-    Speechiness et Key(ce groupe ne donne pas beaucoup de contribution sur les cps.)
 
+Le cercle de corrélation nous montre qu'il existe plusieurs groupes
+d'attribut : Danceability et Valence Loudness et Energy Tempo et
+Liveness Acousticness et Instrumentalness Speechiness et Key(ce groupe
+ne donne pas beaucoup de contribution sur les cps.)
 
-Maintenant nous pouvons continuer notre analyse, nous allons essayer de trouver les différente sytle musicale par la classification ascendante hiérarchique : 
-```{r}
+Maintenant nous pouvons continuer notre analyse, nous allons essayer de
+trouver les différente sytle musicale par la classification ascendante
+hiérarchique :
+
+```{r eval=FALSE, include=FALSE}
 matrice_dist <- dist(résultat.ACP$ind$coord[, 1:2],
                      method = "euclidean")
 CAH <- cutree(hclust(matrice_dist, method = "ward.D2"), 
                      k = 6)
 
 ```
-Si on faire une combinaison du résultat de la classification ascendante hiérarchique et le cercle de corrélation, on trouve que les groupes de variable dans le cercle de corrélation nous permettent de décrire les clusters.
-Par exemple, le cluster 1 est Ce cluster est fortement influencé par Danceability et Valence, le cluster 2 est influencé par Loudness et Energy, etc.
+
+Si on faire une combinaison du résultat de la classification ascendante
+hiérarchique et le cercle de corrélation, on trouve que les groupes de
+variable dans le cercle de corrélation nous permettent de décrire les
+clusters. Par exemple, le cluster 1 est Ce cluster est fortement
+influencé par Danceability et Valence, le cluster 2 est influencé par
+Loudness et Energy, etc.
 
 ![Plot combiné](https://imgur.com/MM6KxxX.png)
 
-On peut maintenant valider notre hypothèse grâce à ce découvert. Le nuage de point des titres et aussi un nuage de point des artiste.
-Prenons l'exemple de groupe Musicale "AC/DC", on liste nombre de ses ouvres dans chaque cluster : 
+On peut maintenant valider notre hypothèse grâce à ce découvert. Le
+nuage de point des titres et aussi un nuage de point des artiste.
+Prenons l'exemple du groupe "AC/DC", on liste nombre de ses ouvres dans
+chaque cluster :
 
-Cluster 1 ("Loudness"  , "Energy"  ) : 3  
-Cluster 2 ("Dancablity", "Valence" ) : 2  
-Cluster 3 : 0  
-Cluster 4 ("Tempo"     , "Liveness") : 4  
-Cluster 5 : 0  
-Cluster 6 : 0  
-Donc on trouve les caractères liés au ce groupe, et ces caractères correspondent bien notre impression sur "AC/DC" ! .
-#### Conclusion : 
-Reconnaître un artiste/un album par des attributs est tout à fait possible. Grâce à une combinaison d'analyse en composantes principales et la classification ascendante hiérarchique, nous pouvons trouver les différents styles musicals puis le style d'artiste/album. 
+Cluster 1 ("Loudness" , "Energy" ) : 3\
+Cluster 2 ("Dancablity", "Valence" ) : 2\
+Cluster 3 : 0\
+Cluster 4 ("Tempo" , "Liveness") : 4\
+Cluster 5 : 0\
+Cluster 6 : 0\
 
+Donc on trouve les caractères liés au ce groupe, et ces caractères
+correspondent bien notre impression sur "AC/DC" ! .
 
+#### Conclusion :
 
+Reconnaître un artiste/un album par des attributs est tout à fait
+possible. Grâce à une combinaison d'analyse en composantes principales
+et la classification ascendante hiérarchique, nous pouvons trouver les
+différents styles musicals puis le style d'artiste/album.
 
-### question 8
+### Question 8
 
-Sur youtube, est-ce que la distinction officiel/pas officiel a un effet
-sur les écoutes ? / les likes ? / les commentaires ?
+[***Sur youtube, est-ce que la distinction officiel/pas officiel a un
+effet sur les écoutes ? / les likes ? / les commentaires
+?***]{.underline}
 
 Variables : 'Official_video', 'Views', 'Likes', 'Comments'
 
@@ -1080,14 +1206,15 @@ Il semblerait que le jeu de données ne propose pas de vidéos officielles et de
 On s'attend donc à ce qu'il n'y ai pas de grande différence entre les écoutes / likes / commentaires des vidéos officielles et non officielles.
 ```
 
-#### nombre de views, likes et comments pour l'année 2021
+##### Nombre de Views, Likes et Comments pour l'année 2021
 
-![histogram](https://briandiffo.github.io/image_if36/question%208.png)
-\#### nombre de views, likes et comments pour l'année 1960
+##### ![histogram](https://briandiffo.github.io/image_if36/question%208.png)
+
+##### Nombre de Views, Likes et Comments pour l'année 1960
 
 ![histogram](https://briandiffo.github.io/image_if36/question8_2.png)
 
-#### nombre de views, likes et comments pour l'année 1967
+##### Nombre de Views, Likes et Comments pour l'année 1967
 
 ![histogram](https://briandiffo.github.io/image_if36/question8_3.png)
 
@@ -1110,13 +1237,10 @@ systématiquement créée et la chanson postée déçu ainsi pour ces vielles
 chansons , se sont généralement des particulier qui les enregistre et
 les déposent sur Youtube
 
-
-
-
 ### Question 9
 
-**Est-ce que la fréquence de diffusion d'album / de single d'un artiste
-peut avoir un effet sur sa popularité ?**
+[**Est-ce que la fréquence de diffusion d'album / de single d'un artiste
+peut avoir un effet sur sa popularité ?**]{.underline}
 
 Variables : 'Streams', 'Views', 'Artist', 'Album-type', 'date' pour
 obtenir la fréquence
@@ -1124,10 +1248,9 @@ obtenir la fréquence
 Objectif : Relation avec valeurs discrètes (nombres d'écoutes),
 nominales (artistes, type d'albums) et continues (fréquence).
 
-Rappel :
-On peut commencer par faire l'analyse indépendemment du type de l'album,
-mais on a trouvé cela pertinent d'aussi voir si cette variable a un
-effet sur nos résultats.
+Rappel : On peut commencer par faire l'analyse indépendemment du type de
+l'album, mais on a trouvé cela pertinent d'aussi voir si cette variable
+a un effet sur nos résultats.
 
 -   On suppose que d'avoir une fréquence plus élevée de publication de
     titres est liée à la popularité d'un artiste. Ceci repose sur
@@ -1135,10 +1258,13 @@ effet sur nos résultats.
     naturel à un artiste : surtout qu'ils communiquent autour de leurs
     publication généralement.
 
--   Le format des single cherche plus à apporter de l'engouement pour un artiste en règle     générale : peut-être que si un artiste publie souvent des singles, il aura plus           d'écoutes ?
+-   Le format du single cherche plus à apporter de l'engouement pour un
+    artiste en règle générale : peut-être que si un artiste publie
+    souvent des singles, il aura plus d'écoutes ?
 
 ##### Traiter le format des dates dans les données et afficher toutes les valeurs de l'année dans la base de données
-```{r}
+
+```{r include=FALSE}
 dataset_if36 <- dataset_if36 %>%
   filter(!is.na(date)) %>%
   mutate(date = ymd(date))
@@ -1146,16 +1272,21 @@ dataset_if36$year <- year(dataset_if36$date)
 print(dataset_if36$year)
 ```
 
-Comme la période annuelle des données est trop grande, la période peut atteindre 50 ans. Au cours des 50 années, certains artistes peuvent avoir été inactifs pendant une longue période. Nous avons donc décidé d'étudier les données de 2019 à 2023 pour les analyser. 
+Comme la période annuelle des données est trop grande, la période peut
+atteindre 50 ans. Au cours des 50 années, certains artistes peuvent
+avoir été inactifs pendant une longue période. Nous avons donc décidé
+d'étudier les données de 2019 à 2023 pour les analyser.
 
 ##### Filtrez l'ensemble de données pour conserver les données de la période 2019 à 2023
-```{r}
+
+```{r echo=FALSE}
 filtered_dataset <- dataset_if36 %>%
   filter(year(date) >= 2019 & year(date) <= 2023)
 ```
 
 ##### Regroupez par artiste, année et type d'album pour calculer le nombre de sorties et le nombre total de streams par an
-```{r}
+
+```{r echo=FALSE}
 artist_yearly_filtered <- filtered_dataset %>%
   mutate(year = year(date)) %>%
   group_by(Artist, year, Album_type) %>%
@@ -1163,17 +1294,19 @@ artist_yearly_filtered <- filtered_dataset %>%
 ```
 
 ##### Calculez la fréquence de sortie annuelle moyenne et le nombre total de flux par artiste, en conservant Album_type
-```{r}
+
+```{r echo=FALSE}
 artist_stats_filtered <- artist_yearly_filtered %>%
   group_by(Artist, Album_type) %>%
   summarise(Avg_Frequency_2019_2023 = mean(Release_Frequency), Avg_Streams_2019_2023 = mean(Total_Streams), .groups = 'drop')
 ```
 
 ##### Diagramme d'un nuage de points de la fréquence des sorties et du nombre de flux, coloré par Album_type
-```{r}
+
+```{r echo=FALSE}
 ggplot(artist_stats_filtered, aes(x = Avg_Frequency_2019_2023, y = Avg_Streams_2019_2023, color = Album_type)) +
   geom_point(alpha = 0.5, size = 0.8) +
-  labs(title = "La relation entre Average Yearly Release Frequency et Average Yearly Streams (2019-2023)",
+  labs(title = "La relation entre Average Yearly Release Frequency et \n Average Yearly Streams (2019-2023)",
        x = "Average Yearly Release Frequency (2019-2023)",
        y = "Average Yearly Streams (2019-2023)") +
   theme_minimal() +
@@ -1182,25 +1315,48 @@ ggplot(artist_stats_filtered, aes(x = Avg_Frequency_2019_2023, y = Avg_Streams_2
   scale_color_manual(values = c("album" = "red", "single" = "blue"))
 ```
 
-##### Analyse :
-Ce graphique en nuage de points illustre la relation entre le nombre moyen d'albums publiés par an et le nombre moyen de flux de sportify par an pour chaque artiste de 2019 à 2023.
+#### Analyse :
 
-On constate que pendant cette période, la plupart des artistes ont publié en moyenne entre 0 et 3 albums par an, correspondant à des flux annuels compris entre 0 et 2 500 000 000.
+Ce graphique en nuage de points illustre la relation entre le nombre
+moyen d'albums publiés par an et le nombre moyen de flux de spotify par
+an pour chaque artiste de 2019 à 2023.
 
-Le nombre d'artistes publiant en moyenne plus de 5 albums par an est faible, et pour ceux qui publient en moyenne 10 albums par an, leur flux n'est pas significativement plus élevé que ceux qui publient moins d'albums.
+On constate que pendant cette période, la plupart des artistes ont
+publié en moyenne entre 0 et 3 albums par an, correspondant à des flux
+annuels compris entre 0 et 2 500 000 000.
 
-En revanche, plusieurs artistes qui publient en moyenne environ 4 albums par an ont généré un flux particulièrement élevé.
+Le nombre d'artistes publiant en moyenne plus de 5 albums par an est
+faible, et pour ceux qui publient en moyenne 10 albums par an, leur flux
+n'est pas significativement plus élevé que ceux qui publient moins
+d'albums.
 
-Cela est conforme à la logique, car publier trop d'albums en une année peut entraîner une baisse de qualité des œuvres, ce qui peut à son tour entraîner une baisse du nombre d'écoutes. En même temps, pour les artistes très connus, même s'ils publient très peu d'albums par an, ils peuvent avoir l'occasion de générer un flux très élevé.
+En revanche, plusieurs artistes qui publient en moyenne environ 4 albums
+par an ont généré un flux particulièrement élevé.
 
-Les points rouges sur ce graphique représentent les œuvres des artistes sous forme d'albums, tandis que les points bleus représentent les œuvres sous forme de singles.
+Cela est conforme à la logique, car publier trop d'albums en une année
+peut entraîner une baisse de qualité des œuvres, ce qui peut à son tour
+entraîner une baisse du nombre d'écoutes. En même temps, pour les
+artistes très connus, même s'ils publient très peu d'albums par an, ils
+peuvent avoir l'occasion de générer un flux très élevé.
 
-Nous pouvons voir que dans les zones de flux élevé, presque tous les points sont rouges, tandis que les points bleus sont plus concentrés dans les zones de faible flux. De cela, nous pouvons déduire que la forme des œuvres a une certaine influence sur le nombre de flux. La forme d'un album peut, dans une certaine mesure, aider les œuvres à obtenir plus de flux.
+Les points rouges sur ce graphique représentent les œuvres des artistes
+sous forme d'albums, tandis que les points bleus représentent les œuvres
+sous forme de singles.
 
-Ensuite, nous avons commencé à faire la même analyse sur la relation entre la fréquence annuelle moyenne de sortie d’un album et les vues sur YouTube.
+Nous pouvons voir que dans les zones de flux élevé, presque tous les
+points sont rouges, tandis que les points bleus sont plus concentrés
+dans les zones de faible flux. De cela, nous pouvons déduire que la
+forme des œuvres a une certaine influence sur le nombre de flux. La
+forme d'un album peut, dans une certaine mesure, aider les œuvres à
+obtenir plus de flux.
+
+Ensuite, nous avons commencé à faire la même analyse sur la relation
+entre la fréquence annuelle moyenne de sortie d’un album et les vues sur
+YouTube.
 
 ##### Diagramme d'un nuage de points de la fréquence des sorties et du nombre de flux, coloré par Album_type
-```{r}
+
+```{r echo=FALSE}
 filtered_dataset <- dataset_if36 %>%
   filter(year(date) >= 2019 & year(date) <= 2023)
 
@@ -1215,7 +1371,7 @@ artist_stats_filtered <- artist_yearly_filtered %>%
 
 ggplot(artist_stats_filtered, aes(x = Avg_Frequency_2019_2023, y = Avg_Views_2019_2023, color = Album_type)) +
   geom_point(alpha = 0.5, size = 0.8) +
-  labs(title = "La relation entre Average Yearly Release Frequency et Average Yearly Views (2019-2023)",
+  labs(title = "La relation entre Average Yearly Release Frequency et \nAverage Yearly Views (2019-2023)",
        x = "Average Yearly Release Frequency (2019-2023)",
        y = "Average Yearly Views (2019-2023)") +
   theme_minimal() +
@@ -1224,27 +1380,61 @@ ggplot(artist_stats_filtered, aes(x = Avg_Frequency_2019_2023, y = Avg_Views_201
   scale_color_manual(values = c("album" = "red", "single" = "blue"))
 ```
 
-##### Analyse :
-Cette carte de dispersion montre la relation entre la fréquence moyenne annuelle de publication d'albums et les vues annuelles moyennes pour chaque artiste sur la période 2019-2023, en distinguant les types d'albums par des couleurs différentes , où le rouge représente les albums et le bleu représente les singles .
+#### Analyse :
 
-Lorsque la fréquence moyenne annuelle de publication d'albums est faible (0-2,5), la plage de variation des vues annuelles moyennes est très large, allant de presque zéro à plus de 2 milliards.
+Cette carte de dispersion montre la relation entre la fréquence moyenne
+annuelle de publication d'albums et les vues annuelles moyennes pour
+chaque artiste sur la période 2019-2023, en distinguant les types
+d'albums par des couleurs différentes , où le rouge représente les
+albums et le bleu représente les singles .
 
-Lorsque la fréquence moyenne annuelle de publication d'albums est élevée (2,5-10), les vues annuelles moyennes tendent à être plus faibles et les points de données sont plus clairsemés, ce qui indique qu'une augmentation de la fréquence de publication d'albums n'entraîne pas nécessairement une augmentation des vues.
+Lorsque la fréquence moyenne annuelle de publication d'albums est faible
+(0-2,5), la plage de variation des vues annuelles moyennes est très
+large, allant de presque zéro à plus de 2 milliards.
 
-Globalement, il n'y a pas de corrélation positive directe entre la fréquence moyenne annuelle de publication d'albums et les vues annuelles moyennes. Les vues élevées apparaissent plus souvent dans la zone de faible fréquence de publication d'albums.
+Lorsque la fréquence moyenne annuelle de publication d'albums est élevée
+(2,5-10), les vues annuelles moyennes tendent à être plus faibles et les
+points de données sont plus clairsemés, ce qui indique qu'une
+augmentation de la fréquence de publication d'albums n'entraîne pas
+nécessairement une augmentation des vues.
 
-Dans la zone de faible fréquence de publication, les singles et les albums peuvent tous deux atteindre des niveaux élevés de vues. Dans la zone de haute fréquence de publication, les singles ont quelques points de vues annuelles moyennes plus élevés, tandis que les albums ont des vues annuelles moyennes relativement plus basses, ce qui pourrait indiquer que les singles sont plus susceptibles de maintenir des vues élevées lorsqu'ils sont publiés fréquemment.
+Globalement, il n'y a pas de corrélation positive directe entre la
+fréquence moyenne annuelle de publication d'albums et les vues annuelles
+moyennes. Les vues élevées apparaissent plus souvent dans la zone de
+faible fréquence de publication d'albums.
 
-Le type d'album a un certain impact sur les vues. Bien que les deux types aient des points de données avec des vues élevées dans différentes plages de fréquence de publication, les singles ont une plus grande probabilité de maintenir des vues élevées lorsqu'ils sont publiés fréquemment.
+Dans la zone de faible fréquence de publication, les singles et les
+albums peuvent tous deux atteindre des niveaux élevés de vues. Dans la
+zone de haute fréquence de publication, les singles ont quelques points
+de vues annuelles moyennes plus élevés, tandis que les albums ont des
+vues annuelles moyennes relativement plus basses, ce qui pourrait
+indiquer que les singles sont plus susceptibles de maintenir des vues
+élevées lorsqu'ils sont publiés fréquemment.
 
-##### Conclusions :
-La fréquence moyenne annuelle de publication d'albums n'a pas de relation directe avec le flux de morceaux sur Spotify et le nombre de vues sur YouTube. Il est probable que d'autres facteurs influencent davantage ces flux et ces vues. Nous supposons que ces facteurs pourraient être la popularité de l'artiste ou la qualité des chansons.
+Le type d'album a un certain impact sur les vues. Bien que les deux
+types aient des points de données avec des vues élevées dans différentes
+plages de fréquence de publication, les singles ont une plus grande
+probabilité de maintenir des vues élevées lorsqu'ils sont publiés
+fréquemment.
 
-La forme de l'œuvre a un certain impact sur les flux et les vues. En ce qui concerne les flux, il semble que les gens préfèrent écouter des albums sur Spotify. Quant aux vidéos, les albums et les singles ont tous deux la possibilité d'obtenir un grand nombre de vues, mais lorsque des œuvres sont publiées fréquemment, les gens semblent préférer regarder des vidéos de singles plutôt que des albums.
+#### Conclusions :
+
+La fréquence moyenne annuelle de publication d'albums n'a pas de
+relation directe avec le flux de morceaux sur Spotify et le nombre de
+vues sur YouTube. Il est probable que d'autres facteurs influencent
+davantage ces flux et ces vues. Nous supposons que ces facteurs
+pourraient être la popularité de l'artiste ou la qualité des chansons.
+
+La forme de l'œuvre a un certain impact sur les flux et les vues. En ce
+qui concerne les flux, il semble que les gens préfèrent écouter des
+albums sur Spotify. Quant aux vidéos, les albums et les singles ont tous
+deux la possibilité d'obtenir un grand nombre de vues, mais lorsque des
+œuvres sont publiées fréquemment, les gens semblent préférer regarder
+des vidéos de singles plutôt que des albums.
 
 ### Question 10
 
-**Quels sont les effets d'un 'feat' sur un titre ?**
+[***Quels sont les effets d'un 'feat' sur un titre ?***]{.underline}
 
 Un 'featuring' en musique indique dans le titre de la chanson que
 celle-ci est une collaboration entre l'auteur et l'artiste featuré.
@@ -1262,7 +1452,7 @@ Hypothèses :
 
 ##### Préparation d'un dataframe pour la question
 
-```{r}
+```{r echo=FALSE}
 df_q10 <- df %>%
   select(Track, Artist, Views, Stream, Likes, Comments, Speechiness) %>%
   na.omit() %>%
@@ -1271,9 +1461,12 @@ df_q10 <- df %>%
 head(df_q10)
 ```
 
-##### Diagramme en Secteurs de Feat
+Nous avons préparer un dataframe qui a notamment une colonne "feat" de
+valeur TRUE ou FALSE pour nous aider dans cette question.
 
-```{r}
+##### Proportion de titres avec Feat dans le jeu de données
+
+```{r echo=FALSE}
 df_q10 %>%
   ggplot(aes(x = "", fill = Feat)) +
   geom_bar(position = "stack", width = 0.5) +
@@ -1284,7 +1477,15 @@ df_q10 %>%
                     labels = c("TRUE" = "Avec Feat", "FALSE" = "Sans Feat"))
 ```
 
-```{r}
+On remarque, sans grande surprise, que la grande majorité des titres de
+notre jeu de données ne sont pas issus d'une collaboration.
+
+On peut donc continuer notre analyse des données mais gardons en tête
+que les titres avec Feat sont relativement peu nombreux.
+
+##### Comparaison de respectivement le nombre de Streams et de Vues avec ou sans Feat
+
+```{r echo=FALSE}
 # Transformer les données en format long
 df_long_stream_view <- df_q10 %>%
   pivot_longer(cols = c(Stream, Views), names_to = "Metric", values_to = "Value")
@@ -1297,7 +1498,25 @@ df_long_stream_view %>% ggplot(aes(x = Metric, y = Value, color = Feat)) +
   theme_minimal()
 ```
 
-```{r}
+Nous avons utilisé un diagramme en boîte à moustache car d'après nos
+analyses précédentes, notre dataset a des valeurs de nombre d'écoutes
+(streams et/ou vues) en grand nombre et assez dispersées. C'est pourquoi
+un diagramme 'statistique' de ce style est très adapté à notre
+visualisation pour cette question.
+
+On voit de manière assez claire que les chansons avec Feat sont plus
+écoutées en moyenne que celles sans. Il y a aussi des nombres d'écoutes
+plus grand pour le quatrième quartile (ligne au-dessus des boîtes) qui
+est plus long et haut pour les Streams comme pour les Vues des chansons
+avec Feat. Ceci concorde avec notre hypothèse initiale que les titres
+issus d'une collaboration soient plus 'populaires'.
+
+Est-ce qu'on retrouve la même tendance au niveau des Commentaires et des
+Likes ?
+
+##### Comparaison de respectivement le nombre de Likes et de Commentaires avec ou sans Feat
+
+```{r echo=FALSE}
 # Transformer les données en format long
 df_comment <- df_q10 %>%
   pivot_longer(cols = c(Comments), names_to = "Metric", values_to = "Value")
@@ -1324,7 +1543,32 @@ feat_like_plot <- df_like %>% ggplot(aes(x = "", y = Value, color = Feat)) +
 feat_comment_plot + feat_like_plot + plot_annotation(title = "Diagrammes en boîte à moustache de Commentaires et de Likes par Feat")
 ```
 
-```{r}
+Oui, on remarque bien la même tendance pour les Commentaires et les
+Likes. Les titres avec Feat sont plus likés et commentés que ceux sans.
+Il est probable que cela soit dû au fait que si un auditeur apprécie les
+deux artistes collaborateurs : il a deux fois plus de chances
+d'intéragir positivement avec le titre en question en laiçant un
+commentaire ou un like.
+
+Nous avons donc des résultats plutôt conclusifs quand on analyse l'effet
+d'un feat sur la popularité mais nous sommes curieux de savoir si cela a
+un effet sur d'autres choses.
+
+Un Feat représente une collaboration entre au moins deux
+artistes/groupes différents sur un titre donné. Si il y a plus
+d'artistes sur une chanson, il a peut-être plus de paroles pour ne pas
+faire de jaloux ?
+
+Nous pensons notamment à certains rappeurs.euses qui apparaissent
+souvent sur des titres d'autres artistes pour quelques mesures de rap ou
+de slam par exemple.
+
+Est-ce qu'on peut observer une relation entre la présence d'un Feat et
+l'attribut 'Speechiness' d'un titre ?
+
+##### Distribution de l'attribut 'Speechiness' des titres avec ou sans Feat
+
+```{r echo=FALSE}
 df_speechiness <- df_q10 %>%
   pivot_longer(cols = c(Speechiness), names_to = "Metric", values_to = "Value")
 # Créer le boxplot avec facet_wrap
@@ -1336,7 +1580,22 @@ df_speechiness %>% ggplot(aes(x = "", y = Value, color = Feat)) +
   theme_minimal()
 ```
 
-```{r}
+Comme pour l'effet sur la popularité, nous observons des résultats
+plutôt clairs. Nous voulons juste rappeler que la proportion de titres
+avec Feat est assez faible dans notre jeu de données : ceci explique
+probablement pourquoi nous avons des visualisations aussi tranchées. Les
+conclusions que nous tirons sur cette question sont peut-être
+significatives pour la musique moderne de manière générale mais aussi
+peut-être juste explicatives pour les choix faits lors de
+l'échantillonage du jeu de données.
+
+On remarque que les titres avec Feat ont des valeurs de 'Speechiness'
+significativement plus élevées que les titres sans ce qui tendrait à
+confirmer nos hypothèses.
+
+##### Distribution et Densité de l'attribut 'Speechiness' des titres avec ou sans Feat
+
+```{r echo=FALSE}
 # Create the violin plot with facet_wrap
 speechiness_plt <- ggbetweenstats(
   data = df_q10,
@@ -1371,9 +1630,243 @@ speechiness_plt <- speechiness_plt +
 speechiness_plt
 ```
 
+Nous avons utilisé presque exclusivement des diagrammes en boîte à
+moustache dans cette question : nous avons voulu proposer une autre
+visualisation 'statistique' de la densité avec ce graphique en violon.
+
+Avec cette visualisation, il est plus facile de voir que les chansons
+sans collaboration ont des valeurs de 'Speechiness' beaucoup plus
+concentrées que pour les chansons avec qui sont plus dispersées en
+faveurs de valeurs de 'Speechiness' plus élevées.
+
+On remarque aussi qu'il a bien moins de points verts que de points
+oranges, rappelant la faible proportion de titres avec Feat dans le jeu
+de données.
+
 #### Conclusion
 
-## Bonus / Annexe :
+-   Il a proportionnellement peu de titres issus d'une collaboration
+    dans notre jeu de données ce qui explique des résultats très (trop)
+    conclusifs : il est important de noter cette proportionnalité
+    inéquitable lorsqu'on présente ces résultats
+
+-   Les titres avec Feat sont plus 'populaires' que les titres sans Feat
+
+-   Les chansons sans collaboartion ont des valeurs de 'Speechiness'
+    plus concentrées vers des valeurs faibles alors que les chansons
+    avec collaboration sont plus équitablement dispersées en faveur de
+    valeurs de 'Speechiness' plus élevées.
+
+### Question 11
+
+[***Y-a-t-il un lien entre les valeurs des différents attributs comme
+'danceability' et 'energy' ?***]{.underline}
+
+**Variables** : attributs quantitatifs
+
+**Objectif** : Relation + Comparaison avec valeurs continues
+(attributs).
+
+**Hypothèses** :
+
+On s'attend à ce qu'il y ai des liens plus forts entre certains
+attributs qu'avec d'autres.
+
+#### Analyse sur la question
+
+Après tous les questions et recherches précédentes et par l'expérience
+dans la vie quotidienne, on peut déjà avoir une hypothèse que certain
+variable quantitatifs peuvent avoir une corrélation avec les autres. Le
+but de cette question est d'essayer faire une analyse et quantifier ces
+corrélation entre les attributs. On peut facilement calculer la matrice
+de corrélation entre ces attributs.
+
+```{r eval=FALSE, include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(reshape2)
+
+data <- read.csv("C:/Users/Glibc/Documents/UTT/P24/IF36/Projet/Question11/data/dataset_if36.csv")
+
+variables_actives <- data %>% select(Danceability, 
+                                     Energy, 
+                                     Key, 
+                                     Loudness, 
+                                     Speechiness, 
+                                     Acousticness, 
+                                     Instrumentalness, 
+                                     Liveness, 
+                                     Valence, 
+                                     Tempo)
+
+matrice_corrélation <- cor(variables_actives)
+
+inertie_totale <- rowSums(matrice_corrélation)
+
+critère_tri <- order(inertie_totale, decreasing = TRUE)
+matrice_triée <- matrice_corrélation[critère_tri, critère_tri]
+
+cor_df <- as.data.frame(as.table(matrice_triée))
+colnames(cor_df) <- c("variables_x", "variables_y", "valeur")
+
+ggplot(cor_df, 
+       aes(variables_y, 
+           variables_x, 
+           fill = valeur,
+           label = round(valeur, 2))) +
+geom_tile(color = "white") +
+geom_text(color = "black") + 
+scale_fill_gradient2(low = "blue", 
+                     high = "red", 
+                     mid = "GRAY", 
+                     midpoint = 0, 
+                     limit = c(-1,1), 
+                     space = "Lab", 
+                     name="Corrélation") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, 
+                                     vjust = 1, 
+                                     size = 10, 
+                                     hjust = 1)) +
+    coord_fixed() +
+    labs(title = "Matrice de corrélation") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
+![res](https://imgur.com/eEnhNYV.png)
+
+Voici la matrice de corrélation. Nous voyons bien que la corrélation
+entre "Danceability" et "Energy" est 0.24. Le lien entre ces deux
+variables existe mais n'est pas très fort. La variable plus corrélée
+avec "Dancability" est "Valence"(0.46). \#### Conclustion Cette matrice
+nous permet aussi de consulter la corrélation entre les n'importe quel
+binôme de variable, que ce soit positif ou négatif.
+
+### Question 12
+
+[***Comment est-ce que la durée des différentes chanson a évoluée avec
+le temps ?***]{.underline}
+
+Variables : année, durée
+
+Objectif : comparaison + évolution (attributs).
+
+Hypothèses : de manière générale , il est facile de se rendre compte que
+les chasons qui qui sortaient au paravant étaient deux fois plus longues
+que celles qui sortent actuellement d'ailleurs la longueur des chanson
+se réduit de plus en plus. En effet , les chansons allaient jusqu'à 7
+minutes et maintenant elles tournent autour de 3 minutes.
+
+```         
+on s'attend donc à une visualisation sur laquelle on pourra remarqué que pour les décénies , les plus éloignée on aura beaucoup plus de chanson avec une durée relativement forte , tandis que avec l'évolution du temps , la répartition changera et on aura beaucoups plus de chanson de faible durée.
+```
+
+![histogram](https://briandiffo.github.io/image_if36/question%2012%201.png)
+![histogram](https://briandiffo.github.io/image_if36/question%2012%202.png)
+![histogram](https://briandiffo.github.io/image_if36/question%2012%203.png)
+
+Le but de cette question était d'évaluer la répartition des durée des
+différentes chansons et de comparer cette répartition en fonction de
+l'année de sortie de chaque chanson. L'hypothèse était que plus les
+musiques sont récentes et plus elles sont courtes de façon globales.
+
+La première chose que l'on remarque sur cette visualisation est que ,
+sur quasiment toutes les périodes , la durée de musique la plus répandue
+se trouve entre 3 et 4 minutes . Cela peut s'observer par des piques de
+l'histogramme à ce niveau là
+
+La deuxième chose que l'on remarque , c'est que plus rentre dans le
+temps , c’est-à-dire vers les années 1980 et autres et plus on a des
+chansons qui ont une durée de 6 à 7 minutes. c'est le cas par exemple
+autour des années 1980. on observer également en 1973 un nombre
+relativement élevé de musique dont la durée varie entre 4 et 6 minutes ,
+ce qui confirme un peu notre hypothèse. Enfin on peut remarquer que à
+partir des année 2010, on note beaucoup moins de chanson ayant une durée
+supérieure à 5 minutes par rapport aux années précédentes
+
+## Conclusion du Rapport :
+
+Ce projet nous a permis de découvrir et d'analyser en profondeur les
+différents aspects d'un large jeu de données musicales. À travers nos
+analyses, nous avons pu identifier des tendances claires dans la
+popularité des artistes, l'impact des genres musicaux, et l'effet des
+collaborations sur la réception des titres. Nous avons appris sur
+l'importance de l'échantillon étudié et donc l'effet que
+l'échantillonage peut avoir sur les résultats observés.
+
+Le fait que notre jeu de données avait beaucoup de métriques pour les
+chansons ('Danceability', etc...) était un attrait lorsqu'on l'a choisi
+mais ces mêmes attributs se sont révélés assez difficiles à visualiser.
+Une autre difficulté qu'a posée le jeu de données est le fait que les
+données de Streams, Likes, Vues, Commentaires étaient très redondants et
+difficile à analyser sans appliquer des statistiques ou juste des
+Diagrammes de points. La difficulté a donc été d'essayer de diversifier
+les types de visualisations que nous analysons. Cependant, nous avons
+fait beaucoup de recherches pour trouver des visualisations originales,
+ce qui nous a été très enrichissant au final.
+
+Pour remédier à ces difficultés, on aurait aussi pû essayer de trouver
+un autre jeu de données ou utiliser l'API de Spotify pour complémenter
+nos données comme on a fait pour les dates de publication des titres.
+Dans cette mesure, on aurait pû avoir des données sur le genre musical
+par exemple.
+
+Zoé Boutin :
+
+> La compétence que je retiens de ce projet est celle de l'explication
+> d'une visualisation. En effet, c'est une première tâche de créer une
+> visualisation avec R (ou pandas, etc...) mais j'ai trouvé cela plus
+> challengant et plus intéressant d'avoir un regard critique et
+> explicatif sur mes différentes visualisation. Cela m'a fait prendre du
+> recul sur le travail de l'infographie et de la data analyse et ses
+> complexitées. J'aurais aimé essayé de faire des visualisations plus
+> 'flashy' ou 'clickbait' plus lissées et avec des images ou des
+> couleurs mais les contraintes de notre jeu de données ainsi que les
+> contraintes temporelles m'en ont empechées. Mais ce projet m'a
+> certainement donné envie de chercher plus loin.
+
+Brian Diffo Diffo :
+
+> Au cours de ce projet de visualisation de données, le premier
+> apprentissage dont j'ai pu bénéficier a été la manipulation des
+> différents outils de visualisation de données en R ainsi que le
+> traitement des données avec les différents packages tels que Tidyverse
+> ou dplyr. J'ai également eu la possibilité d'apprendre à agencer les
+> visualisations afin de leur donner plus de sens et de simplifier leur
+> analyse en effectuant des traitements tels que l'ajustement de
+> l'échelle ou encore la transformation logarithmique. J'ai appris que
+> la visualisation de données n'est pas seulement une question
+> d'informatique ou de programmation, mais qu'elle comporte plusieurs
+> aspects importants permettant de faciliter la compréhension des
+> données.
+
+Hanxiao Sun :
+
+He Huang :
+
+## Annexe (répartition du travail)
+
+Zoé Boutin :
+
+-   Questions : 1, 3, 10
+
+-   Introduction
+
+Brian Diffo Diffo :
+
+-   Questions : 2, 6, 8, 12
+
+-   Shiny
+
+Hanxiao Sun :
+
+-   Questions : 5, 9
+
+He Huang :
+
+-   Questions : 4, 7, 11
+
+## Bonus :
 
 Lors de nos recherches pour ce projet, nous avons trouvé les
 visualisations issus du projet TidyTuesday très inspirants.
@@ -1438,191 +1931,3 @@ test_plot
 
 [Lien vers le script de \@jkaupp sur
 github](https://github.com/jkaupp/tidytuesdays/blob/master/2020/week4/R/analysis.R)
-
-### Question 11
-
-**Y-a-t-il un lien entre les valeurs des différents attributs comme
-'danceability' et 'energy' ?**
-
-**Variables** : attributs quantitatifs
-
-**Objectif** : Relation + Comparaison avec valeurs continues (attributs).
-
-**Hypothèses** :
-
-On s'attend à ce qu'il y ai des liens plus forts entre certains attributs qu'avec d'autres.
-
-#### Analyse sur la question
-
-Après tous les questions et recherches précédentes et par l'expérience
-dans la vie quotidienne, on peut déjà avoir une hypothèse que certain
-variable quantitatifs peuvent avoir une corrélation avec les autres. Le
-but de cette question est d'essayer faire une analyse et quantifier ces
-corrélation entre les attributs.
-On peut facilement calculer la matrice de corrélation entre ces attributs.
-
-```{r}
-library(ggplot2)
-library(tidyverse)
-library(reshape2)
-
-data <- read.csv("C:/Users/Glibc/Documents/UTT/P24/IF36/Projet/Question11/data/dataset_if36.csv")
-
-variables_actives <- data %>% select(Danceability, 
-                                     Energy, 
-                                     Key, 
-                                     Loudness, 
-                                     Speechiness, 
-                                     Acousticness, 
-                                     Instrumentalness, 
-                                     Liveness, 
-                                     Valence, 
-                                     Tempo)
-
-matrice_corrélation <- cor(variables_actives)
-
-inertie_totale <- rowSums(matrice_corrélation)
-
-critère_tri <- order(inertie_totale, decreasing = TRUE)
-matrice_triée <- matrice_corrélation[critère_tri, critère_tri]
-
-cor_df <- as.data.frame(as.table(matrice_triée))
-colnames(cor_df) <- c("variables_x", "variables_y", "valeur")
-
-ggplot(cor_df, 
-       aes(variables_y, 
-           variables_x, 
-           fill = valeur,
-           label = round(valeur, 2))) +
-geom_tile(color = "white") +
-geom_text(color = "black") + 
-scale_fill_gradient2(low = "blue", 
-                     high = "red", 
-                     mid = "GRAY", 
-                     midpoint = 0, 
-                     limit = c(-1,1), 
-                     space = "Lab", 
-                     name="Corrélation") +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, 
-                                     vjust = 1, 
-                                     size = 10, 
-                                     hjust = 1)) +
-    coord_fixed() +
-    labs(title = "Matrice de corrélation") +
-    theme(plot.title = element_text(hjust = 0.5))
-```
-![res](https://imgur.com/eEnhNYV.png)
-
-Voici la matrice de corrélation. Nous voyons bien que la corrélation entre "Danceability" et "Energy" est 0.24. Le lien entre ces deux variables existe mais n'est pas très fort. La variable plus corrélée avec "Dancability" est "Valence"(0.46). 
-#### Conclustion
-Cette matrice nous permet aussi de consulter la corrélation entre les n'importe quel binôme de variable, que ce soit positif ou négatif.
-
-### question 12
-
-12. comment est-ce que la durée des différentes chanson a évoluée avec
-    le temps
-
-Variables : année, durée
-
-Objectif : comparaison + évolution (attributs).
-
-Hypothèses : de manière générale , il est facile de se rendre compte que
-les chasons qui qui sortaient au paravant étaient deux fois plus longues
-que celles qui sortent actuellement d'ailleurs la longueur des chanson
-se réduit de plus en plus. En effet , les chansons allaient jusqu'à 7
-minutes et maintenant elles tournnent autour de 3 minutes.
-
-```         
-on s'attend donc à une visualisation sur laquelle on pourra remarqué que pour les décénies , les plus éloignée on aura beaucoup plus de chanson avec une durée relativement forte , tandis que avec l'évolution du temps , la répartition changera et on aura beaucoups plus de chanson de faible durée.
-```
-
-![histogram](https://briandiffo.github.io/image_if36/question%2012%201.png)
-![histogram](https://briandiffo.github.io/image_if36/question%2012%202.png)
-![histogram](https://briandiffo.github.io/image_if36/question%2012%203.png)
-
-Le but de cette question était d'évaluer la répartition des durée des
-différentes chansons et de comparer cette répartition en fonction de
-l'année de sortie de chaque chanson. L'hypothèse était que plus les
-musiques sont récentes et plus elles sont courtes de façon globales.
-
-La première chose que l'on remarque sur cette visualisation est que ,
-sur quasiment toutes les périodes , la durée de musique la plus répandue
-se trouve entre 3 et 4 minutes . Cela peut s'observer par des piques de
-l'histogramme à ce niveau là
-
-La deuxième chose que l'on remarque , c'est que plus rentre dans le
-temps , c’est-à-dire vers les années 1980 et autres et plus on a des
-chansons qui ont une durée de 6 à 7 minutes. c'est le cas par exemple
-autour des années 1980. on observer également en 1973 un nombre
-relativement élevé de musique dont la durée varie entre 4 et 6 minutes ,
-ce qui confirme un peu notre hypothèse. Enfin on peut remarquer que à
-partir des année 2010, on note beaucoup moins de chanson ayant une durée
-supérieure à 5 minutes par rapport aux années précédentes
-
-## Bonus / Annexe :
-
-Lors de nos recherches pour ce projet, nous avons trouvé les
-visualisations issus du projet TidyTuesday très inspirants.
-
-Le TidyTuesday Challenge est une initiative hebdomadaire organisée par
-la communauté R for Data Science (R4DS), où les participants sont
-invités à explorer, nettoyer et visualiser des jeux de données fournis
-chaque mardi, en utilisant les principes de la "tidyverse" en R. Cet
-exercice vise à améliorer les compétences en manipulation de données et
-en visualisation tout en favorisant l'apprentissage collaboratif et le
-partage de solutions créatives au sein de la communauté.
-
-Nous avons fait une petite exploration avec le script de Jake Kaupp
-(\@jkaupp sur github) pour essayer de le comprendre et approfondir notre
-maitrise de R et des packages Tidyverse.
-
-Ci-dessous se trouve notre exploration du code de Jake Kaupp pour notre
-jeu de données puis sa visualisation pour une itération du TidyTuesday.
-
-```{r}
-rush <- df %>% 
-  filter(!is.na(Track), Artist %in% c("Metallica", "Smash Mouth", "ABBA", "Britney Spears", "Wolfgang Amadeus Mozart"), Track %in% c("Screaming Suicide", "All Star", "Dancing Queen", "Toxic", "Piano Concerto No. 21 in C Major, K. 467: II. Andante")) %>% 
-  distinct(Track, .keep_all = TRUE) %>% 
-  select(Track, Artist, Danceability, Energy, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo) %>% 
-  mutate(color = c("#f7b801","#f18701","#f35b04","darkred","red")) %>% 
-  mutate_at(vars(Track, Artist), as.character) %>% 
-  mutate_at(vars(Danceability:Tempo), function(x) x/max(x)) %>% 
-  pivot_longer(Danceability:Tempo) 
-
-
-bg <- df %>% 
-          distinct(Uri, .keep_all = TRUE) %>% 
-          distinct(Track, Artist, .keep_all = TRUE) %>% 
-          filter(!is.na(Track)) %>% 
-          select(Track, Artist, Danceability, Energy, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo) %>% 
-          mutate(color = "#d8dee9") %>% 
-  mutate_at(vars(Danceability:Tempo), function(x) x/max(x)) %>% 
-  pivot_longer(Danceability:Tempo) 
-
-
-test_plot <- ggplot(bg, aes(x = name, y = value)) +
-  geom_line(aes(color = color,  group = Track), alpha = 0.1, size = 0.1) +
-  geom_line(data = rush, aes(color = color, group = Artist), size = 0.5) +
-  geom_point(data = rush, aes(color = color, group = Artist), size = 1) +
-  geom_text(data = filter(rush, name == "Valence"), aes(label = glue("{str_replace_all(Artist, '(?<=.)(?!$)', ' ')}\n{Track}"), colour = color), family = "Arial", hjust = 0, nudge_x = 0.1, nudge_y = c(-0.05, 0, 0)) +
-  scale_color_identity() +  
-  scale_fill_identity() +
-  scale_y_continuous(breaks = c(0, 0.5, 1), labels = c("Bas", "Moy", "Haut")) +
-  scale_x_discrete(labels = function(x) str_replace_all(x, "(?<=.)(?!$)", " ")) +
-  expand_limits(x = c(1, 10)) +
-  labs(title = "Charactéristiques Musicales de quelques chansons",
-       x = NULL,
-       y = NULL) +
-  theme_dark() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1, size = 6),
-        legend.position = "none")
-
-test_plotn
-```
-
-![](data/tw4_plot.png)
-
-[Lien vers le script de \@jkaupp sur
-github](https://github.com/jkaupp/tidytuesdays/blob/master/2020/week4/R/analysis.R)
-

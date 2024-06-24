@@ -78,25 +78,7 @@ plot_bar_charts <- function(data, metric) {
 
 shinyServer(function(input, output) {
 
-  # Dummy values for avg_height and median_mass for demonstration
-  avg_height <- mean(dataset_if36$height, na.rm = TRUE)
-  median_mass <- median(dataset_if36$mass, na.rm = TRUE)
-
-  output$averageheight <- renderInfoBox({
-    infoBox(
-      "Average Height", avg_height,
-      color = "purple"
-    )
-  })
-
-  output$medianmass <- renderInfoBox({
-    infoBox(
-      "Median Mass", median_mass,
-      color = "purple"
-    )
-  })
-
-  # Output Menu question2, graphique 1
+    # Output Menu question2, graphique 1
   output$graphique1 <- renderPlotly({
     ggplot_obj <- ggplotly(
       ggplot(stream_view_2008, aes(x = Stream, y = Views)) +
