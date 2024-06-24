@@ -1021,7 +1021,7 @@ Pour analyse le résultat, nous imprimons l'inertie des composantes principales 
 # L’inertie des cps
 fviz_eig(résultat.ACP)
 # Cercle des corrélations
-fviz_pca_var(pca_result)
+fviz_pca_var(résultat.ACP)
 
 ```
 ![inertie](https://imgur.com/VYpMGRa.png)
